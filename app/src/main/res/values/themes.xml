@@ -1,0 +1,12 @@
+<resources>
+    <style name="Theme.CampusConnect" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="android:windowBackground">@color/color_background</item>
+        <item name="android:statusBarColor">@color/color_background</item>
+        <item name="android:navigationBarColor">@color/color_background</item>
+        <item name="colorPrimary">@color/color_cyan</item>
+        <item name="colorPrimaryVariant">@color/color_purple</item>
+        <item name="colorOnPrimary">@color/color_background</item>
+        <item name="android:textColor">@color/color_text_primary</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+</resources>
