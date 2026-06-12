@@ -9,5 +9,6 @@
         <item name="android:textColor">@color/color_text_primary</item>
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:textColorHint">@color/color_muted</item>
+        <item name="android:fitsSystemWindows">true</item>
     </style>
 </resources>
