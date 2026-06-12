@@ -13,17 +13,13 @@
         android:theme="@style/Theme.CampusConnect">
 
         <activity
-            android:name=".auth.login.LoginActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".auth.register.RegisterActivity" />
-        <activity android:name=".home.HomeActivity" />
-        <activity android:name=".profile.PublicProfileActivity" />
 
     </application>
 
