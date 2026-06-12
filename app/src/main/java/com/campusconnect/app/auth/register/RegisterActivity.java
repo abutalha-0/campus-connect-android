@@ -67,18 +67,27 @@ public class RegisterActivity extends BaseActivity {
                 .enqueue(new Callback<AuthResponse>() {
                     @Override
                     public void onResponse(Call<AuthResponse> call, Response<AuthResponse> response) {
-                        setLoading(false);
                         if (response.isSuccessful() && response.body() != null) {
                             AuthResponse auth = response.body();
                             tokenManager.saveTokens(
                                     auth.getTokens().getAccess(),
                                     auth.getTokens().getRefresh()
                             );
-                            Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            startActivity(intent);
-                            finish();
-                        } else {
+
+                            // show confirmation toast
+                            Toast.makeText(RegisterActivity.this,
+                                    "Account created! Welcome to Campus Connect.",
+                                    Toast.LENGTH_SHORT).show();
+
+                            // wait 2 seconds then go to Home
+                            new android.os.Handler(android.os.Looper.getMainLooper())
+                                    .postDelayed(() -> {
+                                        Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
+                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        startActivity(intent);
+                                        finish();
+                                    }, 1000);
+                        }else {
                             Toast.makeText(RegisterActivity.this,
                                     "Registration failed. Email or username may already exist.",
                                     Toast.LENGTH_LONG).show();
