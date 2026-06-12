@@ -58,7 +58,7 @@
             android:paddingEnd="16dp"
             android:inputType="textEmailAddress"
             android:hint="you@example.com"
-            android:hintTextColor="@color/color_muted"
+
             android:textColor="@color/color_text_primary"
             android:textSize="14sp"
             android:layout_marginBottom="20dp"/>
@@ -81,7 +81,7 @@
             android:paddingEnd="16dp"
             android:inputType="textPassword"
             android:hint="Min 8 characters"
-            android:hintTextColor="@color/color_muted"
+
             android:textColor="@color/color_text_primary"
             android:textSize="14sp"
             android:layout_marginBottom="32dp"/>

@@ -8,5 +8,6 @@
         <item name="colorOnPrimary">@color/color_background</item>
         <item name="android:textColor">@color/color_text_primary</item>
         <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColorHint">@color/color_muted</item>
     </style>
 </resources>
