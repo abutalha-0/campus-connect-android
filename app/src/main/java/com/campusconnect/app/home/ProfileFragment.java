@@ -1,5 +1,6 @@
 package com.campusconnect.app.home;
 
+import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -78,6 +79,13 @@ public class ProfileFragment extends Fragment {
                     getActivity(), com.campusconnect.app.auth.login.LoginActivity.class);
             intent.setFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK |
                     android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+        });
+
+        // edit profile button
+        view.findViewById(R.id.btnEditProfile).setOnClickListener(v -> {
+            Intent intent = new Intent(getActivity(),
+                    com.campusconnect.app.profile.edit.EditProfileActivity.class);
             startActivity(intent);
         });
 
