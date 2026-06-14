@@ -6,6 +6,11 @@ import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Path;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import retrofit2.http.Multipart;
+import retrofit2.http.PATCH;
+import retrofit2.http.Part;
 
 public interface ProfileApiService {
 
@@ -46,5 +51,14 @@ public interface ProfileApiService {
     Call<Void> deleteLink(
             @Header("Authorization") String token,
             @Path("id") int id
+    );
+
+    @PATCH("api/profiles/me/")
+    @retrofit2.http.FormUrlEncoded
+    Call<Profile> updateBasicInfo(
+            @Header("Authorization") String token,
+            @retrofit2.http.Field("bio") String bio,
+            @retrofit2.http.Field("about") String about,
+            @retrofit2.http.Field("user_type") String userType
     );
 }
