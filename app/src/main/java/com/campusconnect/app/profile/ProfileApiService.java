@@ -1,10 +1,19 @@
 package com.campusconnect.app.profile;
 
+import com.campusconnect.app.profile.models.Education;
+import com.campusconnect.app.profile.models.Experience;
+import com.campusconnect.app.profile.models.ExperienceRequest;
 import com.campusconnect.app.profile.models.Profile;
+import com.campusconnect.app.profile.models.ProfileUpdateRequest;
+import com.campusconnect.app.profile.models.Project;
+import com.campusconnect.app.profile.models.ProjectRequest;
+
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -53,12 +62,32 @@ public interface ProfileApiService {
             @Path("id") int id
     );
 
-    @PATCH("api/profiles/me/")
-    @retrofit2.http.FormUrlEncoded
-    Call<Profile> updateBasicInfo(
+    @POST("api/profiles/me/projects/")
+    Call<Project> addProject(
             @Header("Authorization") String token,
-            @retrofit2.http.Field("bio") String bio,
-            @retrofit2.http.Field("about") String about,
-            @retrofit2.http.Field("user_type") String userType
+            @Body ProjectRequest body
     );
+
+    @POST("api/profiles/me/experience/")
+    Call<Experience> addExperience(
+            @Header("Authorization") String token,
+            @Body ExperienceRequest body
+    );
+
+    @Multipart
+    @POST("api/profiles/me/education/")
+    Call<Education> addEducation(
+            @Header("Authorization") String token,
+            @Part("institution_name") RequestBody institutionName,
+            @Part("degree") RequestBody degree,
+            @Part("start_year") RequestBody startYear,
+            @Part("end_year") RequestBody endYear
+    );
+
+    @PATCH("api/profiles/me/")
+    Call<Profile> updateProfile(
+            @Header("Authorization") String token,
+            @Body ProfileUpdateRequest body
+    );
+
 }

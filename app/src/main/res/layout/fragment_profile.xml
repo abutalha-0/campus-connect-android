@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    ProfileFragment Layout
-    ─────────────────────
-    Structure:
-    1. Top bar          → app name + logout button
-    2. NestedScrollView → all scrollable content
-       ├── Cover banner     → gradient strip
-       ├── Hero card        → avatar + name + username + badge (overlaps cover)
-       ├── About section    → bio/about text
-       └── Tab section      → Projects / Experience / Education
+    fragment_profile.xml  (UPDATED)
+    ─────────────────────────────────
+    Changes from original:
+      1. Hero card:  pencil button (btnEditHero) added top-right,
+                     overlapping the card like the HTML reference.
+      2. About card: pencil button (btnEditAbout) in the section header row.
+      3. Tab section: "+ Add" button (btnAddTabItem) next to the tab title row,
+                     replaces full-screen EditProfileActivity navigation.
+      4. Top bar: "Edit" button removed — editing is now done inline via sheets.
+
+    View IDs that are NEW (wire in ProfileFragment.java):
+      btnEditHero   → opens EditBasicInfoBottomSheet
+      btnEditAbout  → opens EditBasicInfoBottomSheet (same sheet, both are about info)
+      btnAddTabItem → opens Add sheet for the active tab
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -18,7 +23,7 @@
     android:clipChildren="false"
     android:clipToPadding="false">
 
-    <!-- ─── TOP BAR ─────────────────────────────────────────────────────── -->
+    <!-- ─── TOP BAR ──────────────────────────────────────────────────────── -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
@@ -31,37 +36,25 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Campus"
+            android:text="Campus Connect"
             android:textColor="@color/color_text_primary"
             android:textSize="18sp"
             android:textStyle="bold"/>
 
-        <!-- Edit profile button -->
-        <Button
-            android:id="@+id/btnEditProfile"
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:background="@drawable/bg_button_outline"
-            android:text="Edit"
-            android:textColor="@color/color_cyan"
-            android:textSize="11sp"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:layout_marginEnd="8dp"/>
-
-        <!-- Logout button -->
+        <!-- Logout button (kept from original) -->
         <Button
             android:id="@+id/btnLogout"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:background="@drawable/bg_button_outline"
             android:text="Logout"
-            android:textColor="@color/color_muted"
+            android:textColor="@color/color_text_primary"
             android:textSize="11sp"
             android:paddingStart="12dp"
             android:paddingEnd="12dp"/>
 
     </LinearLayout>
+
     <!-- ─── SCROLLABLE CONTENT ───────────────────────────────────────────── -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
@@ -70,7 +63,6 @@
         android:clipChildren="false"
         android:clipToPadding="false">
 
-        <!-- Single child required by NestedScrollView -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -79,7 +71,6 @@
             android:clipToPadding="false">
 
             <!-- ─── COVER BANNER ─────────────────────────────────────────── -->
-            <!-- Gradient is applied programmatically in ProfileFragment.java -->
             <View
                 android:id="@+id/coverBanner"
                 android:layout_width="match_parent"
@@ -87,19 +78,20 @@
 
             <!-- ─── HERO CARD ─────────────────────────────────────────────── -->
             <!--
-                Negative marginTop pulls this card up over the cover banner
-                creating the overlapping effect from the design
+                Outer padding wrapper pulls the card up -32dp over the cover
+                FrameLayout wraps the card + pencil button so the pencil can be
+                positioned top-right of the card without interfering with layout.
             -->
-            <LinearLayout
+            <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
                 android:layout_marginTop="-32dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp"
                 android:clipChildren="false"
                 android:clipToPadding="false">
 
+                <!-- Card body -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -118,11 +110,6 @@
                         android:clipChildren="false"
                         android:clipToPadding="false">
 
-                        <!--
-                            Avatar FrameLayout
-                            Negative marginTop pulls avatar up over the card top edge
-                            giving the floating avatar effect from the design
-                        -->
                         <FrameLayout
                             android:layout_width="72dp"
                             android:layout_height="72dp"
@@ -130,14 +117,6 @@
                             android:clipChildren="false"
                             android:clipToPadding="false">
 
-                            <!--
-                                Profile photo
-                                - bg_avatar_large provides rounded corners
-                                - clipToOutline clips the image to that shape
-                                - outlineProvider is set in Java to make clipToOutline work
-                                - Glide loads the Cloudinary URL at runtime
-                                - Default icon shows before photo loads
-                            -->
                             <ImageView
                                 android:id="@+id/ivAvatar"
                                 android:layout_width="72dp"
@@ -149,7 +128,6 @@
 
                         </FrameLayout>
 
-                        <!-- Spacer pushes avatar to the left -->
                         <View
                             android:layout_width="0dp"
                             android:layout_height="1dp"
@@ -176,7 +154,7 @@
                         android:textSize="13sp"
                         android:layout_marginTop="2dp"/>
 
-                    <!-- User type badge e.g. STUDENT / CR -->
+                    <!-- User type badge -->
                     <TextView
                         android:id="@+id/tvUserType"
                         android:layout_width="wrap_content"
@@ -192,7 +170,26 @@
 
                 </LinearLayout>
 
-            </LinearLayout>
+                <!--
+                    Pencil icon button — positioned top-right of the hero card.
+                    Margin 12dp from top/right to sit inside the card corner.
+                    Tapping opens EditBasicInfoBottomSheet.
+                -->
+                <TextView
+                    android:id="@+id/btnEditHero"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="top|end"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginEnd="12dp"
+                    android:gravity="center"
+                    android:text="✎"
+                    android:textColor="@color/color_muted"
+                    android:textSize="16sp"
+                    android:background="@drawable/bg_input"
+                    android:padding="0dp"/>
+
+            </FrameLayout>
 
             <!-- ─── ABOUT SECTION ─────────────────────────────────────────── -->
             <LinearLayout
@@ -205,18 +202,39 @@
                 android:layout_marginStart="12dp"
                 android:layout_marginEnd="12dp">
 
-                <!-- Section label -->
-                <TextView
-                    android:layout_width="wrap_content"
+                <!-- Section header row with pencil -->
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="ABOUT"
-                    android:textColor="@color/color_muted"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.1"
-                    android:layout_marginBottom="8dp"/>
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="8dp">
 
-                <!-- Bio or about text populated from API -->
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="ABOUT"
+                        android:textColor="@color/color_muted"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.1"/>
+
+                    <!-- Pencil edit button for About section -->
+                    <TextView
+                        android:id="@+id/btnEditAbout"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:gravity="center"
+                        android:text="✎"
+                        android:textColor="@color/color_muted"
+                        android:textSize="14sp"
+                        android:background="@drawable/bg_input"
+                        android:padding="0dp"/>
+
+                </LinearLayout>
+
+                <!-- Bio / about text -->
                 <TextView
                     android:id="@+id/tvAbout"
                     android:layout_width="match_parent"
@@ -237,12 +255,7 @@
                 android:layout_marginEnd="12dp"
                 android:layout_marginBottom="24dp">
 
-                <!--
-                    Tab buttons row
-                    Active tab gets bg_tab_active background + cyan text
-                    Inactive tabs get transparent background + muted text
-                    Switching is handled in ProfileFragment.java → switchTab()
-                -->
+                <!-- Tab buttons row -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="44dp"
@@ -283,17 +296,47 @@
                 </LinearLayout>
 
                 <!--
-                    Tab content container
-                    Cards are inflated and added here dynamically in ProfileFragment.java
-                    Content changes when user taps a tab button
-                    item_project.xml / item_experience.xml / item_education.xml
+                    Sub-header row: active tab title on the left, "+ Add" on the right.
+                    btnAddTabItem calls the right sheet depending on the active tab.
                 -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginTop="10dp">
+
+                    <TextView
+                        android:id="@+id/tvActiveTabTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Projects"
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold"/>
+
+                    <!-- Plus add button -->
+                    <TextView
+                        android:id="@+id/btnAddTabItem"
+                        android:layout_width="28dp"
+                        android:layout_height="28dp"
+                        android:gravity="center"
+                        android:text="+"
+                        android:textColor="@color/color_cyan"
+                        android:textSize="20sp"
+                        android:textStyle="bold"
+                        android:background="@drawable/bg_input"
+                        android:padding="0dp"/>
+
+                </LinearLayout>
+
+                <!-- Tab content area -->
                 <LinearLayout
                     android:id="@+id/tabContent"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_marginTop="10dp"/>
+                    android:orientation="vertical"/>
 
             </LinearLayout>
 

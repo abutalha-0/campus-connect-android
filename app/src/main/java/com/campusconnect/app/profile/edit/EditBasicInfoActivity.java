@@ -13,6 +13,7 @@ import com.campusconnect.app.profile.models.Profile;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import com.campusconnect.app.profile.models.ProfileUpdateRequest;
 
 public class EditBasicInfoActivity extends BaseActivity {
 
@@ -86,8 +87,10 @@ public class EditBasicInfoActivity extends BaseActivity {
 
         String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
 
+        ProfileUpdateRequest body = new ProfileUpdateRequest(bio, about, selectedUserType);
+
         RetrofitClient.createService(ProfileApiService.class)
-                .updateBasicInfo(token, bio, about, selectedUserType)
+                .updateProfile(token, body)
                 .enqueue(new Callback<Profile>() {
                     @Override
                     public void onResponse(Call<Profile> call,
