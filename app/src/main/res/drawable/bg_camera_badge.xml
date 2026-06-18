@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    bg_camera_badge.xml
+    ─────────────────────
+    Small circular cyan badge that sits on the bottom-right corner
+    of the avatar. Holds the camera glyph (📷 or a vector icon).
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="@color/color_cyan"/>
+    <stroke
+        android:width="2dp"
+        android:color="@color/color_card"/>
+</shape>

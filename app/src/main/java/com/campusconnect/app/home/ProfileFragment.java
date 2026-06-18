@@ -1,6 +1,7 @@
 package com.campusconnect.app.home;
 
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -9,6 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -16,6 +21,7 @@ import com.bumptech.glide.Glide;
 import com.campusconnect.app.R;
 import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.utils.Constants;
+import com.campusconnect.app.core.utils.ImageUtils;
 import com.campusconnect.app.core.utils.TokenManager;
 import com.campusconnect.app.profile.ProfileApiService;
 import com.campusconnect.app.profile.edit.AddEducationBottomSheet;
@@ -26,10 +32,14 @@ import com.campusconnect.app.profile.models.Education;
 import com.campusconnect.app.profile.models.Experience;
 import com.campusconnect.app.profile.models.Profile;
 import com.campusconnect.app.profile.models.Project;
+import java.io.File;
+import java.util.List;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import java.util.List;
 
 public class ProfileFragment extends Fragment {
 
@@ -46,17 +56,39 @@ public class ProfileFragment extends Fragment {
     private LinearLayout tabContent;
 
     // ── Edit / add entry points ───────────────────────────────────────────────
-    /** Pencil on the hero card → EditBasicInfoBottomSheet */
     private TextView btnEditHero;
-    /** Pencil in the About section header → same sheet */
     private TextView btnEditAbout;
-    /** "+" button in the tab sub-header → Add sheet for active tab */
     private TextView btnAddTabItem;
+    /** Camera badge on the avatar corner → opens gallery picker */
+    private TextView btnChangePhoto;
 
     private Profile currentProfile;
     private String  activeTab = "projects";
 
+    /**
+     * Modern Android Photo Picker launcher. No storage permission needed
+     * on Android 11+ (and gracefully falls back to the system picker on
+     * older versions too — it's all handled by this one API).
+     */
+    private ActivityResultLauncher<PickVisualMediaRequest> photoPickerLauncher;
+
     // ── Fragment lifecycle ────────────────────────────────────────────────────
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Must be registered before onViewCreated/onStart — register here.
+        photoPickerLauncher = registerForActivityResult(
+                new ActivityResultContracts.PickVisualMedia(),
+                uri -> {
+                    if (uri != null) {
+                        onPhotoPicked(uri);
+                    }
+                    // uri is null if the user backed out of the picker — do nothing
+                }
+        );
+    }
 
     @Nullable
     @Override
@@ -89,11 +121,12 @@ public class ProfileFragment extends Fragment {
         tabContent       = view.findViewById(R.id.tabContent);
 
         // bind edit / add buttons
-        btnEditHero    = view.findViewById(R.id.btnEditHero);
-        btnEditAbout   = view.findViewById(R.id.btnEditAbout);
-        btnAddTabItem  = view.findViewById(R.id.btnAddTabItem);
+        btnEditHero     = view.findViewById(R.id.btnEditHero);
+        btnEditAbout    = view.findViewById(R.id.btnEditAbout);
+        btnAddTabItem   = view.findViewById(R.id.btnAddTabItem);
+        btnChangePhoto  = view.findViewById(R.id.btnChangePhoto);
 
-        // gradient cover banner (same as before)
+        // gradient cover banner
         GradientDrawable gradient = new GradientDrawable(
                 GradientDrawable.Orientation.LEFT_RIGHT,
                 new int[]{0xFF06B6D4, 0xFF3B82F6, 0xFF8B5CF6}
@@ -118,6 +151,9 @@ public class ProfileFragment extends Fragment {
 
         // ── "+" button → add sheet for the active tab ─────────────────────────
         btnAddTabItem.setOnClickListener(v -> openAddSheet());
+
+        // ── Camera badge → photo picker ────────────────────────────────────────
+        btnChangePhoto.setOnClickListener(v -> openPhotoPicker());
 
         // ── Tabs ──────────────────────────────────────────────────────────────
         tabProjects.setOnClickListener(v   -> switchTab("projects"));
@@ -184,23 +220,19 @@ public class ProfileFragment extends Fragment {
     private void switchTab(String tab) {
         activeTab = tab;
 
-        // reset all
         for (TextView t : new TextView[]{tabProjects, tabExperience, tabEducation}) {
             t.setBackgroundResource(0);
             t.setTextColor(getResources().getColor(R.color.color_muted, null));
         }
 
-        // activate selected
         TextView active = tab.equals("projects")   ? tabProjects  :
                 tab.equals("experience")  ? tabExperience : tabEducation;
         active.setBackgroundResource(R.drawable.bg_tab_active);
         active.setTextColor(getResources().getColor(R.color.color_cyan, null));
 
-        // update the sub-header title
         String label = tab.substring(0, 1).toUpperCase() + tab.substring(1);
         if (tvActiveTabTitle != null) tvActiveTabTitle.setText(label);
 
-        // render content
         tabContent.removeAllViews();
         if (currentProfile == null) return;
 
@@ -213,19 +245,12 @@ public class ProfileFragment extends Fragment {
 
     // ── Bottom sheet launchers ────────────────────────────────────────────────
 
-    /**
-     * Opens EditBasicInfoBottomSheet. After a successful save the sheet calls
-     * back and we reload the profile so the hero card reflects the new data.
-     */
     private void openEditBasicInfo() {
         EditBasicInfoBottomSheet sheet = new EditBasicInfoBottomSheet();
         sheet.setOnSavedListener(this::loadProfile);
         sheet.show(getChildFragmentManager(), "edit_basic_info");
     }
 
-    /**
-     * Opens the correct Add sheet based on which tab is currently active.
-     */
     private void openAddSheet() {
         switch (activeTab) {
             case "projects":
@@ -248,7 +273,87 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    // ── Tab content renderers (unchanged from original) ───────────────────────
+    // ── Profile photo flow ───────────────────────────────────────────────────
+
+    /**
+     * Launches the system Photo Picker, restricted to images only.
+     * No runtime permission request needed — the Photo Picker API
+     * handles access scoping internally.
+     */
+    private void openPhotoPicker() {
+        photoPickerLauncher.launch(new PickVisualMediaRequest.Builder()
+                .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                .build());
+    }
+
+    /**
+     * Called once the user picks an image. Shows it immediately for instant
+     * feedback (optimistic UI), then compresses and uploads it in the
+     * background.
+     */
+    private void onPhotoPicked(Uri uri) {
+        // Optimistic preview — show the picked image right away
+        Glide.with(this).load(uri).centerCrop().into(ivAvatar);
+        Toast.makeText(getContext(), "Uploading photo…", Toast.LENGTH_SHORT).show();
+        uploadProfilePhoto(uri);
+    }
+
+    private void uploadProfilePhoto(Uri uri) {
+        if (getContext() == null) return;
+
+        File compressedFile;
+        try {
+            compressedFile = ImageUtils.compressImageFromUri(getContext(), uri);
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "Couldn't read that image. Try another.",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        RequestBody fileBody = RequestBody.create(
+                MediaType.parse("image/jpeg"), compressedFile);
+
+        MultipartBody.Part photoPart = MultipartBody.Part.createFormData(
+                "profile_photo", compressedFile.getName(), fileBody);
+
+        String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
+
+        RetrofitClient.createService(ProfileApiService.class)
+                .updateProfilePhoto(token, photoPart)
+                .enqueue(new Callback<Profile>() {
+                    @Override
+                    public void onResponse(Call<Profile> call, Response<Profile> response) {
+                        if (!isAdded()) return;
+                        if (response.isSuccessful() && response.body() != null) {
+                            currentProfile = response.body();
+                            // re-load from the server URL to confirm the real
+                            // uploaded image (replaces the optimistic local preview)
+                            if (currentProfile.getProfilePhoto() != null) {
+                                Glide.with(ProfileFragment.this)
+                                        .load(currentProfile.getProfilePhoto())
+                                        .centerCrop()
+                                        .into(ivAvatar);
+                            }
+                            Toast.makeText(getContext(), "Profile photo updated!",
+                                    Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getContext(),
+                                    "Upload failed. Try again.", Toast.LENGTH_SHORT).show();
+                            loadProfile(); // revert preview back to the old photo
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Profile> call, Throwable t) {
+                        if (!isAdded()) return;
+                        Toast.makeText(getContext(),
+                                getString(R.string.error_network), Toast.LENGTH_SHORT).show();
+                        loadProfile(); // revert preview back to the old photo
+                    }
+                });
+    }
+
+    // ── Tab content renderers (unchanged) ───────────────────────────────────────
 
     private void renderProjects(List<Project> projects) {
         if (projects == null || projects.isEmpty()) {

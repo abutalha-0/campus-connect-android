@@ -90,4 +90,15 @@ public interface ProfileApiService {
             @Body ProfileUpdateRequest body
     );
 
+
+    // ── 2.2 Edit My Profile — photo only (multipart) ────────────────────────
+    // Separate from updateProfile() because the API requires
+    // multipart/form-data specifically when uploading a file.
+    @Multipart
+    @PATCH("api/profiles/me/")
+    Call<Profile> updateProfilePhoto(
+            @Header("Authorization") String token,
+            @Part MultipartBody.Part profilePhoto
+    );
+
 }
