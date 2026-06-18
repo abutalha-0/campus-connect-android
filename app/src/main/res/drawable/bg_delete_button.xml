@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    bg_delete_button.xml
+    ──────────────────────
+    Circular tap target for the ✕ delete icon on project/experience/
+    education cards. Transparent by default, faint red tint on press
+    (ripple-like feedback without needing Material ripple drawables).
+-->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape android:shape="oval">
+            <solid android:color="#332B3A"/>
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="@android:color/transparent"/>
+        </shape>
+    </item>
+</selector>

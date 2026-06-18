@@ -1,5 +1,6 @@
 package com.campusconnect.app.home;
 
+import android.app.AlertDialog;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -59,17 +60,11 @@ public class ProfileFragment extends Fragment {
     private TextView btnEditHero;
     private TextView btnEditAbout;
     private TextView btnAddTabItem;
-    /** Camera badge on the avatar corner → opens gallery picker */
     private TextView btnChangePhoto;
 
     private Profile currentProfile;
     private String  activeTab = "projects";
 
-    /**
-     * Modern Android Photo Picker launcher. No storage permission needed
-     * on Android 11+ (and gracefully falls back to the system picker on
-     * older versions too — it's all handled by this one API).
-     */
     private ActivityResultLauncher<PickVisualMediaRequest> photoPickerLauncher;
 
     // ── Fragment lifecycle ────────────────────────────────────────────────────
@@ -78,14 +73,10 @@ public class ProfileFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Must be registered before onViewCreated/onStart — register here.
         photoPickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.PickVisualMedia(),
                 uri -> {
-                    if (uri != null) {
-                        onPhotoPicked(uri);
-                    }
-                    // uri is null if the user backed out of the picker — do nothing
+                    if (uri != null) onPhotoPicked(uri);
                 }
         );
     }
@@ -105,7 +96,6 @@ public class ProfileFragment extends Fragment {
 
         tokenManager = new TokenManager(getContext());
 
-        // bind hero views
         tvFullName   = view.findViewById(R.id.tvFullName);
         tvUsername   = view.findViewById(R.id.tvUsername);
         tvUserType   = view.findViewById(R.id.tvUserType);
@@ -113,27 +103,23 @@ public class ProfileFragment extends Fragment {
         ivAvatar     = view.findViewById(R.id.ivAvatar);
         coverBanner  = view.findViewById(R.id.coverBanner);
 
-        // bind tab views
         tabProjects      = view.findViewById(R.id.tabProjects);
         tabExperience    = view.findViewById(R.id.tabExperience);
         tabEducation     = view.findViewById(R.id.tabEducation);
         tvActiveTabTitle = view.findViewById(R.id.tvActiveTabTitle);
         tabContent       = view.findViewById(R.id.tabContent);
 
-        // bind edit / add buttons
         btnEditHero     = view.findViewById(R.id.btnEditHero);
         btnEditAbout    = view.findViewById(R.id.btnEditAbout);
         btnAddTabItem   = view.findViewById(R.id.btnAddTabItem);
         btnChangePhoto  = view.findViewById(R.id.btnChangePhoto);
 
-        // gradient cover banner
         GradientDrawable gradient = new GradientDrawable(
                 GradientDrawable.Orientation.LEFT_RIGHT,
                 new int[]{0xFF06B6D4, 0xFF3B82F6, 0xFF8B5CF6}
         );
         coverBanner.setBackground(gradient);
 
-        // ── Logout ────────────────────────────────────────────────────────────
         view.findViewById(R.id.btnLogout).setOnClickListener(v -> {
             tokenManager.clearTokens();
             android.content.Intent intent = new android.content.Intent(
@@ -144,18 +130,13 @@ public class ProfileFragment extends Fragment {
             startActivity(intent);
         });
 
-        // ── Pencil buttons → EditBasicInfoBottomSheet ─────────────────────────
         View.OnClickListener openEditInfo = v -> openEditBasicInfo();
         btnEditHero.setOnClickListener(openEditInfo);
         btnEditAbout.setOnClickListener(openEditInfo);
 
-        // ── "+" button → add sheet for the active tab ─────────────────────────
         btnAddTabItem.setOnClickListener(v -> openAddSheet());
-
-        // ── Camera badge → photo picker ────────────────────────────────────────
         btnChangePhoto.setOnClickListener(v -> openPhotoPicker());
 
-        // ── Tabs ──────────────────────────────────────────────────────────────
         tabProjects.setOnClickListener(v   -> switchTab("projects"));
         tabExperience.setOnClickListener(v -> switchTab("experience"));
         tabEducation.setOnClickListener(v  -> switchTab("education"));
@@ -171,8 +152,7 @@ public class ProfileFragment extends Fragment {
                 .getMyProfile(token)
                 .enqueue(new Callback<Profile>() {
                     @Override
-                    public void onResponse(Call<Profile> call,
-                                           Response<Profile> response) {
+                    public void onResponse(Call<Profile> call, Response<Profile> response) {
                         if (!isAdded()) return;
                         if (response.isSuccessful() && response.body() != null) {
                             currentProfile = response.body();
@@ -182,7 +162,7 @@ public class ProfileFragment extends Fragment {
 
                     @Override
                     public void onFailure(Call<Profile> call, Throwable t) {
-                        // no-op — existing behaviour
+                        // no-op
                     }
                 });
     }
@@ -275,24 +255,13 @@ public class ProfileFragment extends Fragment {
 
     // ── Profile photo flow ───────────────────────────────────────────────────
 
-    /**
-     * Launches the system Photo Picker, restricted to images only.
-     * No runtime permission request needed — the Photo Picker API
-     * handles access scoping internally.
-     */
     private void openPhotoPicker() {
         photoPickerLauncher.launch(new PickVisualMediaRequest.Builder()
                 .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
                 .build());
     }
 
-    /**
-     * Called once the user picks an image. Shows it immediately for instant
-     * feedback (optimistic UI), then compresses and uploads it in the
-     * background.
-     */
     private void onPhotoPicked(Uri uri) {
-        // Optimistic preview — show the picked image right away
         Glide.with(this).load(uri).centerCrop().into(ivAvatar);
         Toast.makeText(getContext(), "Uploading photo…", Toast.LENGTH_SHORT).show();
         uploadProfilePhoto(uri);
@@ -326,8 +295,6 @@ public class ProfileFragment extends Fragment {
                         if (!isAdded()) return;
                         if (response.isSuccessful() && response.body() != null) {
                             currentProfile = response.body();
-                            // re-load from the server URL to confirm the real
-                            // uploaded image (replaces the optimistic local preview)
                             if (currentProfile.getProfilePhoto() != null) {
                                 Glide.with(ProfileFragment.this)
                                         .load(currentProfile.getProfilePhoto())
@@ -339,7 +306,7 @@ public class ProfileFragment extends Fragment {
                         } else {
                             Toast.makeText(getContext(),
                                     "Upload failed. Try again.", Toast.LENGTH_SHORT).show();
-                            loadProfile(); // revert preview back to the old photo
+                            loadProfile();
                         }
                     }
 
@@ -348,12 +315,119 @@ public class ProfileFragment extends Fragment {
                         if (!isAdded()) return;
                         Toast.makeText(getContext(),
                                 getString(R.string.error_network), Toast.LENGTH_SHORT).show();
-                        loadProfile(); // revert preview back to the old photo
+                        loadProfile();
                     }
                 });
     }
 
-    // ── Tab content renderers (unchanged) ───────────────────────────────────────
+    // ── Delete flow ───────────────────────────────────────────────────────────
+
+    /**
+     * Shows a simple Yes/No confirmation dialog before deleting any
+     * project / experience / education entry. `itemLabel` is shown in
+     * the dialog message so the user knows exactly what they're removing
+     * (e.g. "Delete \"Campus Connect\"?").
+     */
+    private void confirmDelete(String itemTypeLabel, String itemName, Runnable onConfirmed) {
+        if (getContext() == null) return;
+
+        new AlertDialog.Builder(getContext())
+                .setTitle("Delete " + itemTypeLabel + "?")
+                .setMessage("Remove \"" + itemName + "\" from your profile? "
+                        + "This cannot be undone.")
+                .setPositiveButton("Delete", (dialog, which) -> onConfirmed.run())
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void deleteProject(Project project) {
+        confirmDelete("Project", project.getName(), () -> {
+            String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
+            RetrofitClient.createService(ProfileApiService.class)
+                    .deleteProject(token, project.getId())
+                    .enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if (!isAdded()) return;
+                            if (response.isSuccessful()) {
+                                Toast.makeText(getContext(), "Project deleted",
+                                        Toast.LENGTH_SHORT).show();
+                                loadProfile();
+                            } else {
+                                Toast.makeText(getContext(), "Couldn't delete. Try again.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            if (!isAdded()) return;
+                            Toast.makeText(getContext(), getString(R.string.error_network),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        });
+    }
+
+    private void deleteExperience(Experience experience) {
+        confirmDelete("Experience", experience.getTitle(), () -> {
+            String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
+            RetrofitClient.createService(ProfileApiService.class)
+                    .deleteExperience(token, experience.getId())
+                    .enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if (!isAdded()) return;
+                            if (response.isSuccessful()) {
+                                Toast.makeText(getContext(), "Experience deleted",
+                                        Toast.LENGTH_SHORT).show();
+                                loadProfile();
+                            } else {
+                                Toast.makeText(getContext(), "Couldn't delete. Try again.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            if (!isAdded()) return;
+                            Toast.makeText(getContext(), getString(R.string.error_network),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        });
+    }
+
+    private void deleteEducation(Education education) {
+        confirmDelete("Education", education.getInstitutionName(), () -> {
+            String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
+            RetrofitClient.createService(ProfileApiService.class)
+                    .deleteEducation(token, education.getId())
+                    .enqueue(new Callback<Void>() {
+                        @Override
+                        public void onResponse(Call<Void> call, Response<Void> response) {
+                            if (!isAdded()) return;
+                            if (response.isSuccessful()) {
+                                Toast.makeText(getContext(), "Education deleted",
+                                        Toast.LENGTH_SHORT).show();
+                                loadProfile();
+                            } else {
+                                Toast.makeText(getContext(), "Couldn't delete. Try again.",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<Void> call, Throwable t) {
+                            if (!isAdded()) return;
+                            Toast.makeText(getContext(), getString(R.string.error_network),
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        });
+    }
+
+    // ── Tab content renderers ────────────────────────────────────────────────
 
     private void renderProjects(List<Project> projects) {
         if (projects == null || projects.isEmpty()) {
@@ -369,6 +443,13 @@ public class ProfileFragment extends Fragment {
                     .setText(p.getAssociatedWith() != null ? p.getAssociatedWith() : "");
             ((TextView) card.findViewById(R.id.tvDescription))
                     .setText(p.getDescription() != null ? p.getDescription() : "");
+
+            // CHANGED: wire the ✕ delete button (see item_project.xml — btnDelete)
+            View btnDelete = card.findViewById(R.id.btnDelete);
+            if (btnDelete != null) {
+                btnDelete.setOnClickListener(v -> deleteProject(p));
+            }
+
             tabContent.addView(card);
         }
     }
@@ -390,6 +471,13 @@ public class ProfileFragment extends Fragment {
             String dates = e.getStartDate() + " — "
                     + (e.getEndDate() != null ? e.getEndDate() : "Present");
             ((TextView) card.findViewById(R.id.tvDates)).setText(dates);
+
+            // CHANGED: wire the ✕ delete button (see item_experience.xml — btnDelete)
+            View btnDelete = card.findViewById(R.id.btnDelete);
+            if (btnDelete != null) {
+                btnDelete.setOnClickListener(v -> deleteExperience(e));
+            }
+
             tabContent.addView(card);
         }
     }
@@ -409,6 +497,13 @@ public class ProfileFragment extends Fragment {
             String years = e.getStartYear() + " — "
                     + (e.getEndYear() != null ? e.getEndYear() : "Present");
             ((TextView) card.findViewById(R.id.tvYears)).setText(years);
+
+            // CHANGED: wire the ✕ delete button (see item_education.xml — btnDelete)
+            View btnDelete = card.findViewById(R.id.btnDelete);
+            if (btnDelete != null) {
+                btnDelete.setOnClickListener(v -> deleteEducation(e));
+            }
+
             tabContent.addView(card);
         }
     }

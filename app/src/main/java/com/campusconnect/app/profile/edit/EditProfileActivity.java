@@ -177,6 +177,7 @@ public class EditProfileActivity extends BaseActivity {
         parent.addView(row);
     }
 
+
     private void deleteItem(String type, int id) {
         String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
         ProfileApiService service = RetrofitClient.createService(ProfileApiService.class);
