@@ -33,6 +33,7 @@
         <activity android:name=".profile.edit.AddExperienceActivity"/>
         <activity android:name=".profile.edit.AddSkillActivity"/>
         <activity android:name=".profile.edit.AddLinkActivity"/>
+        <activity android:name=".core.ui.ComingSoonActivity"/>
 
     </application>
 

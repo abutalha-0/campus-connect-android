@@ -11,4 +11,6 @@
     <color name="color_red">#EF4444</color>
     <color name="color_cover_start">#06B6D4</color>
     <color name="color_cover_end">#8B5CF6</color>
+    <color name="color_amber">#F59E0B</color>
+    <color name="color_indigo">#6366F1</color>
 </resources>
