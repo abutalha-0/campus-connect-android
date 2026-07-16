@@ -1,12 +1,18 @@
 package com.campusconnect.app.home;
 
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.ColorInt;
+import androidx.annotation.Nullable;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import com.bumptech.glide.Glide;
 import com.campusconnect.app.R;
 import com.campusconnect.app.core.base.BaseActivity;
 import com.campusconnect.app.core.ui.ComingSoonActivity;
@@ -16,6 +22,13 @@ public class HomeActivity extends BaseActivity {
 
     private BottomNavigationView bottomNav;
     private DrawerLayout drawerLayout;
+
+    private View drawerHome, drawerProfile;
+    private ImageView ivDrawerHomeIcon, ivDrawerProfileIcon;
+    private TextView tvDrawerHomeLabel, tvDrawerProfileLabel;
+
+    private TextView tvDrawerName, tvDrawerSubtitle, tvDrawerUserType, tvDrawerAvatarInitials;
+    private ImageView ivDrawerAvatar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +45,7 @@ public class HomeActivity extends BaseActivity {
         bottomNav = findViewById(R.id.bottomNav);
 
         setUpDrawer();
+        setActiveDrawerItem(R.id.nav_home);
 
         // load HomeFragment by default
         if (savedInstanceState == null) {
@@ -42,9 +56,15 @@ public class HomeActivity extends BaseActivity {
             int id = item.getItemId();
             if (id == R.id.nav_home) {
                 loadFragment(new HomeFragment());
+                setActiveDrawerItem(R.id.nav_home);
+                return true;
+            } else if (id == R.id.nav_discover) {
+                loadFragment(new DiscoverFragment());
+                setActiveDrawerItem(R.id.nav_discover);
                 return true;
             } else if (id == R.id.nav_profile) {
                 loadFragment(new ProfileFragment());
+                setActiveDrawerItem(R.id.nav_profile);
                 return true;
             }
             return false;
@@ -64,12 +84,25 @@ public class HomeActivity extends BaseActivity {
     }
 
     private void setUpDrawer() {
-        findViewById(R.id.drawerHome).setOnClickListener(v -> {
+        drawerHome = findViewById(R.id.drawerHome);
+        drawerProfile = findViewById(R.id.drawerProfile);
+        ivDrawerHomeIcon = findViewById(R.id.ivDrawerHomeIcon);
+        ivDrawerProfileIcon = findViewById(R.id.ivDrawerProfileIcon);
+        tvDrawerHomeLabel = findViewById(R.id.tvDrawerHomeLabel);
+        tvDrawerProfileLabel = findViewById(R.id.tvDrawerProfileLabel);
+
+        tvDrawerName = findViewById(R.id.tvDrawerName);
+        tvDrawerSubtitle = findViewById(R.id.tvDrawerSubtitle);
+        tvDrawerUserType = findViewById(R.id.tvDrawerUserType);
+        tvDrawerAvatarInitials = findViewById(R.id.tvDrawerAvatarInitials);
+        ivDrawerAvatar = findViewById(R.id.ivDrawerAvatar);
+
+        drawerHome.setOnClickListener(v -> {
             bottomNav.setSelectedItemId(R.id.nav_home);
             closeDrawer();
         });
 
-        findViewById(R.id.drawerProfile).setOnClickListener(v -> {
+        drawerProfile.setOnClickListener(v -> {
             bottomNav.setSelectedItemId(R.id.nav_profile);
             closeDrawer();
         });
@@ -82,6 +115,50 @@ public class HomeActivity extends BaseActivity {
         });
 
         findViewById(R.id.drawerLogout).setOnClickListener(v -> logout());
+    }
+
+    /**
+     * Highlights whichever bottom-nav destination the drawer currently reflects.
+     * Neither Home nor Profile lights up when Discover is selected — the
+     * drawer doesn't have its own Discover entry.
+     */
+    private void setActiveDrawerItem(int navId) {
+        styleDrawerItem(drawerHome, ivDrawerHomeIcon, tvDrawerHomeLabel, navId == R.id.nav_home);
+        styleDrawerItem(drawerProfile, ivDrawerProfileIcon, tvDrawerProfileLabel, navId == R.id.nav_profile);
+    }
+
+    private void styleDrawerItem(View row, ImageView icon, TextView label, boolean active) {
+        @ColorInt int color = getResources().getColor(
+                active ? R.color.color_cyan : R.color.color_text_primary, null);
+        row.setBackgroundResource(active
+                ? R.drawable.bg_drawer_item_active
+                : R.drawable.bg_drawer_item_ripple);
+        icon.setImageTintList(ColorStateList.valueOf(color));
+        label.setTextColor(color);
+    }
+
+    /** Called by HomeFragment once it has real profile data to show. */
+    public void updateDrawerHeader(String name, @Nullable String username,
+                                    @Nullable String userType, @Nullable String photoUrl) {
+        tvDrawerName.setText(name);
+        tvDrawerSubtitle.setText(username != null ? "@" + username : "");
+
+        if (userType != null && !userType.isEmpty()) {
+            tvDrawerUserType.setText(userType);
+            tvDrawerUserType.setVisibility(View.VISIBLE);
+        }
+
+        String[] parts = name.trim().split("\\s+");
+        StringBuilder initials = new StringBuilder();
+        for (int i = 0; i < parts.length && initials.length() < 2; i++) {
+            if (!parts[i].isEmpty()) initials.append(Character.toUpperCase(parts[i].charAt(0)));
+        }
+        tvDrawerAvatarInitials.setText(initials.toString());
+
+        if (photoUrl != null && !photoUrl.isEmpty()) {
+            ivDrawerAvatar.setVisibility(View.VISIBLE);
+            Glide.with(this).load(photoUrl).centerCrop().into(ivDrawerAvatar);
+        }
     }
 
     public void openDrawer() {

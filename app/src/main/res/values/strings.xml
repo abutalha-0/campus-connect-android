@@ -37,4 +37,6 @@
 
     <string name="coming_soon_title">Coming soon</string>
     <string name="coming_soon_body">We\'re still building this. Check back soon!</string>
+
+    <string name="app_footer_tag">CAMPUS CONNECT · v1.0</string>
 </resources>

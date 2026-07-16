@@ -27,12 +27,19 @@ import com.campusconnect.app.core.utils.TokenManager;
 import com.campusconnect.app.profile.ProfileApiService;
 import com.campusconnect.app.profile.edit.AddEducationBottomSheet;
 import com.campusconnect.app.profile.edit.AddExperienceBottomSheet;
+import com.campusconnect.app.profile.edit.AddLinkBottomSheet;
 import com.campusconnect.app.profile.edit.AddProjectBottomSheet;
+import com.campusconnect.app.profile.edit.AddSkillBottomSheet;
 import com.campusconnect.app.profile.edit.EditBasicInfoBottomSheet;
+import com.campusconnect.app.profile.edit.ProfileChipFactory;
+import com.campusconnect.app.profile.edit.SocialPlatform;
 import com.campusconnect.app.profile.models.Education;
 import com.campusconnect.app.profile.models.Experience;
+import com.campusconnect.app.profile.models.Link;
 import com.campusconnect.app.profile.models.Profile;
 import com.campusconnect.app.profile.models.Project;
+import com.campusconnect.app.profile.models.UserSkill;
+import com.google.android.material.chip.ChipGroup;
 import java.io.File;
 import java.util.List;
 import okhttp3.MediaType;
@@ -43,6 +50,20 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ProfileFragment extends Fragment {
+
+    private static final String ARG_USER_ID = "user_id";
+
+    /** No-arg constructor (used by the bottom nav) means "view my own profile". */
+    public static ProfileFragment newInstance(int userId) {
+        ProfileFragment fragment = new ProfileFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_USER_ID, userId);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    private int viewingUserId = -1;
+    private boolean isOwnProfile = true;
 
     private TokenManager tokenManager;
 
@@ -61,6 +82,10 @@ public class ProfileFragment extends Fragment {
     private TextView btnEditAbout;
     private TextView btnAddTabItem;
     private TextView btnChangePhoto;
+    private TextView btnEditSkills;
+    private ChipGroup skillsChipGroup;
+    private TextView btnAddSocial;
+    private ChipGroup socialsChipGroup;
 
     private Profile currentProfile;
     private String  activeTab = "projects";
@@ -72,6 +97,10 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Bundle args = getArguments();
+        viewingUserId = args != null ? args.getInt(ARG_USER_ID, -1) : -1;
+        isOwnProfile = viewingUserId == -1;
 
         photoPickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.PickVisualMedia(),
@@ -113,6 +142,10 @@ public class ProfileFragment extends Fragment {
         btnEditAbout    = view.findViewById(R.id.btnEditAbout);
         btnAddTabItem   = view.findViewById(R.id.btnAddTabItem);
         btnChangePhoto  = view.findViewById(R.id.btnChangePhoto);
+        btnEditSkills   = view.findViewById(R.id.btnEditSkills);
+        skillsChipGroup = view.findViewById(R.id.skillsChipGroup);
+        btnAddSocial     = view.findViewById(R.id.btnAddSocial);
+        socialsChipGroup = view.findViewById(R.id.socialsChipGroup);
 
         GradientDrawable gradient = new GradientDrawable(
                 GradientDrawable.Orientation.LEFT_RIGHT,
@@ -120,22 +153,32 @@ public class ProfileFragment extends Fragment {
         );
         coverBanner.setBackground(gradient);
 
-        view.findViewById(R.id.btnLogout).setOnClickListener(v -> {
-            tokenManager.clearTokens();
-            android.content.Intent intent = new android.content.Intent(
-                    getActivity(),
-                    com.campusconnect.app.auth.login.LoginActivity.class);
-            intent.setFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-                    | android.content.Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            startActivity(intent);
-        });
+        if (isOwnProfile) {
+            // Only ever hosted by HomeActivity's bottom nav in this case,
+            // so the hamburger can safely open its drawer.
+            view.findViewById(R.id.btnMenu).setOnClickListener(v ->
+                    ((HomeActivity) requireActivity()).openDrawer());
 
-        View.OnClickListener openEditInfo = v -> openEditBasicInfo();
-        btnEditHero.setOnClickListener(openEditInfo);
-        btnEditAbout.setOnClickListener(openEditInfo);
+            btnEditHero.setOnClickListener(v -> openEditUserType());
+            btnEditAbout.setOnClickListener(v -> openEditAbout());
+            btnAddTabItem.setOnClickListener(v -> openAddSheet());
+            btnChangePhoto.setOnClickListener(v -> openPhotoPicker());
+            btnEditSkills.setOnClickListener(v -> openManageSkills());
+            btnAddSocial.setOnClickListener(v -> openManageLinks());
+        } else {
+            // Hosted by PublicProfileActivity, which already has its own
+            // back-button header — hide this one entirely.
+            view.findViewById(R.id.topBar).setVisibility(View.GONE);
 
-        btnAddTabItem.setOnClickListener(v -> openAddSheet());
-        btnChangePhoto.setOnClickListener(v -> openPhotoPicker());
+            // Read-only: viewing someone else's profile, so none of the
+            // edit/add entry points apply.
+            btnEditHero.setVisibility(View.GONE);
+            btnEditAbout.setVisibility(View.GONE);
+            btnAddTabItem.setVisibility(View.GONE);
+            btnChangePhoto.setVisibility(View.GONE);
+            btnEditSkills.setVisibility(View.GONE);
+            btnAddSocial.setVisibility(View.GONE);
+        }
 
         tabProjects.setOnClickListener(v   -> switchTab("projects"));
         tabExperience.setOnClickListener(v -> switchTab("experience"));
@@ -148,9 +191,12 @@ public class ProfileFragment extends Fragment {
 
     private void loadProfile() {
         String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
-        RetrofitClient.createService(ProfileApiService.class)
-                .getMyProfile(token)
-                .enqueue(new Callback<Profile>() {
+        ProfileApiService service = RetrofitClient.createService(ProfileApiService.class);
+        Call<Profile> call = isOwnProfile
+                ? service.getMyProfile(token)
+                : service.getPublicProfile(token, viewingUserId);
+
+        call.enqueue(new Callback<Profile>() {
                     @Override
                     public void onResponse(Call<Profile> call, Response<Profile> response) {
                         if (!isAdded()) return;
@@ -192,7 +238,59 @@ public class ProfileFragment extends Fragment {
                     .into(ivAvatar);
         }
 
+        renderSkills(profile.getSkills());
+        renderSocials(profile.getLinks());
         switchTab(activeTab);
+    }
+
+    // ── Skills ────────────────────────────────────────────────────────────────
+
+    private void renderSkills(@Nullable List<UserSkill> skills) {
+        skillsChipGroup.removeAllViews();
+        if (skills == null || skills.isEmpty()) return;
+        for (UserSkill skill : skills) {
+            if (skill.getSkill() == null) continue;
+            skillsChipGroup.addView(
+                    ProfileChipFactory.create(requireContext(), skill.getSkill().getName()));
+        }
+    }
+
+    private void openManageSkills() {
+        AddSkillBottomSheet sheet = new AddSkillBottomSheet();
+        sheet.setSkills(currentProfile != null ? currentProfile.getSkills() : null);
+        sheet.setOnSavedListener(this::loadProfile);
+        sheet.show(getChildFragmentManager(), "manage_skills");
+    }
+
+    // ── Connect & Network ────────────────────────────────────────────────────
+
+    private void renderSocials(@Nullable List<Link> links) {
+        socialsChipGroup.removeAllViews();
+        if (links == null || links.isEmpty()) return;
+        for (Link link : links) {
+            SocialPlatform platform = SocialPlatform.fromKey(link.getIcon());
+            String label = link.getLinkName() != null ? link.getLinkName() : platform.label;
+            com.google.android.material.chip.Chip chip = ProfileChipFactory.create(
+                    requireContext(), label, platform.iconRes, platform.accentColor);
+            chip.setOnClickListener(v -> openUrl(link.getUrl()));
+            socialsChipGroup.addView(chip);
+        }
+    }
+
+    private void openUrl(@Nullable String url) {
+        if (url == null || url.isEmpty() || getContext() == null) return;
+        try {
+            startActivity(new android.content.Intent(android.content.Intent.ACTION_VIEW, Uri.parse(url)));
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "Couldn't open that link.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void openManageLinks() {
+        AddLinkBottomSheet sheet = new AddLinkBottomSheet();
+        sheet.setLinks(currentProfile != null ? currentProfile.getLinks() : null);
+        sheet.setOnSavedListener(this::loadProfile);
+        sheet.show(getChildFragmentManager(), "manage_links");
     }
 
     // ── Tab switching ─────────────────────────────────────────────────────────
@@ -201,13 +299,13 @@ public class ProfileFragment extends Fragment {
         activeTab = tab;
 
         for (TextView t : new TextView[]{tabProjects, tabExperience, tabEducation}) {
-            t.setBackgroundResource(0);
+            t.setBackgroundResource(R.drawable.bg_tab_pill_inactive);
             t.setTextColor(getResources().getColor(R.color.color_muted, null));
         }
 
         TextView active = tab.equals("projects")   ? tabProjects  :
                 tab.equals("experience")  ? tabExperience : tabEducation;
-        active.setBackgroundResource(R.drawable.bg_tab_active);
+        active.setBackgroundResource(R.drawable.bg_tab_pill_active);
         active.setTextColor(getResources().getColor(R.color.color_cyan, null));
 
         String label = tab.substring(0, 1).toUpperCase() + tab.substring(1);
@@ -225,10 +323,18 @@ public class ProfileFragment extends Fragment {
 
     // ── Bottom sheet launchers ────────────────────────────────────────────────
 
-    private void openEditBasicInfo() {
+    private void openEditUserType() {
         EditBasicInfoBottomSheet sheet = new EditBasicInfoBottomSheet();
+        sheet.setMode(EditBasicInfoBottomSheet.Mode.HERO);
         sheet.setOnSavedListener(this::loadProfile);
-        sheet.show(getChildFragmentManager(), "edit_basic_info");
+        sheet.show(getChildFragmentManager(), "edit_user_type");
+    }
+
+    private void openEditAbout() {
+        EditBasicInfoBottomSheet sheet = new EditBasicInfoBottomSheet();
+        sheet.setMode(EditBasicInfoBottomSheet.Mode.ABOUT);
+        sheet.setOnSavedListener(this::loadProfile);
+        sheet.show(getChildFragmentManager(), "edit_about");
     }
 
     private void openAddSheet() {
@@ -435,22 +541,10 @@ public class ProfileFragment extends Fragment {
             return;
         }
         for (Project p : projects) {
-            View card = LayoutInflater.from(getContext())
-                    .inflate(R.layout.item_project, tabContent, false);
-            ((TextView) card.findViewById(R.id.tvName))
-                    .setText(p.getName());
-            ((TextView) card.findViewById(R.id.tvAssociated))
-                    .setText(p.getAssociatedWith() != null ? p.getAssociatedWith() : "");
-            ((TextView) card.findViewById(R.id.tvDescription))
-                    .setText(p.getDescription() != null ? p.getDescription() : "");
-
-            // CHANGED: wire the ✕ delete button (see item_project.xml — btnDelete)
-            View btnDelete = card.findViewById(R.id.btnDelete);
-            if (btnDelete != null) {
-                btnDelete.setOnClickListener(v -> deleteProject(p));
-            }
-
-            tabContent.addView(card);
+            bindEntry(p.getName(), p.getAssociatedWith(), yearOf(p.getCreatedAt()),
+                    p.getDescription(),
+                    () -> openEditProjectSheet(p),
+                    () -> deleteProject(p));
         }
     }
 
@@ -460,25 +554,11 @@ public class ProfileFragment extends Fragment {
             return;
         }
         for (Experience e : experiences) {
-            View card = LayoutInflater.from(getContext())
-                    .inflate(R.layout.item_experience, tabContent, false);
-            ((TextView) card.findViewById(R.id.tvTitle))
-                    .setText(e.getTitle());
-            ((TextView) card.findViewById(R.id.tvOrganization))
-                    .setText(e.getOrganization());
-            ((TextView) card.findViewById(R.id.tvDescription))
-                    .setText(e.getDescription() != null ? e.getDescription() : "");
             String dates = e.getStartDate() + " — "
                     + (e.getEndDate() != null ? e.getEndDate() : "Present");
-            ((TextView) card.findViewById(R.id.tvDates)).setText(dates);
-
-            // CHANGED: wire the ✕ delete button (see item_experience.xml — btnDelete)
-            View btnDelete = card.findViewById(R.id.btnDelete);
-            if (btnDelete != null) {
-                btnDelete.setOnClickListener(v -> deleteExperience(e));
-            }
-
-            tabContent.addView(card);
+            bindEntry(e.getTitle(), e.getOrganization(), dates, e.getDescription(),
+                    () -> openEditExperienceSheet(e),
+                    () -> deleteExperience(e));
         }
     }
 
@@ -488,24 +568,76 @@ public class ProfileFragment extends Fragment {
             return;
         }
         for (Education e : educationList) {
-            View card = LayoutInflater.from(getContext())
-                    .inflate(R.layout.item_education, tabContent, false);
-            ((TextView) card.findViewById(R.id.tvInstitution))
-                    .setText(e.getInstitutionName());
-            ((TextView) card.findViewById(R.id.tvDegree))
-                    .setText(e.getDegree());
             String years = e.getStartYear() + " — "
                     + (e.getEndYear() != null ? e.getEndYear() : "Present");
-            ((TextView) card.findViewById(R.id.tvYears)).setText(years);
-
-            // CHANGED: wire the ✕ delete button (see item_education.xml — btnDelete)
-            View btnDelete = card.findViewById(R.id.btnDelete);
-            if (btnDelete != null) {
-                btnDelete.setOnClickListener(v -> deleteEducation(e));
-            }
-
-            tabContent.addView(card);
+            bindEntry(e.getDegree(), e.getInstitutionName(), years, null,
+                    () -> openEditEducationSheet(e),
+                    () -> deleteEducation(e));
         }
+    }
+
+    /** Inflates the shared title/subtitle/meta/description card used by all three tabs. */
+    private void bindEntry(String title, @Nullable String subtitle, @Nullable String meta,
+                            @Nullable String description, Runnable onEdit, Runnable onDelete) {
+        View card = LayoutInflater.from(getContext())
+                .inflate(R.layout.item_profile_entry, tabContent, false);
+
+        ((TextView) card.findViewById(R.id.tvTitle)).setText(title);
+        setOrHide(card.findViewById(R.id.tvSubtitle), subtitle);
+        setOrHide(card.findViewById(R.id.tvMeta), meta);
+        setOrHide(card.findViewById(R.id.tvDescription), description);
+
+        View btnEdit = card.findViewById(R.id.btnEdit);
+        View btnDelete = card.findViewById(R.id.btnDelete);
+        if (isOwnProfile) {
+            btnEdit.setOnClickListener(v -> onEdit.run());
+            btnDelete.setOnClickListener(v -> onDelete.run());
+        } else {
+            btnEdit.setVisibility(View.GONE);
+            btnDelete.setVisibility(View.GONE);
+        }
+
+        tabContent.addView(card);
+    }
+
+    private void setOrHide(TextView view, @Nullable String text) {
+        if (text == null || text.isEmpty()) {
+            view.setVisibility(View.GONE);
+        } else {
+            view.setVisibility(View.VISIBLE);
+            view.setText(text);
+        }
+    }
+
+    /** Pulls the leading "YYYY" out of an ISO date string, or "" if it doesn't look like one. */
+    private String yearOf(@Nullable String isoDate) {
+        if (isoDate != null && isoDate.length() >= 4) {
+            return isoDate.substring(0, 4);
+        }
+        return "";
+    }
+
+    // ── Edit-in-place launchers ───────────────────────────────────────────────
+
+    private void openEditProjectSheet(Project project) {
+        AddProjectBottomSheet sheet = new AddProjectBottomSheet();
+        sheet.setEditing(project);
+        sheet.setOnSavedListener(this::loadProfile);
+        sheet.show(getChildFragmentManager(), "edit_project");
+    }
+
+    private void openEditExperienceSheet(Experience experience) {
+        AddExperienceBottomSheet sheet = new AddExperienceBottomSheet();
+        sheet.setEditing(experience);
+        sheet.setOnSavedListener(this::loadProfile);
+        sheet.show(getChildFragmentManager(), "edit_experience");
+    }
+
+    private void openEditEducationSheet(Education education) {
+        AddEducationBottomSheet sheet = new AddEducationBottomSheet();
+        sheet.setEditing(education);
+        sheet.setOnSavedListener(this::loadProfile);
+        sheet.show(getChildFragmentManager(), "edit_education");
     }
 
     private void showEmptyState(String message) {

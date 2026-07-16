@@ -117,12 +117,18 @@ public class HomeFragment extends Fragment {
 
     private void populateProfile(Profile profile) {
         String fullName = profile.getUser() != null ? profile.getUser().getFullName() : null;
+        String username = profile.getUser() != null ? profile.getUser().getUsername() : null;
         tvUserName.setText(fullName != null ? fullName : "");
         tvAvatarInitials.setText(initialsOf(fullName));
 
         if (profile.getProfilePhoto() != null && !profile.getProfilePhoto().isEmpty()) {
             ivAvatar.setVisibility(View.VISIBLE);
             Glide.with(this).load(profile.getProfilePhoto()).centerCrop().into(ivAvatar);
+        }
+
+        if (fullName != null) {
+            ((HomeActivity) requireActivity()).updateDrawerHeader(
+                    fullName, username, profile.getUserType(), profile.getProfilePhoto());
         }
     }
 

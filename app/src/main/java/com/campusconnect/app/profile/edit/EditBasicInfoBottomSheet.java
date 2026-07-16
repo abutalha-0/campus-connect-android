@@ -11,35 +11,40 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.campusconnect.app.R;
 import com.campusconnect.app.core.api.RetrofitClient;
+import com.campusconnect.app.core.base.BaseBottomSheet;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.core.utils.TokenManager;
 import com.campusconnect.app.profile.ProfileApiService;
 import com.campusconnect.app.profile.models.Profile;
 import com.campusconnect.app.profile.models.ProfileUpdateRequest;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * EditBasicInfoBottomSheet
- * ─────────────────────────
- * CHANGED: now calls updateProfile(token, ProfileUpdateRequest) instead of
- * the old updateBasicInfo(token, bio, about, userType) — matches the real
- * API: PATCH /api/profiles/me/ with a JSON body.
+ * Edits bio + about + user type, all via one combined PATCH /api/profiles/me/.
+ * The hero card and the About card each only own part of this data, so
+ * setMode() hides the other section's fields — but both modes still fetch
+ * and resubmit all three values together so the hidden ones aren't wiped out.
  */
-public class EditBasicInfoBottomSheet extends BottomSheetDialogFragment {
+public class EditBasicInfoBottomSheet extends BaseBottomSheet {
+
+    public enum Mode { HERO, ABOUT }
 
     private EditText etBio, etAbout;
     private TextView checkStudent, checkCR;
+    private View groupAboutFields, groupUserType;
     private String selectedUserType = "STUDENT";
     private TokenManager tokenManager;
+    private Mode mode = Mode.ABOUT;
 
     public interface OnSavedListener { void onSaved(); }
     private OnSavedListener onSavedListener;
     public void setOnSavedListener(OnSavedListener listener) {
         this.onSavedListener = listener;
     }
+
+    public void setMode(Mode mode) { this.mode = mode; }
 
     @Nullable
     @Override
@@ -61,6 +66,19 @@ public class EditBasicInfoBottomSheet extends BottomSheetDialogFragment {
         etAbout      = view.findViewById(R.id.etAbout);
         checkStudent = view.findViewById(R.id.checkStudent);
         checkCR      = view.findViewById(R.id.checkCR);
+        groupAboutFields = view.findViewById(R.id.groupAboutFields);
+        groupUserType    = view.findViewById(R.id.groupUserType);
+
+        TextView tvSheetTitle = view.findViewById(R.id.tvSheetTitle);
+        if (mode == Mode.HERO) {
+            tvSheetTitle.setText("Edit User Type");
+            groupAboutFields.setVisibility(View.GONE);
+            groupUserType.setVisibility(View.VISIBLE);
+        } else {
+            tvSheetTitle.setText("Edit About");
+            groupAboutFields.setVisibility(View.VISIBLE);
+            groupUserType.setVisibility(View.GONE);
+        }
 
         view.findViewById(R.id.btnSave).setOnClickListener(v -> saveBasicInfo());
         view.findViewById(R.id.optionStudent).setOnClickListener(v -> selectUserType("STUDENT"));
@@ -112,11 +130,12 @@ public class EditBasicInfoBottomSheet extends BottomSheetDialogFragment {
 
         String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
 
-        // CHANGED: build a request object instead of passing 3 raw strings
+        // Always sends all three fields (even the ones hidden in this mode)
+        // so the hidden section's current value isn't overwritten with blanks.
         ProfileUpdateRequest body = new ProfileUpdateRequest(bio, about, selectedUserType);
 
         RetrofitClient.createService(ProfileApiService.class)
-                .updateProfile(token, body)   // CHANGED method name + single body param
+                .updateProfile(token, body)
                 .enqueue(new Callback<Profile>() {
                     @Override
                     public void onResponse(Call<Profile> call, Response<Profile> response) {

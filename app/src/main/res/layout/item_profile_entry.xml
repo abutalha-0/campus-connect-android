@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    Shared card for the Projects / Experience / Education tab lists.
+    title / subtitle(cyan) / meta(muted) / description, plus edit+delete.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -11,10 +15,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center_vertical">
+        android:gravity="top">
 
         <TextView
-            android:id="@+id/tvName"
+            android:id="@+id/tvTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -23,36 +27,50 @@
             android:textStyle="bold"/>
 
         <TextView
+            android:id="@+id/btnEdit"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:gravity="center"
+            android:text="✎"
+            android:textColor="@color/color_muted"
+            android:textSize="12sp"
+            android:background="@drawable/bg_input"
+            android:layout_marginEnd="6dp"/>
+
+        <TextView
             android:id="@+id/btnDelete"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
             android:gravity="center"
             android:text="✕"
             android:textColor="@color/color_muted"
-            android:textSize="14sp"
+            android:textSize="13sp"
             android:background="@drawable/bg_delete_button"/>
 
     </LinearLayout>
 
     <TextView
-        android:id="@+id/tvAssociated"
-        android:layout_width="wrap_content"
+        android:id="@+id/tvSubtitle"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/color_cyan"
-        android:textSize="11sp"
-        android:background="@drawable/bg_badge"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:paddingTop="3dp"
-        android:paddingBottom="3dp"
-        android:layout_marginTop="5dp"/>
+        android:textSize="11.5sp"
+        android:layout_marginTop="2dp"/>
+
+    <TextView
+        android:id="@+id/tvMeta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/color_muted"
+        android:textSize="10.5sp"
+        android:layout_marginTop="2dp"/>
 
     <TextView
         android:id="@+id/tvDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textColor="@color/color_text_body"
-        android:textSize="13sp"
+        android:textSize="12sp"
         android:layout_marginTop="8dp"
         android:lineSpacingMultiplier="1.4"/>
 

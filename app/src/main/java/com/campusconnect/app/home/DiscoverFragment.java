@@ -47,6 +47,9 @@ public class DiscoverFragment extends Fragment {
 
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
+        view.findViewById(R.id.btnMenu).setOnClickListener(v ->
+                ((HomeActivity) requireActivity()).openDrawer());
+
         loadUsers();
     }
 
@@ -79,8 +82,6 @@ public class DiscoverFragment extends Fragment {
                                     Intent intent = new Intent(getActivity(),
                                             PublicProfileActivity.class);
                                     intent.putExtra("user_id", user.getId());
-                                    intent.putExtra("full_name", user.getFullName());
-                                    intent.putExtra("username", user.getUsername());
                                     startActivity(intent);
                                 });
                                 recyclerView.setAdapter(adapter);

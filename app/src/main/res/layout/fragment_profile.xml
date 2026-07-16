@@ -16,6 +16,7 @@
       btnAddTabItem → opens Add sheet for the active tab
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -23,37 +24,13 @@
     android:clipChildren="false"
     android:clipToPadding="false">
 
-    <!-- ─── TOP BAR ──────────────────────────────────────────────────────── -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:gravity="center_vertical"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:background="@color/color_background">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Campus Connect"
-            android:textColor="@color/color_text_primary"
-            android:textSize="18sp"
-            android:textStyle="bold"/>
-
-        <!-- Logout button (kept from original) -->
-        <Button
-            android:id="@+id/btnLogout"
-            android:layout_width="wrap_content"
-            android:layout_height="32dp"
-            android:background="@drawable/bg_button_outline"
-            android:text="Logout"
-            android:textColor="@color/color_text_primary"
-            android:textSize="11sp"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"/>
-
-    </LinearLayout>
+    <!--
+        Hidden when viewing someone else's profile (PublicProfileActivity
+        already shows its own back-button header) — see ProfileFragment.
+    -->
+    <include
+        android:id="@+id/topBar"
+        layout="@layout/top_bar_main"/>
 
     <!-- ─── SCROLLABLE CONTENT ───────────────────────────────────────────── -->
     <androidx.core.widget.NestedScrollView
@@ -101,7 +78,7 @@
                     android:clipChildren="false"
                     android:clipToPadding="false">
 
-                    <!-- Avatar row -->
+                    <!-- Avatar + info row -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -111,16 +88,15 @@
                         android:clipToPadding="false">
 
                         <FrameLayout
-                            android:layout_width="72dp"
-                            android:layout_height="72dp"
-                            android:layout_marginTop="-28dp"
+                            android:layout_width="64dp"
+                            android:layout_height="64dp"
                             android:clipChildren="false"
                             android:clipToPadding="false">
 
                             <ImageView
                                 android:id="@+id/ivAvatar"
-                                android:layout_width="72dp"
-                                android:layout_height="72dp"
+                                android:layout_width="64dp"
+                                android:layout_height="64dp"
                                 android:background="@drawable/bg_avatar_large"
                                 android:scaleType="centerCrop"
                                 android:clipToOutline="true"
@@ -133,57 +109,67 @@
                             -->
                             <TextView
                                 android:id="@+id/btnChangePhoto"
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
+                                android:layout_width="22dp"
+                                android:layout_height="22dp"
                                 android:layout_gravity="bottom|end"
                                 android:background="@drawable/bg_camera_badge"
                                 android:gravity="center"
                                 android:text="✎"
                                 android:textColor="@color/color_background"
-                                android:textSize="13sp"
+                                android:textSize="12sp"
                                 android:padding="0dp"/>
 
                         </FrameLayout>
 
-                        <View
+                        <!-- Name / username / type sit beside the avatar, not below it -->
+                        <LinearLayout
                             android:layout_width="0dp"
-                            android:layout_height="1dp"
-                            android:layout_weight="1"/>
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:layout_marginStart="14dp"
+                            android:layout_marginEnd="36dp"
+                            android:orientation="vertical">
+
+                            <!-- Full name -->
+                            <TextView
+                                android:id="@+id/tvFullName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/color_text_primary"
+                                android:textSize="18sp"
+                                android:textStyle="bold"
+                                android:maxLines="1"
+                                android:ellipsize="end"/>
+
+                            <!-- Username in cyan -->
+                            <TextView
+                                android:id="@+id/tvUsername"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/color_cyan"
+                                android:textSize="12.5sp"
+                                android:maxLines="1"
+                                android:ellipsize="end"
+                                android:layout_marginTop="1dp"/>
+
+                            <!-- User type pill -->
+                            <TextView
+                                android:id="@+id/tvUserType"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_tab_pill_active"
+                                android:textColor="@color/color_cyan"
+                                android:textSize="10sp"
+                                android:textStyle="bold"
+                                android:paddingStart="9dp"
+                                android:paddingEnd="9dp"
+                                android:paddingTop="3dp"
+                                android:paddingBottom="3dp"
+                                android:layout_marginTop="6dp"/>
+
+                        </LinearLayout>
 
                     </LinearLayout>
-
-                    <!-- Full name -->
-                    <TextView
-                        android:id="@+id/tvFullName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:layout_marginTop="10dp"/>
-
-                    <!-- Username in cyan -->
-                    <TextView
-                        android:id="@+id/tvUsername"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/color_cyan"
-                        android:textSize="13sp"
-                        android:layout_marginTop="2dp"/>
-
-                    <!-- User type badge -->
-                    <TextView
-                        android:id="@+id/tvUserType"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:background="@drawable/bg_badge"
-                        android:textColor="@color/color_cyan"
-                        android:textSize="11sp"
-                        android:paddingStart="10dp"
-                        android:paddingEnd="10dp"
-                        android:paddingTop="4dp"
-                        android:paddingBottom="4dp"
-                        android:layout_marginTop="8dp"/>
 
                 </LinearLayout>
 
@@ -262,6 +248,112 @@
 
             </LinearLayout>
 
+            <!-- ─── SKILLS SECTION ────────────────────────────────────────── -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_card"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="13dp"
+                android:paddingBottom="13dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="SKILLS"
+                        android:textColor="@color/color_muted"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.1"/>
+
+                    <TextView
+                        android:id="@+id/btnEditSkills"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:gravity="center"
+                        android:text="✎"
+                        android:textColor="@color/color_muted"
+                        android:textSize="12sp"
+                        android:background="@drawable/bg_input"
+                        android:padding="0dp"/>
+
+                </LinearLayout>
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/skillsChipGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:chipSpacingHorizontal="6dp"
+                    app:chipSpacingVertical="6dp"/>
+
+            </LinearLayout>
+
+            <!-- ─── CONNECT & NETWORK SECTION ─────────────────────────────── -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_card"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
+                android:paddingTop="13dp"
+                android:paddingBottom="13dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginEnd="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="CONNECT &amp; NETWORK"
+                        android:textColor="@color/color_muted"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.1"/>
+
+                    <TextView
+                        android:id="@+id/btnAddSocial"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:gravity="center"
+                        android:text="✎"
+                        android:textColor="@color/color_muted"
+                        android:textSize="12sp"
+                        android:background="@drawable/bg_input"
+                        android:padding="0dp"/>
+
+                </LinearLayout>
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/socialsChipGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:chipSpacingHorizontal="6dp"
+                    app:chipSpacingVertical="6dp"/>
+
+            </LinearLayout>
+
             <!-- ─── TAB SECTION ───────────────────────────────────────────── -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -272,22 +364,21 @@
                 android:layout_marginEnd="12dp"
                 android:layout_marginBottom="24dp">
 
-                <!-- Tab buttons row -->
+                <!-- Tab buttons row — each is its own rounded pill -->
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="44dp"
-                    android:orientation="horizontal"
-                    android:background="@drawable/bg_card"
-                    android:padding="4dp">
+                    android:layout_height="32dp"
+                    android:orientation="horizontal">
 
                     <TextView
                         android:id="@+id/tabProjects"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
+                        android:layout_marginEnd="3dp"
                         android:gravity="center"
                         android:text="Projects"
-                        android:textSize="12sp"
+                        android:textSize="11.5sp"
                         android:textStyle="bold"/>
 
                     <TextView
@@ -295,9 +386,11 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
+                        android:layout_marginStart="3dp"
+                        android:layout_marginEnd="3dp"
                         android:gravity="center"
                         android:text="Experience"
-                        android:textSize="12sp"
+                        android:textSize="11.5sp"
                         android:textStyle="bold"/>
 
                     <TextView
@@ -305,9 +398,10 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
+                        android:layout_marginStart="3dp"
                         android:gravity="center"
                         android:text="Education"
-                        android:textSize="12sp"
+                        android:textSize="11.5sp"
                         android:textStyle="bold"/>
 
                 </LinearLayout>

@@ -3,11 +3,17 @@ package com.campusconnect.app.profile;
 import com.campusconnect.app.profile.models.Education;
 import com.campusconnect.app.profile.models.Experience;
 import com.campusconnect.app.profile.models.ExperienceRequest;
+import com.campusconnect.app.profile.models.Link;
+import com.campusconnect.app.profile.models.LinkRequest;
 import com.campusconnect.app.profile.models.Profile;
 import com.campusconnect.app.profile.models.ProfileUpdateRequest;
 import com.campusconnect.app.profile.models.Project;
 import com.campusconnect.app.profile.models.ProjectRequest;
+import com.campusconnect.app.profile.models.Skill;
+import com.campusconnect.app.profile.models.SkillRequest;
+import com.campusconnect.app.profile.models.UserSkill;
 
+import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -82,6 +88,49 @@ public interface ProfileApiService {
             @Part("degree") RequestBody degree,
             @Part("start_year") RequestBody startYear,
             @Part("end_year") RequestBody endYear
+    );
+
+    // ── Edit-in-place (not live on the backend yet — endpoints are a best
+    // guess so the UI can be wired ahead of time) ───────────────────────────
+
+    @PATCH("api/profiles/me/projects/{id}/")
+    Call<Project> updateProject(
+            @Header("Authorization") String token,
+            @Path("id") int id,
+            @Body ProjectRequest body
+    );
+
+    @PATCH("api/profiles/me/experience/{id}/")
+    Call<Experience> updateExperience(
+            @Header("Authorization") String token,
+            @Path("id") int id,
+            @Body ExperienceRequest body
+    );
+
+    @Multipart
+    @PATCH("api/profiles/me/education/{id}/")
+    Call<Education> updateEducation(
+            @Header("Authorization") String token,
+            @Path("id") int id,
+            @Part("institution_name") RequestBody institutionName,
+            @Part("degree") RequestBody degree,
+            @Part("start_year") RequestBody startYear,
+            @Part("end_year") RequestBody endYear
+    );
+
+    @GET("api/profiles/skills/")
+    Call<List<Skill>> getSkillCatalog(@Header("Authorization") String token);
+
+    @POST("api/profiles/me/skills/")
+    Call<UserSkill> addSkill(
+            @Header("Authorization") String token,
+            @Body SkillRequest body
+    );
+
+    @POST("api/profiles/me/links/")
+    Call<Link> addLink(
+            @Header("Authorization") String token,
+            @Body LinkRequest body
     );
 
     @PATCH("api/profiles/me/")

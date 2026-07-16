@@ -11,31 +11,32 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.campusconnect.app.R;
 import com.campusconnect.app.core.api.RetrofitClient;
+import com.campusconnect.app.core.base.BaseBottomSheet;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.core.utils.TokenManager;
 import com.campusconnect.app.profile.ProfileApiService;
 import com.campusconnect.app.profile.models.Project;
 import com.campusconnect.app.profile.models.ProjectRequest;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * AddProjectBottomSheet
- * ──────────────────────
- * CHANGED: the "url" field was removed — the real API
- * (POST /api/profiles/me/projects/) only accepts name, description,
- * and associated_with. Calls addProject(token, ProjectRequest) now.
+ * Doubles as "Add Project" and "Edit Project" — call setEditing() with an
+ * existing Project before show() to pre-fill and switch to update mode.
  */
-public class AddProjectBottomSheet extends BottomSheetDialogFragment {
+public class AddProjectBottomSheet extends BaseBottomSheet {
 
     private EditText etName, etAssociatedWith, etDescription;
     private TokenManager tokenManager;
 
+    @Nullable private Project editingProject;
+
     public interface OnSavedListener { void onSaved(); }
     private OnSavedListener onSavedListener;
     public void setOnSavedListener(OnSavedListener l) { this.onSavedListener = l; }
+
+    public void setEditing(@Nullable Project project) { this.editingProject = project; }
 
     @Nullable
     @Override
@@ -54,7 +55,14 @@ public class AddProjectBottomSheet extends BottomSheetDialogFragment {
         etName           = view.findViewById(R.id.etProjectName);
         etAssociatedWith = view.findViewById(R.id.etAssociatedWith);
         etDescription    = view.findViewById(R.id.etDescription);
-        // NOTE: etUrl is gone — the field no longer exists in the layout
+
+        if (editingProject != null) {
+            ((TextView) view.findViewById(R.id.tvSheetTitle)).setText("Edit Project");
+            ((TextView) view.findViewById(R.id.btnSave)).setText("Save");
+            etName.setText(editingProject.getName());
+            etAssociatedWith.setText(editingProject.getAssociatedWith());
+            etDescription.setText(editingProject.getDescription());
+        }
 
         view.findViewById(R.id.btnSave).setOnClickListener(v -> save());
     }
@@ -69,39 +77,47 @@ public class AddProjectBottomSheet extends BottomSheetDialogFragment {
             return;
         }
 
+        boolean isEdit = editingProject != null;
         TextView btnSave = requireView().findViewById(R.id.btnSave);
         btnSave.setEnabled(false);
-        btnSave.setText("Adding…");
+        btnSave.setText(isEdit ? "Saving…" : "Adding…");
 
         String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
-
-        // CHANGED: build a ProjectRequest instead of passing raw strings + url
         ProjectRequest body = new ProjectRequest(name, assoc, desc);
 
-        RetrofitClient.createService(ProfileApiService.class)
-                .addProject(token, body)   // CHANGED signature
-                .enqueue(new Callback<Project>() {
-                    @Override
-                    public void onResponse(Call<Project> call, Response<Project> response) {
-                        if (!isAdded()) return;
-                        btnSave.setEnabled(true);
-                        btnSave.setText("Add");
-                        if (response.isSuccessful()) {
-                            Toast.makeText(requireContext(), "Project added!", Toast.LENGTH_SHORT).show();
-                            if (onSavedListener != null) onSavedListener.onSaved();
-                            dismiss();
-                        } else {
-                            Toast.makeText(requireContext(), "Failed to add project. Try again.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
+        Call<Project> call = isEdit
+                ? RetrofitClient.createService(ProfileApiService.class)
+                        .updateProject(token, editingProject.getId(), body)
+                : RetrofitClient.createService(ProfileApiService.class)
+                        .addProject(token, body);
 
-                    @Override
-                    public void onFailure(Call<Project> call, Throwable t) {
-                        if (!isAdded()) return;
-                        btnSave.setEnabled(true);
-                        btnSave.setText("Add");
-                        Toast.makeText(requireContext(), getString(R.string.error_network), Toast.LENGTH_SHORT).show();
-                    }
-                });
+        call.enqueue(new Callback<Project>() {
+            @Override
+            public void onResponse(Call<Project> call, Response<Project> response) {
+                if (!isAdded()) return;
+                btnSave.setEnabled(true);
+                btnSave.setText(isEdit ? "Save" : "Add");
+                if (response.isSuccessful()) {
+                    Toast.makeText(requireContext(),
+                            isEdit ? "Project updated!" : "Project added!",
+                            Toast.LENGTH_SHORT).show();
+                    if (onSavedListener != null) onSavedListener.onSaved();
+                    dismiss();
+                } else {
+                    Toast.makeText(requireContext(),
+                            isEdit ? "Failed to update project. Try again."
+                                   : "Failed to add project. Try again.",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Project> call, Throwable t) {
+                if (!isAdded()) return;
+                btnSave.setEnabled(true);
+                btnSave.setText(isEdit ? "Save" : "Add");
+                Toast.makeText(requireContext(), getString(R.string.error_network), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

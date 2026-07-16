@@ -7,6 +7,11 @@
         android:title="@string/label_home"/>
 
     <item
+        android:id="@+id/nav_discover"
+        android:icon="@drawable/ic_nav_discover"
+        android:title="@string/label_discover"/>
+
+    <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/ic_nav_profile"
         android:title="@string/label_profile"/>

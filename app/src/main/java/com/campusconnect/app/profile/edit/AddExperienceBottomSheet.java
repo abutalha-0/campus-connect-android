@@ -11,31 +11,32 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.campusconnect.app.R;
 import com.campusconnect.app.core.api.RetrofitClient;
+import com.campusconnect.app.core.base.BaseBottomSheet;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.core.utils.TokenManager;
 import com.campusconnect.app.profile.ProfileApiService;
 import com.campusconnect.app.profile.models.Experience;
 import com.campusconnect.app.profile.models.ExperienceRequest;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * AddExperienceBottomSheet
- * ─────────────────────────
- * CHANGED: calls addExperience(token, ExperienceRequest) instead of 5
- * raw string params — matches POST /api/profiles/me/experience/.
- * Dates must be full YYYY-MM-DD (enforced via hint text in the layout).
+ * Doubles as "Add Experience" and "Edit Experience" — call setEditing() with
+ * an existing Experience before show() to pre-fill and switch to update mode.
  */
-public class AddExperienceBottomSheet extends BottomSheetDialogFragment {
+public class AddExperienceBottomSheet extends BaseBottomSheet {
 
     private EditText etTitle, etOrganization, etStartDate, etEndDate, etDescription;
     private TokenManager tokenManager;
 
+    @Nullable private Experience editingExperience;
+
     public interface OnSavedListener { void onSaved(); }
     private OnSavedListener onSavedListener;
     public void setOnSavedListener(OnSavedListener l) { this.onSavedListener = l; }
+
+    public void setEditing(@Nullable Experience experience) { this.editingExperience = experience; }
 
     @Nullable
     @Override
@@ -56,6 +57,16 @@ public class AddExperienceBottomSheet extends BottomSheetDialogFragment {
         etStartDate    = view.findViewById(R.id.etStartDate);
         etEndDate      = view.findViewById(R.id.etEndDate);
         etDescription  = view.findViewById(R.id.etDescription);
+
+        if (editingExperience != null) {
+            ((TextView) view.findViewById(R.id.tvSheetTitle)).setText("Edit Experience");
+            ((TextView) view.findViewById(R.id.btnSave)).setText("Save");
+            etTitle.setText(editingExperience.getTitle());
+            etOrganization.setText(editingExperience.getOrganization());
+            etStartDate.setText(editingExperience.getStartDate());
+            etEndDate.setText(editingExperience.getEndDate());
+            etDescription.setText(editingExperience.getDescription());
+        }
 
         view.findViewById(R.id.btnSave).setOnClickListener(v -> save());
     }
@@ -79,40 +90,48 @@ public class AddExperienceBottomSheet extends BottomSheetDialogFragment {
             return;
         }
 
+        boolean isEdit = editingExperience != null;
         TextView btnSave = requireView().findViewById(R.id.btnSave);
         btnSave.setEnabled(false);
-        btnSave.setText("Adding…");
+        btnSave.setText(isEdit ? "Saving…" : "Adding…");
 
         String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
         String endOrNull = end.isEmpty() ? null : end;
-
-        // CHANGED: build an ExperienceRequest instead of passing 5 raw params
         ExperienceRequest body = new ExperienceRequest(title, org, desc, start, endOrNull);
 
-        RetrofitClient.createService(ProfileApiService.class)
-                .addExperience(token, body)   // CHANGED signature
-                .enqueue(new Callback<Experience>() {
-                    @Override
-                    public void onResponse(Call<Experience> call, Response<Experience> response) {
-                        if (!isAdded()) return;
-                        btnSave.setEnabled(true);
-                        btnSave.setText("Add");
-                        if (response.isSuccessful()) {
-                            Toast.makeText(requireContext(), "Experience added!", Toast.LENGTH_SHORT).show();
-                            if (onSavedListener != null) onSavedListener.onSaved();
-                            dismiss();
-                        } else {
-                            Toast.makeText(requireContext(), "Failed to add experience. Try again.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
+        Call<Experience> call = isEdit
+                ? RetrofitClient.createService(ProfileApiService.class)
+                        .updateExperience(token, editingExperience.getId(), body)
+                : RetrofitClient.createService(ProfileApiService.class)
+                        .addExperience(token, body);
 
-                    @Override
-                    public void onFailure(Call<Experience> call, Throwable t) {
-                        if (!isAdded()) return;
-                        btnSave.setEnabled(true);
-                        btnSave.setText("Add");
-                        Toast.makeText(requireContext(), getString(R.string.error_network), Toast.LENGTH_SHORT).show();
-                    }
-                });
+        call.enqueue(new Callback<Experience>() {
+            @Override
+            public void onResponse(Call<Experience> call, Response<Experience> response) {
+                if (!isAdded()) return;
+                btnSave.setEnabled(true);
+                btnSave.setText(isEdit ? "Save" : "Add");
+                if (response.isSuccessful()) {
+                    Toast.makeText(requireContext(),
+                            isEdit ? "Experience updated!" : "Experience added!",
+                            Toast.LENGTH_SHORT).show();
+                    if (onSavedListener != null) onSavedListener.onSaved();
+                    dismiss();
+                } else {
+                    Toast.makeText(requireContext(),
+                            isEdit ? "Failed to update experience. Try again."
+                                   : "Failed to add experience. Try again.",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Experience> call, Throwable t) {
+                if (!isAdded()) return;
+                btnSave.setEnabled(true);
+                btnSave.setText(isEdit ? "Save" : "Add");
+                Toast.makeText(requireContext(), getString(R.string.error_network), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

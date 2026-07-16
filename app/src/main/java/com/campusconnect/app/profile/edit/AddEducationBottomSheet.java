@@ -11,11 +11,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.campusconnect.app.R;
 import com.campusconnect.app.core.api.RetrofitClient;
+import com.campusconnect.app.core.base.BaseBottomSheet;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.core.utils.TokenManager;
 import com.campusconnect.app.profile.ProfileApiService;
 import com.campusconnect.app.profile.models.Education;
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -23,23 +23,24 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * AddEducationBottomSheet
- * ────────────────────────
- * CHANGED: the education endpoint is multipart/form-data (not JSON), and
- * start_year / end_year are integers on the server. We still type them
- * into plain EditTexts, but now we:
- *   1. Validate they parse as integers.
- *   2. Wrap every field as an okhttp3.RequestBody "text/plain" part.
- *   3. Call the @Multipart addEducation(...) method.
+ * Doubles as "Add Education" and "Edit Education" — call setEditing() with
+ * an existing Education before show() to pre-fill and switch to update mode.
+ *
+ * The endpoint is multipart/form-data (not JSON), and start_year / end_year
+ * are integers on the server, so every field gets wrapped as a text part.
  */
-public class AddEducationBottomSheet extends BottomSheetDialogFragment {
+public class AddEducationBottomSheet extends BaseBottomSheet {
 
     private EditText etInstitution, etDegree, etStartYear, etEndYear;
     private TokenManager tokenManager;
 
+    @Nullable private Education editingEducation;
+
     public interface OnSavedListener { void onSaved(); }
     private OnSavedListener onSavedListener;
     public void setOnSavedListener(OnSavedListener l) { this.onSavedListener = l; }
+
+    public void setEditing(@Nullable Education education) { this.editingEducation = education; }
 
     @Nullable
     @Override
@@ -60,6 +61,17 @@ public class AddEducationBottomSheet extends BottomSheetDialogFragment {
         etStartYear   = view.findViewById(R.id.etStartYear);
         etEndYear     = view.findViewById(R.id.etEndYear);
 
+        if (editingEducation != null) {
+            ((TextView) view.findViewById(R.id.tvSheetTitle)).setText("Edit Education");
+            ((TextView) view.findViewById(R.id.btnSave)).setText("Save");
+            etInstitution.setText(editingEducation.getInstitutionName());
+            etDegree.setText(editingEducation.getDegree());
+            etStartYear.setText(String.valueOf(editingEducation.getStartYear()));
+            if (editingEducation.getEndYear() != null) {
+                etEndYear.setText(String.valueOf(editingEducation.getEndYear()));
+            }
+        }
+
         view.findViewById(R.id.btnSave).setOnClickListener(v -> save());
     }
 
@@ -78,8 +90,6 @@ public class AddEducationBottomSheet extends BottomSheetDialogFragment {
         if (degree.isEmpty())      { etDegree.setError("Degree is required"); return; }
         if (startYearStr.isEmpty()) { etStartYear.setError("Start year is required"); return; }
 
-        // CHANGED: validate that years are actually integers, since the
-        // server field type is integer, not string.
         int startYear;
         try {
             startYear = Integer.parseInt(startYearStr);
@@ -98,42 +108,52 @@ public class AddEducationBottomSheet extends BottomSheetDialogFragment {
             }
         }
 
+        boolean isEdit = editingEducation != null;
         TextView btnSave = requireView().findViewById(R.id.btnSave);
         btnSave.setEnabled(false);
-        btnSave.setText("Adding…");
+        btnSave.setText(isEdit ? "Saving…" : "Adding…");
 
         String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
 
-        // CHANGED: wrap each field as a multipart RequestBody part
         RequestBody institutionPart = textPart(institution);
         RequestBody degreePart      = textPart(degree);
         RequestBody startYearPart   = textPart(String.valueOf(startYear));
         RequestBody endYearPart     = endYear != null ? textPart(String.valueOf(endYear)) : null;
 
-        RetrofitClient.createService(ProfileApiService.class)
-                .addEducation(token, institutionPart, degreePart, startYearPart, endYearPart)
-                .enqueue(new Callback<Education>() {
-                    @Override
-                    public void onResponse(Call<Education> call, Response<Education> response) {
-                        if (!isAdded()) return;
-                        btnSave.setEnabled(true);
-                        btnSave.setText("Add");
-                        if (response.isSuccessful()) {
-                            Toast.makeText(requireContext(), "Education added!", Toast.LENGTH_SHORT).show();
-                            if (onSavedListener != null) onSavedListener.onSaved();
-                            dismiss();
-                        } else {
-                            Toast.makeText(requireContext(), "Failed to add education. Try again.", Toast.LENGTH_SHORT).show();
-                        }
-                    }
+        Call<Education> call = isEdit
+                ? RetrofitClient.createService(ProfileApiService.class)
+                        .updateEducation(token, editingEducation.getId(),
+                                institutionPart, degreePart, startYearPart, endYearPart)
+                : RetrofitClient.createService(ProfileApiService.class)
+                        .addEducation(token, institutionPart, degreePart, startYearPart, endYearPart);
 
-                    @Override
-                    public void onFailure(Call<Education> call, Throwable t) {
-                        if (!isAdded()) return;
-                        btnSave.setEnabled(true);
-                        btnSave.setText("Add");
-                        Toast.makeText(requireContext(), getString(R.string.error_network), Toast.LENGTH_SHORT).show();
-                    }
-                });
+        call.enqueue(new Callback<Education>() {
+            @Override
+            public void onResponse(Call<Education> call, Response<Education> response) {
+                if (!isAdded()) return;
+                btnSave.setEnabled(true);
+                btnSave.setText(isEdit ? "Save" : "Add");
+                if (response.isSuccessful()) {
+                    Toast.makeText(requireContext(),
+                            isEdit ? "Education updated!" : "Education added!",
+                            Toast.LENGTH_SHORT).show();
+                    if (onSavedListener != null) onSavedListener.onSaved();
+                    dismiss();
+                } else {
+                    Toast.makeText(requireContext(),
+                            isEdit ? "Failed to update education. Try again."
+                                   : "Failed to add education. Try again.",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Education> call, Throwable t) {
+                if (!isAdded()) return;
+                btnSave.setEnabled(true);
+                btnSave.setText(isEdit ? "Save" : "Add");
+                Toast.makeText(requireContext(), getString(R.string.error_network), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

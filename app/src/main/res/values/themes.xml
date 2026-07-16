@@ -17,18 +17,20 @@
         <item name="android:layout_height">wrap_content</item>
         <item name="android:orientation">horizontal</item>
         <item name="android:gravity">center_vertical</item>
+        <item name="android:baselineAligned">false</item>
         <item name="android:paddingStart">10dp</item>
         <item name="android:paddingEnd">10dp</item>
         <item name="android:paddingTop">11dp</item>
         <item name="android:paddingBottom">11dp</item>
-        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:layout_marginBottom">2dp</item>
+        <item name="android:background">@drawable/bg_drawer_item_ripple</item>
         <item name="android:clickable">true</item>
         <item name="android:focusable">true</item>
     </style>
 
     <style name="DrawerItemIcon">
-        <item name="android:layout_width">18dp</item>
-        <item name="android:layout_height">18dp</item>
+        <item name="android:layout_width">20dp</item>
+        <item name="android:layout_height">20dp</item>
     </style>
 
     <style name="DrawerItemLabel">
@@ -37,5 +39,14 @@
         <item name="android:layout_marginStart">12dp</item>
         <item name="android:textSize">14sp</item>
         <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="DrawerDivider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:layout_marginStart">10dp</item>
+        <item name="android:layout_marginEnd">10dp</item>
+        <item name="android:layout_marginBottom">2dp</item>
+        <item name="android:background">@color/color_border</item>
     </style>
 </resources>

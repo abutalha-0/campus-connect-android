@@ -24,7 +24,6 @@
         <activity android:name=".auth.register.RegisterActivity" />
         <activity android:name=".home.HomeActivity" />
         <activity android:name=".profile.PublicProfileActivity"/>
-        <activity android:name=".profile.PublicProfileActivity"/>
         <activity android:name=".profile.edit.EditProfileActivity"/>
         <activity android:name=".profile.edit.EditBasicInfoActivity"/>
         <activity android:name=".profile.edit.EditPhotoActivity"/>
