@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Animation-ready copy of ic_crew.xml: named + trimPathEnd=0 paths, used only as the base for avd_crew.xml. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="60dp"
+    android:height="60dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:name="path1"
+        android:pathData="M5.8,8 A3.2,3.2 0 1,0 12.2,8 A3.2,3.2 0 1,0 5.8,8"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.8"
+        android:trimPathEnd="0"
+        android:fillColor="#00000000"/>
+    <path
+        android:name="path2"
+        android:pathData="M2.5 20c1-3.5 3.6-5.3 6.5-5.3s5.5 1.8 6.5 5.3"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:trimPathEnd="0"
+        android:fillColor="#00000000"/>
+    <path
+        android:name="path3"
+        android:pathData="M14.4,7 A2.6,2.6 0 1,0 19.6,7 A2.6,2.6 0 1,0 14.4,7"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.8"
+        android:trimPathEnd="0"
+        android:fillColor="#00000000"/>
+    <path
+        android:name="path4"
+        android:pathData="M15 14.3c2.4.2 4.3 1.9 5.1 5.7"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:trimPathEnd="0"
+        android:fillColor="#00000000"/>
+</vector>

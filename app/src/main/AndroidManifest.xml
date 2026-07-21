@@ -13,7 +13,7 @@
         android:theme="@style/Theme.CampusConnect">
 
         <activity
-            android:name=".auth.login.LoginActivity"
+            android:name=".onboarding.OnboardingActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -21,6 +21,7 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".auth.login.LoginActivity" />
         <activity android:name=".auth.register.RegisterActivity" />
         <activity android:name=".home.HomeActivity" />
         <activity android:name=".profile.PublicProfileActivity"/>

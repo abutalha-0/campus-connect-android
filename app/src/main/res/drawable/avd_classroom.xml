@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_classroom_anim">
+    <target
+        android:name="pathDiamond"
+        android:animation="@animator/trim_draw_d100_700"/>
+    <target
+        android:name="pathStem"
+        android:animation="@animator/trim_draw_d750_200"/>
+    <target
+        android:name="pathBand"
+        android:animation="@animator/trim_draw_d900_700"/>
+</animated-vector>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Animation-ready copy of ic_classroom.xml. The original single "path1" was
+    actually two disconnected subpaths (a stem line + the diamond outline)
+    glued into one pathData string — trimPathEnd measures cumulative length
+    across both, causing jumpy/uneven drawing. Split into 3 separate named
+    paths so each has clean, independent, single-contour trim animation.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="60dp"
+    android:height="60dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:name="pathDiamond"
+        android:pathData="M2 10l10-5 10 5-10 5-10-5z"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:trimPathEnd="0"
+        android:fillColor="#00000000"/>
+    <path
+        android:name="pathStem"
+        android:pathData="M22 10v6"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:trimPathEnd="0"
+        android:fillColor="#00000000"/>
+    <path
+        android:name="pathBand"
+        android:pathData="M6 12v5c0 1 3 3 6 3s6-2 6-3v-5"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:trimPathEnd="0"
+        android:fillColor="#00000000"/>
+</vector>

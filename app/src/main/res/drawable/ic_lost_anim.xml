@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Animation-ready icon for onboarding: plain magnifying glass (matches the design mockup), used only as the base for avd_lost.xml. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="60dp"
+    android:height="60dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+    <path
+        android:name="path1"
+        android:pathData="M4,11 A7,7 0 1,0 18,11 A7,7 0 1,0 4,11"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.8"
+        android:trimPathEnd="0"
+        android:fillColor="#00000000"/>
+    <path
+        android:name="path2"
+        android:pathData="M21 21l-4.3-4.3"
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:trimPathEnd="0"
+        android:fillColor="#00000000"/>
+</vector>
