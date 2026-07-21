@@ -38,6 +38,8 @@
 
     </LinearLayout>
 
-    <include layout="@layout/drawer_home"/>
+    <include
+        android:id="@+id/drawerPanel"
+        layout="@layout/drawer_home"/>
 
 </androidx.drawerlayout.widget.DrawerLayout>

@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * ProjectRequest
  * ───────────────
  * Request body for POST /api/profiles/me/projects/
- * Used by AddProjectBottomSheet.
+ * Used by AddProjectActivity.
  *
  * Note: the API does NOT accept a "url" field for projects.
  * Only name, description, and associated_with are valid.

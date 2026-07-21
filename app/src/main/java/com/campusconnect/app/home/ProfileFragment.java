@@ -25,12 +25,12 @@ import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.core.utils.ImageUtils;
 import com.campusconnect.app.core.utils.TokenManager;
 import com.campusconnect.app.profile.ProfileApiService;
-import com.campusconnect.app.profile.edit.AddEducationBottomSheet;
-import com.campusconnect.app.profile.edit.AddExperienceBottomSheet;
-import com.campusconnect.app.profile.edit.AddLinkBottomSheet;
-import com.campusconnect.app.profile.edit.AddProjectBottomSheet;
-import com.campusconnect.app.profile.edit.AddSkillBottomSheet;
-import com.campusconnect.app.profile.edit.EditBasicInfoBottomSheet;
+import com.campusconnect.app.profile.edit.AddEducationActivity;
+import com.campusconnect.app.profile.edit.AddExperienceActivity;
+import com.campusconnect.app.profile.edit.AddLinkActivity;
+import com.campusconnect.app.profile.edit.AddProjectActivity;
+import com.campusconnect.app.profile.edit.AddSkillActivity;
+import com.campusconnect.app.profile.edit.EditBasicInfoActivity;
 import com.campusconnect.app.profile.edit.ProfileChipFactory;
 import com.campusconnect.app.profile.edit.SocialPlatform;
 import com.campusconnect.app.profile.models.Education;
@@ -159,12 +159,14 @@ public class ProfileFragment extends Fragment {
             view.findViewById(R.id.btnMenu).setOnClickListener(v ->
                     ((HomeActivity) requireActivity()).openDrawer());
 
-            btnEditHero.setOnClickListener(v -> openEditUserType());
-            btnEditAbout.setOnClickListener(v -> openEditAbout());
-            btnAddTabItem.setOnClickListener(v -> openAddSheet());
+            btnEditHero.setOnClickListener(v ->
+                    EditBasicInfoActivity.start(requireContext(), EditBasicInfoActivity.Mode.HERO));
+            btnEditAbout.setOnClickListener(v ->
+                    EditBasicInfoActivity.start(requireContext(), EditBasicInfoActivity.Mode.ABOUT));
+            btnAddTabItem.setOnClickListener(v -> openAddScreen());
             btnChangePhoto.setOnClickListener(v -> openPhotoPicker());
-            btnEditSkills.setOnClickListener(v -> openManageSkills());
-            btnAddSocial.setOnClickListener(v -> openManageLinks());
+            btnEditSkills.setOnClickListener(v -> AddSkillActivity.start(requireContext()));
+            btnAddSocial.setOnClickListener(v -> AddLinkActivity.start(requireContext()));
         } else {
             // Hosted by PublicProfileActivity, which already has its own
             // back-button header — hide this one entirely.
@@ -183,7 +185,14 @@ public class ProfileFragment extends Fragment {
         tabProjects.setOnClickListener(v   -> switchTab("projects"));
         tabExperience.setOnClickListener(v -> switchTab("experience"));
         tabEducation.setOnClickListener(v  -> switchTab("education"));
+    }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Covers the initial load too (onResume always follows onViewCreated)
+        // and auto-refreshes whenever we return from one of the full-page
+        // edit/add screens.
         loadProfile();
     }
 
@@ -255,13 +264,6 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    private void openManageSkills() {
-        AddSkillBottomSheet sheet = new AddSkillBottomSheet();
-        sheet.setSkills(currentProfile != null ? currentProfile.getSkills() : null);
-        sheet.setOnSavedListener(this::loadProfile);
-        sheet.show(getChildFragmentManager(), "manage_skills");
-    }
-
     // ── Connect & Network ────────────────────────────────────────────────────
 
     private void renderSocials(@Nullable List<Link> links) {
@@ -284,13 +286,6 @@ public class ProfileFragment extends Fragment {
         } catch (Exception e) {
             Toast.makeText(getContext(), "Couldn't open that link.", Toast.LENGTH_SHORT).show();
         }
-    }
-
-    private void openManageLinks() {
-        AddLinkBottomSheet sheet = new AddLinkBottomSheet();
-        sheet.setLinks(currentProfile != null ? currentProfile.getLinks() : null);
-        sheet.setOnSavedListener(this::loadProfile);
-        sheet.show(getChildFragmentManager(), "manage_links");
     }
 
     // ── Tab switching ─────────────────────────────────────────────────────────
@@ -321,40 +316,18 @@ public class ProfileFragment extends Fragment {
         }
     }
 
-    // ── Bottom sheet launchers ────────────────────────────────────────────────
+    // ── Full-page add launcher ───────────────────────────────────────────────
 
-    private void openEditUserType() {
-        EditBasicInfoBottomSheet sheet = new EditBasicInfoBottomSheet();
-        sheet.setMode(EditBasicInfoBottomSheet.Mode.HERO);
-        sheet.setOnSavedListener(this::loadProfile);
-        sheet.show(getChildFragmentManager(), "edit_user_type");
-    }
-
-    private void openEditAbout() {
-        EditBasicInfoBottomSheet sheet = new EditBasicInfoBottomSheet();
-        sheet.setMode(EditBasicInfoBottomSheet.Mode.ABOUT);
-        sheet.setOnSavedListener(this::loadProfile);
-        sheet.show(getChildFragmentManager(), "edit_about");
-    }
-
-    private void openAddSheet() {
+    private void openAddScreen() {
         switch (activeTab) {
             case "projects":
-                AddProjectBottomSheet projectSheet = new AddProjectBottomSheet();
-                projectSheet.setOnSavedListener(this::loadProfile);
-                projectSheet.show(getChildFragmentManager(), "add_project");
+                AddProjectActivity.start(requireContext());
                 break;
-
             case "experience":
-                AddExperienceBottomSheet expSheet = new AddExperienceBottomSheet();
-                expSheet.setOnSavedListener(this::loadProfile);
-                expSheet.show(getChildFragmentManager(), "add_experience");
+                AddExperienceActivity.start(requireContext());
                 break;
-
             case "education":
-                AddEducationBottomSheet eduSheet = new AddEducationBottomSheet();
-                eduSheet.setOnSavedListener(this::loadProfile);
-                eduSheet.show(getChildFragmentManager(), "add_education");
+                AddEducationActivity.start(requireContext());
                 break;
         }
     }
@@ -543,7 +516,7 @@ public class ProfileFragment extends Fragment {
         for (Project p : projects) {
             bindEntry(p.getName(), p.getAssociatedWith(), yearOf(p.getCreatedAt()),
                     p.getDescription(),
-                    () -> openEditProjectSheet(p),
+                    () -> AddProjectActivity.startEdit(requireContext(), p),
                     () -> deleteProject(p));
         }
     }
@@ -557,7 +530,7 @@ public class ProfileFragment extends Fragment {
             String dates = e.getStartDate() + " — "
                     + (e.getEndDate() != null ? e.getEndDate() : "Present");
             bindEntry(e.getTitle(), e.getOrganization(), dates, e.getDescription(),
-                    () -> openEditExperienceSheet(e),
+                    () -> AddExperienceActivity.startEdit(requireContext(), e),
                     () -> deleteExperience(e));
         }
     }
@@ -571,7 +544,7 @@ public class ProfileFragment extends Fragment {
             String years = e.getStartYear() + " — "
                     + (e.getEndYear() != null ? e.getEndYear() : "Present");
             bindEntry(e.getDegree(), e.getInstitutionName(), years, null,
-                    () -> openEditEducationSheet(e),
+                    () -> AddEducationActivity.startEdit(requireContext(), e),
                     () -> deleteEducation(e));
         }
     }
@@ -615,29 +588,6 @@ public class ProfileFragment extends Fragment {
             return isoDate.substring(0, 4);
         }
         return "";
-    }
-
-    // ── Edit-in-place launchers ───────────────────────────────────────────────
-
-    private void openEditProjectSheet(Project project) {
-        AddProjectBottomSheet sheet = new AddProjectBottomSheet();
-        sheet.setEditing(project);
-        sheet.setOnSavedListener(this::loadProfile);
-        sheet.show(getChildFragmentManager(), "edit_project");
-    }
-
-    private void openEditExperienceSheet(Experience experience) {
-        AddExperienceBottomSheet sheet = new AddExperienceBottomSheet();
-        sheet.setEditing(experience);
-        sheet.setOnSavedListener(this::loadProfile);
-        sheet.show(getChildFragmentManager(), "edit_experience");
-    }
-
-    private void openEditEducationSheet(Education education) {
-        AddEducationBottomSheet sheet = new AddEducationBottomSheet();
-        sheet.setEditing(education);
-        sheet.setOnSavedListener(this::loadProfile);
-        sheet.show(getChildFragmentManager(), "edit_education");
     }
 
     private void showEmptyState(String message) {

@@ -1,59 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    EditBasicInfoActivity Layout
-    ─────────────────────────────
-    Allows user to update:
-    - Bio (short tagline, max 160 chars)
-    - About (longer description)
-    - User type (STUDENT or CR)
--->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@color/color_background">
 
-    <!-- Top bar -->
-    <LinearLayout
+    <include layout="@layout/top_bar_edit"/>
+
+    <View
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:gravity="center_vertical"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp">
+        android:layout_height="1dp"
+        android:background="@color/color_border"/>
 
-        <TextView
-            android:id="@+id/btnBack"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="← Back"
-            android:textColor="@color/color_cyan"
-            android:textSize="14sp"
-            android:padding="8dp"/>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Basic Info"
-            android:textColor="@color/color_text_primary"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:gravity="center"/>
-
-        <!-- Save button -->
-        <TextView
-            android:id="@+id/btnSave"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Save"
-            android:textColor="@color/color_cyan"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:padding="8dp"/>
-
-    </LinearLayout>
-
-    <androidx.core.widget.NestedScrollView
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
@@ -62,127 +21,148 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="16dp">
+            android:padding="20dp">
 
-            <!-- Bio field -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Bio"
-                android:textColor="@color/color_muted"
-                android:textSize="12sp"
-                android:layout_marginBottom="6dp"/>
-
-            <EditText
-                android:id="@+id/etBio"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:background="@drawable/bg_input"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:inputType="text"
-                android:hint="Short tagline (max 160 chars)"
-                android:textColor="@color/color_text_primary"
-                android:textSize="14sp"
-                android:maxLength="160"
-                android:layout_marginBottom="20dp"/>
-
-            <!-- About field -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="About"
-                android:textColor="@color/color_muted"
-                android:textSize="12sp"
-                android:layout_marginBottom="6dp"/>
-
-            <EditText
-                android:id="@+id/etAbout"
-                android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:background="@drawable/bg_input"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:paddingTop="12dp"
-                android:paddingBottom="12dp"
-                android:inputType="textMultiLine"
-                android:gravity="top"
-                android:hint="Tell others about yourself"
-                android:textColor="@color/color_text_primary"
-                android:textSize="14sp"
-                android:layout_marginBottom="20dp"/>
-
-            <!-- User type field -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="User Type"
-                android:textColor="@color/color_muted"
-                android:textSize="12sp"
-                android:layout_marginBottom="6dp"/>
-
-            <!-- STUDENT option -->
+            <!-- About-card fields: hidden entirely when opened from the hero card -->
             <LinearLayout
-                android:id="@+id/optionStudent"
+                android:id="@+id/groupAboutFields"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="@drawable/bg_input"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:layout_marginBottom="8dp">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Student"
-                    android:textColor="@color/color_text_primary"
-                    android:textSize="14sp"/>
-
-                <TextView
-                    android:id="@+id/checkStudent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="○"
+                    android:text="Bio"
                     android:textColor="@color/color_muted"
-                    android:textSize="18sp"/>
+                    android:textSize="11sp"
+                    android:textAllCaps="true"
+                    android:letterSpacing="0.08"
+                    android:layout_marginBottom="6dp"/>
+
+                <EditText
+                    android:id="@+id/etBio"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_input_selector"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:inputType="text"
+                    android:hint="Short tagline (max 160 chars)"
+                    android:textColor="@color/color_text_primary"
+                    android:textColorHint="@color/color_muted"
+                    android:textSize="14sp"
+                    android:maxLength="160"
+                    android:layout_marginBottom="20dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="About"
+                    android:textColor="@color/color_muted"
+                    android:textSize="11sp"
+                    android:textAllCaps="true"
+                    android:letterSpacing="0.08"
+                    android:layout_marginBottom="6dp"/>
+
+                <EditText
+                    android:id="@+id/etAbout"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:background="@drawable/bg_input_selector"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp"
+                    android:inputType="textMultiLine"
+                    android:gravity="top"
+                    android:hint="Tell others about yourself"
+                    android:textColor="@color/color_text_primary"
+                    android:textColorHint="@color/color_muted"
+                    android:textSize="14sp"
+                    android:layout_marginBottom="20dp"/>
 
             </LinearLayout>
 
-            <!-- CR option -->
+            <!-- Hero-card field: hidden entirely when opened from the About card -->
             <LinearLayout
-                android:id="@+id/optionCR"
+                android:id="@+id/groupUserType"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:background="@drawable/bg_input"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:layout_marginBottom="24dp">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Class Representative (CR)"
-                    android:textColor="@color/color_text_primary"
-                    android:textSize="14sp"/>
-
-                <TextView
-                    android:id="@+id/checkCR"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="○"
+                    android:text="User Type"
                     android:textColor="@color/color_muted"
-                    android:textSize="18sp"/>
+                    android:textSize="11sp"
+                    android:textAllCaps="true"
+                    android:letterSpacing="0.08"
+                    android:layout_marginBottom="6dp"/>
+
+                <LinearLayout
+                    android:id="@+id/optionStudent"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_input"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Student"
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="14sp"/>
+
+                    <TextView
+                        android:id="@+id/checkStudent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="○"
+                        android:textColor="@color/color_muted"
+                        android:textSize="18sp"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/optionCR"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_input"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Class Representative (CR)"
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="14sp"/>
+
+                    <TextView
+                        android:id="@+id/checkCR"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="○"
+                        android:textColor="@color/color_muted"
+                        android:textSize="18sp"/>
+
+                </LinearLayout>
 
             </LinearLayout>
 
         </LinearLayout>
 
-    </androidx.core.widget.NestedScrollView>
+    </ScrollView>
 
 </LinearLayout>

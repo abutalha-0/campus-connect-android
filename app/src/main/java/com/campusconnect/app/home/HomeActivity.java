@@ -10,6 +10,8 @@ import android.widget.TextView;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.ColorInt;
 import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
@@ -27,7 +29,7 @@ public class HomeActivity extends BaseActivity {
     private ImageView ivDrawerHomeIcon, ivDrawerProfileIcon;
     private TextView tvDrawerHomeLabel, tvDrawerProfileLabel;
 
-    private TextView tvDrawerName, tvDrawerSubtitle, tvDrawerUserType, tvDrawerAvatarInitials;
+    private TextView tvDrawerName, tvDrawerSubtitle, tvDrawerAvatarInitials;
     private ImageView ivDrawerAvatar;
 
     @Override
@@ -45,6 +47,7 @@ public class HomeActivity extends BaseActivity {
         bottomNav = findViewById(R.id.bottomNav);
 
         setUpDrawer();
+        padDrawerForNavigationBar();
         setActiveDrawerItem(R.id.nav_home);
 
         // load HomeFragment by default
@@ -93,7 +96,6 @@ public class HomeActivity extends BaseActivity {
 
         tvDrawerName = findViewById(R.id.tvDrawerName);
         tvDrawerSubtitle = findViewById(R.id.tvDrawerSubtitle);
-        tvDrawerUserType = findViewById(R.id.tvDrawerUserType);
         tvDrawerAvatarInitials = findViewById(R.id.tvDrawerAvatarInitials);
         ivDrawerAvatar = findViewById(R.id.ivDrawerAvatar);
 
@@ -118,6 +120,25 @@ public class HomeActivity extends BaseActivity {
     }
 
     /**
+     * The drawer panel is match_parent height inside the DrawerLayout, so on
+     * newer Android versions (edge-to-edge enforced from targetSdk 35+) its
+     * bottom content renders under the system navigation bar unless we
+     * reserve real space for it — the legacy fitsSystemWindows theme trick
+     * no longer does this reliably on its own.
+     */
+    private void padDrawerForNavigationBar() {
+        View drawerPanel = findViewById(R.id.drawerPanel);
+        int basePaddingBottom = drawerPanel.getPaddingBottom();
+
+        ViewCompat.setOnApplyWindowInsetsListener(drawerPanel, (v, insets) -> {
+            int navBarBottom = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom;
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(),
+                    basePaddingBottom + navBarBottom);
+            return insets;
+        });
+    }
+
+    /**
      * Highlights whichever bottom-nav destination the drawer currently reflects.
      * Neither Home nor Profile lights up when Discover is selected — the
      * drawer doesn't have its own Discover entry.
@@ -139,14 +160,9 @@ public class HomeActivity extends BaseActivity {
 
     /** Called by HomeFragment once it has real profile data to show. */
     public void updateDrawerHeader(String name, @Nullable String username,
-                                    @Nullable String userType, @Nullable String photoUrl) {
+                                    @Nullable String photoUrl) {
         tvDrawerName.setText(name);
         tvDrawerSubtitle.setText(username != null ? "@" + username : "");
-
-        if (userType != null && !userType.isEmpty()) {
-            tvDrawerUserType.setText(userType);
-            tvDrawerUserType.setVisibility(View.VISIBLE);
-        }
 
         String[] parts = name.trim().split("\\s+");
         StringBuilder initials = new StringBuilder();

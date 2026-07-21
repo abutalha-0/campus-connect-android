@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * ProfileUpdateRequest
  * ─────────────────────
  * Request body for PATCH /api/profiles/me/
- * Used by EditBasicInfoBottomSheet to update bio, about, and user_type.
+ * Used by EditBasicInfoActivity to update bio, about, and user_type.
  *
  * The @SerializedName values MUST match the API's JSON keys exactly
  * (see campus_connect_api_docs.md section 2.2).

@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
  * ExperienceRequest
  * ──────────────────
  * Request body for POST /api/profiles/me/experience/
- * Used by AddExperienceBottomSheet.
+ * Used by AddExperienceActivity.
  *
  * start_date / end_date must be full dates: "YYYY-MM-DD".
  * end_date may be null for a current/ongoing role.

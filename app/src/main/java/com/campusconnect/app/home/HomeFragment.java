@@ -128,7 +128,7 @@ public class HomeFragment extends Fragment {
 
         if (fullName != null) {
             ((HomeActivity) requireActivity()).updateDrawerHeader(
-                    fullName, username, profile.getUserType(), profile.getProfilePhoto());
+                    fullName, username, profile.getProfilePhoto());
         }
     }
 
