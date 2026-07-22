@@ -2,11 +2,11 @@ package com.campusconnect.app.role;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Toast;
 import com.campusconnect.app.R;
 import com.campusconnect.app.auth.login.LoginActivity;
+import com.campusconnect.app.auth.register.RegisterActivity;
 import com.campusconnect.app.core.base.BaseActivity;
-import com.campusconnect.app.home.HomeActivity;
+import com.campusconnect.app.faculty.auth.FacultyRegisterActivity;
 
 /**
  * "Who are you?" landing screen shown right after onboarding.
@@ -25,27 +25,19 @@ public class RoleSelectionActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         if (tokenManager.hasToken()) {
-            goToHome();
+            goToRoleHome();
             return;
         }
 
         setContentView(R.layout.activity_role_selection);
 
-        findViewById(R.id.cardStudent).setOnClickListener(v -> goToLogin());
-        findViewById(R.id.tvLogin).setOnClickListener(v -> goToLogin());
+        // Both role cards lead to their sign-up screen. Existing users of
+        // either role log in through the single shared "Log in" footer.
+        findViewById(R.id.cardStudent).setOnClickListener(v ->
+                startActivity(new Intent(this, RegisterActivity.class)));
         findViewById(R.id.cardFaculty).setOnClickListener(v ->
-                Toast.makeText(this, getString(R.string.role_faculty_coming_soon),
-                        Toast.LENGTH_SHORT).show());
-    }
-
-    private void goToLogin() {
-        startActivity(new Intent(this, LoginActivity.class));
-    }
-
-    private void goToHome() {
-        Intent intent = new Intent(this, HomeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
+                startActivity(new Intent(this, FacultyRegisterActivity.class)));
+        findViewById(R.id.tvLogin).setOnClickListener(v ->
+                startActivity(new Intent(this, LoginActivity.class)));
     }
 }

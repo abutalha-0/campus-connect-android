@@ -6,4 +6,8 @@ public class Constants {
     public static final String PREF_NAME = "secure_prefs";
     public static final String KEY_ACCESS = "access_token";
     public static final String KEY_REFRESH = "refresh_token";
+    public static final String KEY_ROLE = "user_role";
+
+    public static final String ROLE_FACULTY = "FACULTY";
+    public static final String ROLE_STUDENT = "STUDENT";
 }

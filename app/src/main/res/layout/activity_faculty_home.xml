@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="@color/color_background"
+    android:padding="28dp">
+
+    <ImageView
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:src="@drawable/ic_grad_cap"
+        android:tint="@color/color_cyan"
+        android:contentDescription="@null" />
+
+    <TextView
+        android:id="@+id/tvFacultyWelcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:text="@string/label_home"
+        android:textColor="@color/color_text_primary"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Faculty home — coming together in the next phase."
+        android:textColor="@color/color_muted"
+        android:textSize="13sp"
+        android:gravity="center" />
+
+    <Button
+        android:id="@+id/btnLogout"
+        android:layout_width="wrap_content"
+        android:layout_height="48dp"
+        android:layout_marginTop="28dp"
+        android:background="@drawable/bg_button_outline"
+        android:paddingStart="28dp"
+        android:paddingEnd="28dp"
+        android:text="@string/btn_logout"
+        android:textColor="@color/color_text_primary"
+        android:textSize="14sp" />
+
+</LinearLayout>

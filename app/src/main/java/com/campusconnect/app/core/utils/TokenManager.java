@@ -57,6 +57,20 @@ public class TokenManager {
         return prefs.getString(Constants.KEY_REFRESH, null);
     }
 
+    public void saveRole(String role) {
+        if (prefs == null) return;
+        prefs.edit().putString(Constants.KEY_ROLE, role).apply();
+    }
+
+    public String getRole() {
+        if (prefs == null) return null;
+        return prefs.getString(Constants.KEY_ROLE, null);
+    }
+
+    public boolean isFaculty() {
+        return Constants.ROLE_FACULTY.equals(getRole());
+    }
+
     public boolean hasToken() {
         return getAccessToken() != null;
     }

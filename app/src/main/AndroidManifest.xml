@@ -24,6 +24,8 @@
         <activity android:name=".role.RoleSelectionActivity" />
         <activity android:name=".auth.login.LoginActivity" />
         <activity android:name=".auth.register.RegisterActivity" />
+        <activity android:name=".faculty.auth.FacultyRegisterActivity" />
+        <activity android:name=".faculty.FacultyHomeActivity" />
         <activity android:name=".home.HomeActivity" />
         <activity android:name=".profile.PublicProfileActivity"/>
         <activity android:name=".profile.edit.EditBasicInfoActivity"/>

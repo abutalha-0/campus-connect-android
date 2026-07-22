@@ -73,6 +73,7 @@ public class RegisterActivity extends BaseActivity {
                                     auth.getTokens().getAccess(),
                                     auth.getTokens().getRefresh()
                             );
+                            tokenManager.saveRole(auth.getUser().getRole());
 
                             // show confirmation toast
                             Toast.makeText(RegisterActivity.this,

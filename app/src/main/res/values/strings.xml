@@ -49,4 +49,39 @@
     <string name="role_login_action">Log in</string>
 
     <string name="app_footer_tag">CAMPUS CONNECT · v1.0</string>
+
+    <!-- Faculty sign up -->
+    <string name="faculty_signup_title">Faculty Sign Up</string>
+    <string name="faculty_signup_subtitle">Creating a faculty account</string>
+    <string name="faculty_label_name">Full name</string>
+    <string name="faculty_hint_name">Dr. Farhana Islam</string>
+    <string name="faculty_label_email">University email</string>
+    <string name="faculty_hint_email">name@university.edu</string>
+    <string name="faculty_label_empid">Employee ID</string>
+    <string name="faculty_hint_empid">e.g. FAC-2291</string>
+    <string name="faculty_label_dept">Department</string>
+    <string name="faculty_hint_dept">e.g. CSE</string>
+    <string name="faculty_label_designation">Designation</string>
+    <string name="faculty_label_password">Password</string>
+    <string name="faculty_hint_password">Create a password</string>
+    <string name="faculty_label_confirm">Confirm password</string>
+    <string name="faculty_hint_confirm">Re-enter password</string>
+    <string name="faculty_verify_note">Your account will be verified by the admin office before you can create classes or subjects.</string>
+    <string name="faculty_create_account">Create Account</string>
+    <string name="error_password_mismatch">Passwords don\'t match</string>
+    <string name="faculty_signup_failed">Registration failed. Email or employee ID may already exist.</string>
+    <string name="faculty_welcome">Welcome, %1$s</string>
+
+    <string-array name="faculty_designations">
+        <item>Lecturer</item>
+        <item>Assistant Professor</item>
+        <item>Associate Professor</item>
+        <item>Professor</item>
+    </string-array>
+    <string-array name="faculty_designation_keys">
+        <item>LECTURER</item>
+        <item>ASSISTANT_PROFESSOR</item>
+        <item>ASSOCIATE_PROFESSOR</item>
+        <item>PROFESSOR</item>
+    </string-array>
 </resources>

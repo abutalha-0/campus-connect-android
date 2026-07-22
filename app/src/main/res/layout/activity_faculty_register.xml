@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/color_background"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- Header -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="18dp">
+
+            <ImageView
+                android:id="@+id/btnBack"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:src="@drawable/ic_chevron_left"
+                android:tint="@color/color_text_primary"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="@null" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="12dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/faculty_signup_title"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="20sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/faculty_signup_subtitle"
+                    android:textColor="@color/color_cyan"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Full name -->
+        <TextView style="@style/FacultyFieldLabel" android:text="@string/faculty_label_name" />
+        <EditText
+            android:id="@+id/etName"
+            style="@style/FacultyInput"
+            android:inputType="textPersonName"
+            android:hint="@string/faculty_hint_name" />
+
+        <!-- University email -->
+        <TextView style="@style/FacultyFieldLabel" android:text="@string/faculty_label_email" />
+        <EditText
+            android:id="@+id/etEmail"
+            style="@style/FacultyInput"
+            android:inputType="textEmailAddress"
+            android:hint="@string/faculty_hint_email" />
+
+        <!-- Employee ID + Department -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginEnd="6dp">
+
+                <TextView style="@style/FacultyFieldLabel" android:text="@string/faculty_label_empid" />
+                <EditText
+                    android:id="@+id/etEmployeeId"
+                    style="@style/FacultyInput"
+                    android:inputType="textCapCharacters"
+                    android:hint="@string/faculty_hint_empid" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="6dp">
+
+                <TextView style="@style/FacultyFieldLabel" android:text="@string/faculty_label_dept" />
+                <EditText
+                    android:id="@+id/etDepartment"
+                    style="@style/FacultyInput"
+                    android:inputType="textCapCharacters"
+                    android:hint="@string/faculty_hint_dept" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Designation -->
+        <TextView style="@style/FacultyFieldLabel" android:text="@string/faculty_label_designation" />
+        <Spinner
+            android:id="@+id/spinnerDesignation"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="@drawable/bg_input"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:popupBackground="@color/color_card"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Password -->
+        <TextView style="@style/FacultyFieldLabel" android:text="@string/faculty_label_password" />
+        <EditText
+            android:id="@+id/etPassword"
+            style="@style/FacultyInput"
+            android:inputType="textPassword"
+            android:hint="@string/faculty_hint_password" />
+
+        <!-- Confirm password -->
+        <TextView style="@style/FacultyFieldLabel" android:text="@string/faculty_label_confirm" />
+        <EditText
+            android:id="@+id/etConfirmPassword"
+            style="@style/FacultyInput"
+            android:inputType="textPassword"
+            android:hint="@string/faculty_hint_confirm" />
+
+        <TextView
+            android:id="@+id/tvMismatch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/error_password_mismatch"
+            android:textColor="@color/color_red"
+            android:textSize="11sp"
+            android:visibility="gone"
+            android:layout_marginBottom="8dp" />
+
+        <!-- Verify note -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_info_banner"
+            android:padding="12dp"
+            android:text="@string/faculty_verify_note"
+            android:textColor="@color/color_muted"
+            android:textSize="12sp"
+            android:lineSpacingMultiplier="1.4"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="18dp" />
+
+        <!-- Create Account -->
+        <Button
+            android:id="@+id/btnCreateAccount"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="@drawable/bg_button_primary"
+            android:text="@string/faculty_create_account"
+            android:textColor="@color/color_background"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <!-- Log in link -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp"
+            android:padding="6dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/role_login_prompt"
+                android:textColor="@color/color_muted"
+                android:textSize="12.5sp" />
+
+            <TextView
+                android:id="@+id/tvGoToLogin"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="@string/role_login_action"
+                android:textColor="@color/color_cyan"
+                android:textSize="12.5sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
