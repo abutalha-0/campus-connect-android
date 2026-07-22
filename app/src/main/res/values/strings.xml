@@ -109,4 +109,64 @@
     <string name="subject_add_failed">Couldn\'t add subject. Try again.</string>
     <string name="subject_not_verified">Your profile isn\'t verified yet. You can\'t add subjects until an admin approves your account.</string>
     <string name="faculty_not_verified_banner">⚠  Account not verified — an admin must approve your account before you can create subjects.</string>
+
+    <!-- Subject detail / resources -->
+    <string name="tab_resources">Resources</string>
+    <string name="tab_notice">Notice</string>
+    <string name="tab_work">Work</string>
+    <string name="post_resource">Post Resource</string>
+    <string name="work_empty">No assignments posted yet</string>
+    <string name="notice_coming_soon">Notices are coming in the next update.</string>
+    <string name="post_notice">Post Notice</string>
+    <string name="notices_empty">No notices posted yet.</string>
+    <string name="post_notice_title">Post Notice</string>
+    <string name="edit_notice_title">Edit Notice</string>
+    <string name="notice_label_text">Notice</string>
+    <string name="notice_hint_text">Write the notice for your students</string>
+    <string name="notice_highlight_toggle">Add a highlighted callout (e.g. a date or deadline)</string>
+    <string name="notice_hint_highlight">e.g. Exam date: Jul 20, 10:00 AM</string>
+    <string name="notice_label_attachment">Attachment (optional)</string>
+    <string name="notice_delete_title">Delete notice?</string>
+    <!-- Subject settings -->
+    <string name="subject_settings_title">Subject Settings</string>
+    <string name="subject_code_label">SHARE CODE</string>
+    <string name="subject_code_note">Share this code with class creators so they can add this subject to their class.</string>
+    <string name="subject_settings_save">Save changes</string>
+    <string name="subject_delete">Delete subject</string>
+    <string name="subject_delete_title">Delete subject?</string>
+    <string name="subject_delete_message">This permanently removes the subject and all its resources and notices. This cannot be undone.</string>
+    <string name="subject_deleted">Subject deleted</string>
+    <string name="subject_update_failed">Couldn\'t save changes. Try again.</string>
+    <string name="resources_empty">No resources posted yet.</string>
+    <string name="add_resource_title">Post Resource</string>
+    <string name="edit_resource_title">Edit Resource</string>
+    <string name="resource_label_topic">Week / Topic</string>
+    <string name="resource_hint_topic">e.g. WEEK 3 · RECURSION</string>
+    <string name="resource_label_title">Title</string>
+    <string name="resource_hint_title">e.g. Lecture Slides.pptx</string>
+    <string name="resource_label_type">Type</string>
+    <string name="resource_label_size">Size / length</string>
+    <string name="resource_hint_size">e.g. 1.2 MB</string>
+    <string name="resource_label_desc">Description</string>
+    <string name="resource_hint_desc">What is this resource for?</string>
+    <string name="resource_label_attachment">Attachment</string>
+    <string name="resource_attach_file">Attach a file</string>
+    <string name="resource_label_link">Video link (URL)</string>
+    <string name="resource_hint_link">https://…</string>
+    <string name="resource_open">Open</string>
+    <string name="resource_delete_title">Delete resource?</string>
+    <string name="resource_save_failed">Couldn\'t save. Try again.</string>
+
+    <string-array name="resource_types">
+        <item>PDF</item>
+        <item>Slides</item>
+        <item>Doc</item>
+        <item>Video</item>
+    </string-array>
+    <string-array name="resource_type_keys">
+        <item>PDF</item>
+        <item>PPT</item>
+        <item>DOC</item>
+        <item>VID</item>
+    </string-array>
 </resources>

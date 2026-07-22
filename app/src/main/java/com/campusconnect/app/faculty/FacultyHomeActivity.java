@@ -269,9 +269,12 @@ public class FacultyHomeActivity extends BaseActivity {
 
             View card = LayoutInflater.from(this)
                     .inflate(R.layout.item_subject_card, row, false);
-            ((TextView) card.findViewById(R.id.tvSubjectName)).setText(items.get(i).getName());
+            Subject subject = items.get(i);
+            ((TextView) card.findViewById(R.id.tvSubjectName)).setText(subject.getName());
             ((TextView) card.findViewById(R.id.tvSubjectSection))
-                    .setText(getString(R.string.subject_section_prefix) + items.get(i).getSection());
+                    .setText(getString(R.string.subject_section_prefix) + subject.getSection());
+            card.setOnClickListener(v -> com.campusconnect.app.classroom.SubjectDetailActivity.start(
+                    this, subject.getId(), subject.getName(), subject.getFacultyName()));
 
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                     0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f);

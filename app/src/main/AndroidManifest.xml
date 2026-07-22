@@ -29,6 +29,10 @@
         <activity android:name=".faculty.edit.FacultyEditIdentityActivity" />
         <activity android:name=".faculty.edit.FacultyAddLinkActivity" />
         <activity android:name=".classroom.AddSubjectActivity" />
+        <activity android:name=".classroom.SubjectDetailActivity" />
+        <activity android:name=".classroom.AddResourceActivity" />
+        <activity android:name=".classroom.AddNoticeActivity" />
+        <activity android:name=".classroom.SubjectSettingsActivity" />
         <activity android:name=".home.HomeActivity" />
         <activity android:name=".profile.PublicProfileActivity"/>
         <activity android:name=".profile.edit.EditBasicInfoActivity"/>
