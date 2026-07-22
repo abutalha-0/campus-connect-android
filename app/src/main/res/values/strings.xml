@@ -84,4 +84,29 @@
         <item>ASSOCIATE_PROFESSOR</item>
         <item>PROFESSOR</item>
     </string-array>
+
+    <!-- Subjects -->
+    <string name="subjects_taught">SUBJECTS TAUGHT</string>
+    <string name="subjects_add">Add</string>
+    <string name="subjects_empty">No subjects added yet.</string>
+    <string name="subject_intake_prefix">INTAKE %1$s</string>
+    <string name="subject_section_prefix">Section: </string>
+    <string name="add_subject_title">Add Subject</string>
+    <string name="subject_new_section">NEW SUBJECT</string>
+    <string name="subject_label_name">Subject name</string>
+    <string name="subject_hint_name">e.g. Data Structures</string>
+    <string name="subject_label_intake">Intake</string>
+    <string name="subject_hint_intake">e.g. 42</string>
+    <string name="subject_label_section">Section</string>
+    <string name="subject_hint_section">e.g. B</string>
+    <string name="subject_label_room">Room number</string>
+    <string name="subject_hint_room">e.g. 402</string>
+    <string name="subject_add_btn">Add Subject</string>
+    <string name="subject_added_title">Subject added</string>
+    <string name="subject_added_note">Share this code with class creators so they can add it to their class</string>
+    <string name="subject_copy">Copy code</string>
+    <string name="subject_copied">Copied!</string>
+    <string name="subject_add_failed">Couldn\'t add subject. Try again.</string>
+    <string name="subject_not_verified">Your profile isn\'t verified yet. You can\'t add subjects until an admin approves your account.</string>
+    <string name="faculty_not_verified_banner">⚠  Account not verified — an admin must approve your account before you can create subjects.</string>
 </resources>

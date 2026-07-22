@@ -28,6 +28,7 @@
         <activity android:name=".faculty.FacultyHomeActivity" />
         <activity android:name=".faculty.edit.FacultyEditIdentityActivity" />
         <activity android:name=".faculty.edit.FacultyAddLinkActivity" />
+        <activity android:name=".classroom.AddSubjectActivity" />
         <activity android:name=".home.HomeActivity" />
         <activity android:name=".profile.PublicProfileActivity"/>
         <activity android:name=".profile.edit.EditBasicInfoActivity"/>
