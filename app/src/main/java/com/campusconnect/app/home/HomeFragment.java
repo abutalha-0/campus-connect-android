@@ -80,6 +80,11 @@ public class HomeFragment extends Fragment {
                 R.drawable.ic_route, R.color.color_indigo, "1 match",
                 getString(R.string.label_route));
 
+        // Classroom is live — override its "coming soon" handler with the real screen.
+        view.findViewById(R.id.blockClassroom).setOnClickListener(v ->
+                startActivity(new android.content.Intent(getActivity(),
+                        com.campusconnect.app.classroom.ClassroomActivity.class)));
+
         renderActivity(mockActivity());
         loadProfile();
     }

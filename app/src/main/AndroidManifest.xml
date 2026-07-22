@@ -33,6 +33,8 @@
         <activity android:name=".classroom.AddResourceActivity" />
         <activity android:name=".classroom.AddNoticeActivity" />
         <activity android:name=".classroom.SubjectSettingsActivity" />
+        <activity android:name=".classroom.ClassroomActivity" />
+        <activity android:name=".classroom.CreateClassActivity" />
         <activity android:name=".home.HomeActivity" />
         <activity android:name=".profile.PublicProfileActivity"/>
         <activity android:name=".profile.edit.EditBasicInfoActivity"/>

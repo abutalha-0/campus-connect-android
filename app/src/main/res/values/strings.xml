@@ -169,4 +169,30 @@
         <item>DOC</item>
         <item>VID</item>
     </string-array>
+
+    <!-- Classroom (student) -->
+    <string name="classroom_title">Classroom</string>
+    <string name="create_class">Create Class</string>
+    <string name="join_title">Join a Classroom</string>
+    <string name="join_subtitle">Enter the class code shared by your instructor</string>
+    <string name="join_hint">Enter class code</string>
+    <string name="join_submit">Submit</string>
+    <string name="join_coming_soon">Joining classes is coming in the next update.</string>
+    <string name="class_one_at_a_time">You can only have one class at a time. Add courses to this class, or delete it to start a new one.</string>
+    <string name="class_code_heading">CLASS CODE</string>
+    <string name="class_courses_heading">COURSES IN THIS CLASS</string>
+    <string name="class_no_courses">No subjects added yet</string>
+    <string name="class_add_course_hint">Enter secret code, e.g. 482913</string>
+    <string name="class_delete">Delete Class</string>
+    <string name="class_delete_title">Delete this class?</string>
+    <string name="class_delete_message">This permanently deletes the class and all its courses. Every student who joined will immediately lose access. This cannot be undone.</string>
+    <string name="class_delete_password_label">Enter your password to confirm</string>
+    <string name="class_delete_wrong_password">Incorrect password.</string>
+    <string name="create_class_hint_info">Add courses using their secret code</string>
+    <string name="create_class_where">Where to find the code?</string>
+    <string name="create_class_where_body">The course teacher who created the subject has the course code. Ask them to add the subject in your class.</string>
+    <string name="create_class_add_hint">Enter secret code, e.g. 482913</string>
+    <string name="create_class_no_subject">No subject found with that code.</string>
+    <string name="create_class_failed">Couldn\'t create class. Try again.</string>
+    <string name="course_already_added">This course is already in your class.</string>
 </resources>
