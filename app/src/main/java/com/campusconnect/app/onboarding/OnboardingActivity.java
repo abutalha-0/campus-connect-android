@@ -17,8 +17,8 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 import com.campusconnect.app.R;
-import com.campusconnect.app.auth.login.LoginActivity;
 import com.campusconnect.app.core.base.BaseActivity;
+import com.campusconnect.app.role.RoleSelectionActivity;
 import java.util.List;
 
 /**
@@ -44,7 +44,7 @@ public class OnboardingActivity extends BaseActivity {
 
         SharedPreferences prefs = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         if (prefs.getBoolean(KEY_SEEN, false)) {
-            goToLogin();
+            goToRoleSelection();
             return;
         }
 
@@ -167,11 +167,11 @@ public class OnboardingActivity extends BaseActivity {
 
     private void finishOnboarding() {
         getSharedPreferences(PREFS_NAME, MODE_PRIVATE).edit().putBoolean(KEY_SEEN, true).apply();
-        goToLogin();
+        goToRoleSelection();
     }
 
-    private void goToLogin() {
-        Intent intent = new Intent(this, LoginActivity.class);
+    private void goToRoleSelection() {
+        Intent intent = new Intent(this, RoleSelectionActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();

@@ -38,5 +38,15 @@
     <string name="coming_soon_title">Coming soon</string>
     <string name="coming_soon_body">We\'re still building this. Check back soon!</string>
 
+    <string name="role_title">Welcome to\nCampus Connect</string>
+    <string name="role_subtitle">Tell us who you are so we can set up the right experience</string>
+    <string name="role_student_title">I am a Student</string>
+    <string name="role_student_sub">Join classes, submit work, and connect with peers</string>
+    <string name="role_faculty_title">I am Faculty</string>
+    <string name="role_faculty_sub">Create classes, post resources, and manage subjects</string>
+    <string name="role_faculty_coming_soon">Faculty accounts are coming soon!</string>
+    <string name="role_login_prompt">Already have an account?</string>
+    <string name="role_login_action">Log in</string>
+
     <string name="app_footer_tag">CAMPUS CONNECT · v1.0</string>
 </resources>

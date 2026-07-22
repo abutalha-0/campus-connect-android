@@ -21,6 +21,7 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".role.RoleSelectionActivity" />
         <activity android:name=".auth.login.LoginActivity" />
         <activity android:name=".auth.register.RegisterActivity" />
         <activity android:name=".home.HomeActivity" />
