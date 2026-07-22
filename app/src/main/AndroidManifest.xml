@@ -26,6 +26,8 @@
         <activity android:name=".auth.register.RegisterActivity" />
         <activity android:name=".faculty.auth.FacultyRegisterActivity" />
         <activity android:name=".faculty.FacultyHomeActivity" />
+        <activity android:name=".faculty.edit.FacultyEditIdentityActivity" />
+        <activity android:name=".faculty.edit.FacultyAddLinkActivity" />
         <activity android:name=".home.HomeActivity" />
         <activity android:name=".profile.PublicProfileActivity"/>
         <activity android:name=".profile.edit.EditBasicInfoActivity"/>

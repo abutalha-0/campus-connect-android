@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/color_background">
+
+    <include layout="@layout/top_bar_edit" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/color_border" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView style="@style/FacultyFieldLabel" android:text="@string/faculty_label_name" />
+            <EditText
+                android:id="@+id/etName"
+                style="@style/FacultyInput"
+                android:inputType="textPersonName"
+                android:hint="@string/faculty_hint_name" />
+
+            <TextView style="@style/FacultyFieldLabel" android:text="@string/faculty_label_designation" />
+            <Spinner
+                android:id="@+id/spinnerDesignation"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:background="@drawable/bg_input"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:popupBackground="@color/color_card"
+                android:layout_marginBottom="16dp" />
+
+            <TextView style="@style/FacultyFieldLabel" android:text="@string/faculty_label_dept" />
+            <EditText
+                android:id="@+id/etDepartment"
+                style="@style/FacultyInput"
+                android:inputType="textCapCharacters"
+                android:hint="@string/faculty_hint_dept" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
