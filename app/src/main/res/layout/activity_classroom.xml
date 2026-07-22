@@ -27,15 +27,31 @@
             android:focusable="true"
             android:contentDescription="@null" />
 
-        <TextView
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:layout_marginStart="10dp"
-            android:text="@string/classroom_title"
-            android:textColor="@color/color_text_primary"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:orientation="vertical"
+            android:layout_marginStart="10dp">
+
+            <TextView
+                android:id="@+id/tvHeaderTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/classroom_title"
+                android:textColor="@color/color_text_primary"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvHeaderCode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="1dp"
+                android:textColor="@color/color_muted"
+                android:textSize="12sp"
+                android:visibility="gone" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/btnCreateClass"
@@ -50,6 +66,19 @@
             android:textColor="@color/color_text_primary"
             android:textSize="12.5sp"
             android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/btnSettings"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:padding="9dp"
+            android:src="@drawable/ic_settings"
+            android:tint="@color/color_text_primary"
+            android:background="@drawable/bg_button_outline"
+            android:clickable="true"
+            android:focusable="true"
+            android:contentDescription="@null"
+            android:visibility="gone" />
     </LinearLayout>
 
     <ScrollView
@@ -123,135 +152,23 @@
                     android:background="@drawable/bg_button_primary" />
             </LinearLayout>
 
-            <!-- ── Class state ── -->
+            <!-- ── Class state: subjects list ── -->
             <LinearLayout
                 android:id="@+id/classState"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingStart="20dp"
-                android:paddingEnd="20dp"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:paddingTop="4dp"
                 android:paddingBottom="24dp"
                 android:visibility="gone">
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_warning_banner"
-                    android:padding="12dp"
-                    android:text="@string/class_one_at_a_time"
-                    android:textColor="#FBBF24"
-                    android:textSize="11.5sp"
-                    android:lineSpacingMultiplier="1.4"
-                    android:layout_marginBottom="16dp" />
-
-                <!-- Class code card -->
                 <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:gravity="center_horizontal"
-                    android:background="@drawable/bg_card"
-                    android:padding="20dp"
-                    android:layout_marginBottom="20dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/class_code_heading"
-                        android:textColor="@color/color_muted"
-                        android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:letterSpacing="0.15" />
-
-                    <TextView
-                        android:id="@+id/tvClassCode"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:letterSpacing="0.35"
-                        android:textColor="@color/color_cyan"
-                        android:textSize="30sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/btnCopyCode"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:background="@drawable/bg_button_outline"
-                        android:paddingStart="14dp"
-                        android:paddingEnd="14dp"
-                        android:paddingTop="7dp"
-                        android:paddingBottom="7dp"
-                        android:text="@string/subject_copy"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/class_courses_heading"
-                    android:textColor="@color/color_muted"
-                    android:textSize="11sp"
-                    android:textStyle="bold"
-                    android:letterSpacing="0.1"
-                    android:layout_marginBottom="10dp" />
-
-                <LinearLayout
-                    android:id="@+id/coursesContainer"
+                    android:id="@+id/subjectsContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" />
-
-                <!-- Add-course row -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:layout_marginTop="4dp">
-
-                    <EditText
-                        android:id="@+id/etAddCode"
-                        android:layout_width="0dp"
-                        android:layout_height="52dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/bg_input"
-                        android:paddingStart="16dp"
-                        android:paddingEnd="16dp"
-                        android:inputType="number"
-                        android:hint="@string/class_add_course_hint"
-                        android:textColor="@color/color_text_primary"
-                        android:textSize="14sp"
-                        android:letterSpacing="0.05" />
-
-                    <TextView
-                        android:id="@+id/btnAddCourse"
-                        android:layout_width="52dp"
-                        android:layout_height="52dp"
-                        android:layout_marginStart="8dp"
-                        android:gravity="center"
-                        android:text="＋"
-                        android:textColor="@color/color_background"
-                        android:textSize="20sp"
-                        android:textStyle="bold"
-                        android:background="@drawable/bg_button_primary" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/btnDeleteClass"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="22dp"
-                    android:gravity="center"
-                    android:text="@string/class_delete"
-                    android:textColor="@color/color_red"
-                    android:textSize="13.5sp"
-                    android:textStyle="bold"
-                    android:background="@drawable/bg_delete_button" />
             </LinearLayout>
         </FrameLayout>
     </ScrollView>

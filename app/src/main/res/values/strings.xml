@@ -195,4 +195,14 @@
     <string name="create_class_no_subject">No subject found with that code.</string>
     <string name="create_class_failed">Couldn\'t create class. Try again.</string>
     <string name="course_already_added">This course is already in your class.</string>
+    <string name="class_leave">Leave Class</string>
+    <string name="class_leave_title">Leave this class?</string>
+    <string name="class_leave_message">You\'ll lose access to this class and its courses. You can join again later with the code.</string>
+    <string name="join_enter_code">Please enter a class code.</string>
+    <string name="join_no_class">No class found with that code.</string>
+    <string name="join_already">You\'re already in a class.</string>
+    <string name="join_failed">Couldn\'t join. Try again.</string>
+    <string name="class_left">You left the class</string>
+    <string name="class_settings_title">Class settings</string>
+    <string name="class_share_note">Share this code with students so they can join your class.</string>
 </resources>

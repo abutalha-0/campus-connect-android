@@ -1,12 +1,8 @@
 package com.campusconnect.app.classroom;
 
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
-import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -14,12 +10,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
-
 import com.campusconnect.app.R;
-import com.campusconnect.app.classroom.model.AddCourseRequest;
 import com.campusconnect.app.classroom.model.Classroom;
-import com.campusconnect.app.classroom.model.DeleteClassRequest;
+import com.campusconnect.app.classroom.model.JoinClassRequest;
 import com.campusconnect.app.classroom.model.Subject;
 import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.base.BaseActivity;
@@ -32,8 +25,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Classroom entry for students. Shows the "Join / Create" empty state when the
- * student has no class, or their class (code + courses + management) when they do.
+ * Classroom entry for students. Empty "Join / Create" state when not in a class;
+ * otherwise the class subjects list with a settings gear (view code / manage).
  */
 public class ClassroomActivity extends BaseActivity {
 
@@ -42,11 +35,10 @@ public class ClassroomActivity extends BaseActivity {
     };
 
     private View emptyState, classState;
-    private TextView tvClassCode;
-    private LinearLayout coursesContainer;
-    private EditText etAddCode;
-
-    private String classCode = "";
+    private TextView tvHeaderCode, btnCreateClass;
+    private View btnSettings;
+    private LinearLayout subjectsContainer;
+    private EditText etJoinCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,18 +47,18 @@ public class ClassroomActivity extends BaseActivity {
 
         emptyState = findViewById(R.id.emptyState);
         classState = findViewById(R.id.classState);
-        tvClassCode = findViewById(R.id.tvClassCode);
-        coursesContainer = findViewById(R.id.coursesContainer);
-        etAddCode = findViewById(R.id.etAddCode);
+        tvHeaderCode = findViewById(R.id.tvHeaderCode);
+        btnCreateClass = findViewById(R.id.btnCreateClass);
+        btnSettings = findViewById(R.id.btnSettings);
+        subjectsContainer = findViewById(R.id.subjectsContainer);
+        etJoinCode = findViewById(R.id.etJoinCode);
 
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
-        findViewById(R.id.btnCreateClass).setOnClickListener(v ->
+        btnCreateClass.setOnClickListener(v ->
                 startActivity(new Intent(this, CreateClassActivity.class)));
-        findViewById(R.id.btnJoinSubmit).setOnClickListener(v ->
-                Toast.makeText(this, getString(R.string.join_coming_soon), Toast.LENGTH_SHORT).show());
-        findViewById(R.id.btnCopyCode).setOnClickListener(v -> copyCode());
-        findViewById(R.id.btnAddCourse).setOnClickListener(v -> addCourse());
-        findViewById(R.id.btnDeleteClass).setOnClickListener(v -> promptDelete());
+        findViewById(R.id.btnJoinSubmit).setOnClickListener(v -> joinClass());
+        btnSettings.setOnClickListener(v ->
+                startActivity(new Intent(this, ClassSettingsActivity.class)));
     }
 
     @Override
@@ -86,7 +78,7 @@ public class ClassroomActivity extends BaseActivity {
                         if (response.isSuccessful() && response.body() != null) {
                             showClass(response.body());
                         } else {
-                            showEmpty();  // 404 → no class yet
+                            showEmpty();
                         }
                     }
 
@@ -101,34 +93,39 @@ public class ClassroomActivity extends BaseActivity {
     private void showEmpty() {
         emptyState.setVisibility(View.VISIBLE);
         classState.setVisibility(View.GONE);
-        findViewById(R.id.btnCreateClass).setVisibility(View.VISIBLE);
+        tvHeaderCode.setVisibility(View.GONE);
+        btnCreateClass.setVisibility(View.VISIBLE);
+        btnSettings.setVisibility(View.GONE);
     }
 
     private void showClass(Classroom classroom) {
         emptyState.setVisibility(View.GONE);
         classState.setVisibility(View.VISIBLE);
-        findViewById(R.id.btnCreateClass).setVisibility(View.GONE);
+        btnCreateClass.setVisibility(View.GONE);
+        btnSettings.setVisibility(View.VISIBLE);
 
-        classCode = classroom.getCode();
-        tvClassCode.setText(classCode);
-        renderCourses(classroom.getSubjects());
+        tvHeaderCode.setVisibility(View.VISIBLE);
+        tvHeaderCode.setText("Class code: " + classroom.getCode());
+
+        renderSubjects(classroom.getSubjects());
     }
 
-    private void renderCourses(List<Subject> subjects) {
-        coursesContainer.removeAllViews();
+    private void renderSubjects(List<Subject> subjects) {
+        subjectsContainer.removeAllViews();
         if (subjects == null || subjects.isEmpty()) {
             TextView empty = new TextView(this);
             empty.setText(getString(R.string.class_no_courses));
             empty.setTextColor(getResources().getColor(R.color.color_muted, null));
             empty.setTextSize(12.5f);
             empty.setGravity(android.view.Gravity.CENTER);
-            empty.setPadding(0, dp(14), 0, dp(14));
-            coursesContainer.addView(empty);
+            empty.setPadding(0, dp(24), 0, dp(24));
+            subjectsContainer.addView(empty);
             return;
         }
         for (int i = 0; i < subjects.size(); i++) {
             Subject s = subjects.get(i);
-            View row = LayoutInflater.from(this).inflate(R.layout.item_course, coursesContainer, false);
+            View row = LayoutInflater.from(this)
+                    .inflate(R.layout.item_class_subject, subjectsContainer, false);
 
             int color = PALETTE[i % PALETTE.length];
             TextView badge = row.findViewById(R.id.tvBadge);
@@ -136,124 +133,44 @@ public class ClassroomActivity extends BaseActivity {
             badge.setTextColor(color);
             badge.setBackgroundTintList(ColorStateList.valueOf((color & 0x00FFFFFF) | 0x24000000));
 
-            ((TextView) row.findViewById(R.id.tvCourseName)).setText(s.getName());
-            ((TextView) row.findViewById(R.id.tvCourseCode)).setText("Code: " + s.getCode());
-            row.findViewById(R.id.btnRemove).setOnClickListener(v -> removeCourse(s.getId()));
-            coursesContainer.addView(row);
+            ((TextView) row.findViewById(R.id.tvSubjectName)).setText(s.getName());
+            TextView instructor = row.findViewById(R.id.tvInstructor);
+            instructor.setText(s.getFacultyName() != null ? s.getFacultyName() : "");
+            // Opening a subject's content is a later round.
+            subjectsContainer.addView(row);
         }
     }
 
-    private void copyCode() {
-        ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        if (cm != null && classCode != null && !classCode.isEmpty()) {
-            cm.setPrimaryClip(ClipData.newPlainText("Class code", classCode));
-            ((TextView) findViewById(R.id.btnCopyCode)).setText(getString(R.string.subject_copied));
-        }
-    }
-
-    private void addCourse() {
-        String code = etAddCode.getText().toString().trim();
-        if (code.isEmpty()) return;
-
-        String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
-        RetrofitClient.createService(ClassApiService.class)
-                .addCourse(token, new AddCourseRequest(code))
-                .enqueue(new Callback<Subject>() {
-                    @Override
-                    public void onResponse(Call<Subject> call, Response<Subject> response) {
-                        if (isFinishing()) return;
-                        if (response.isSuccessful()) {
-                            etAddCode.setText("");
-                            loadClass();
-                        } else if (response.code() == 400) {
-                            Toast.makeText(ClassroomActivity.this,
-                                    getString(R.string.course_already_added), Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(ClassroomActivity.this,
-                                    getString(R.string.create_class_no_subject), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<Subject> call, Throwable t) {
-                        if (isFinishing()) return;
-                        Toast.makeText(ClassroomActivity.this,
-                                getString(R.string.error_network), Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    private void removeCourse(int subjectId) {
-        String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
-        RetrofitClient.createService(ClassApiService.class)
-                .removeCourse(token, subjectId)
-                .enqueue(new Callback<Void>() {
-                    @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
-                        if (isFinishing()) return;
-                        if (response.isSuccessful()) {
-                            loadClass();
-                        } else {
-                            Toast.makeText(ClassroomActivity.this, "Couldn't remove. Try again.",
-                                    Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
-                        if (isFinishing()) return;
-                        Toast.makeText(ClassroomActivity.this, getString(R.string.error_network),
-                                Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    private void promptDelete() {
-        EditText input = new EditText(this);
-        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        input.setHint(getString(R.string.hint_password));
-        int pad = dp(12);
-        LinearLayout wrap = new LinearLayout(this);
-        wrap.setPadding(dp(20), pad, dp(20), 0);
-        wrap.addView(input);
-
-        new AlertDialog.Builder(this)
-                .setTitle(getString(R.string.class_delete_title))
-                .setMessage(getString(R.string.class_delete_message) + "\n\n"
-                        + getString(R.string.class_delete_password_label))
-                .setView(wrap)
-                .setPositiveButton(getString(R.string.class_delete),
-                        (d, w) -> deleteClass(input.getText().toString()))
-                .setNegativeButton("Cancel", null)
-                .show();
-    }
-
-    private void deleteClass(String password) {
-        if (password == null || password.isEmpty()) {
-            Toast.makeText(this, getString(R.string.class_delete_wrong_password), Toast.LENGTH_SHORT).show();
+    private void joinClass() {
+        String code = etJoinCode.getText().toString().trim();
+        if (code.isEmpty()) {
+            Toast.makeText(this, getString(R.string.join_enter_code), Toast.LENGTH_SHORT).show();
             return;
         }
         String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
         RetrofitClient.createService(ClassApiService.class)
-                .deleteClass(token, new DeleteClassRequest(password))
-                .enqueue(new Callback<Void>() {
+                .joinClass(token, new JoinClassRequest(code))
+                .enqueue(new Callback<Classroom>() {
                     @Override
-                    public void onResponse(Call<Void> call, Response<Void> response) {
+                    public void onResponse(Call<Classroom> call, Response<Classroom> response) {
                         if (isFinishing()) return;
-                        if (response.isSuccessful()) {
-                            Toast.makeText(ClassroomActivity.this, "Class deleted", Toast.LENGTH_SHORT).show();
-                            loadClass();
+                        if (response.isSuccessful() && response.body() != null) {
+                            etJoinCode.setText("");
+                            showClass(response.body());
+                        } else if (response.code() == 404) {
+                            Toast.makeText(ClassroomActivity.this,
+                                    getString(R.string.join_no_class), Toast.LENGTH_SHORT).show();
                         } else if (response.code() == 400) {
                             Toast.makeText(ClassroomActivity.this,
-                                    getString(R.string.class_delete_wrong_password), Toast.LENGTH_SHORT).show();
+                                    getString(R.string.join_already), Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(ClassroomActivity.this, "Couldn't delete. Try again.",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ClassroomActivity.this,
+                                    getString(R.string.join_failed), Toast.LENGTH_SHORT).show();
                         }
                     }
 
                     @Override
-                    public void onFailure(Call<Void> call, Throwable t) {
+                    public void onFailure(Call<Classroom> call, Throwable t) {
                         if (isFinishing()) return;
                         Toast.makeText(ClassroomActivity.this, getString(R.string.error_network),
                                 Toast.LENGTH_SHORT).show();

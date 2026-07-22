@@ -4,6 +4,7 @@ import com.campusconnect.app.classroom.model.AddCourseRequest;
 import com.campusconnect.app.classroom.model.Classroom;
 import com.campusconnect.app.classroom.model.CreateClassRequest;
 import com.campusconnect.app.classroom.model.DeleteClassRequest;
+import com.campusconnect.app.classroom.model.JoinClassRequest;
 import com.campusconnect.app.classroom.model.Subject;
 
 import retrofit2.Call;
@@ -51,4 +52,13 @@ public interface ClassApiService {
             @Header("Authorization") String token,
             @Body DeleteClassRequest body
     );
+
+    @POST("api/classroom/classes/join/")
+    Call<Classroom> joinClass(
+            @Header("Authorization") String token,
+            @Body JoinClassRequest body
+    );
+
+    @DELETE("api/classroom/classes/leave/")
+    Call<Void> leaveClass(@Header("Authorization") String token);
 }
