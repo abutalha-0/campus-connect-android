@@ -424,6 +424,7 @@ public class SubjectDetailActivity extends BaseActivity {
         roleBadge.setBackgroundTintList(ColorStateList.valueOf((roleColor & 0x00FFFFFF) | 0x24000000));
 
         ((TextView) card.findViewById(R.id.tvDate)).setText(formatDate(n.getCreatedAt()));
+        ((TextView) card.findViewById(R.id.tvTitle)).setText(n.getTitle());
         ((TextView) card.findViewById(R.id.tvText)).setText(n.getText());
 
         View highlightBox = card.findViewById(R.id.highlightBox);

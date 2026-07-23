@@ -23,6 +23,14 @@
             android:orientation="vertical"
             android:padding="20dp">
 
+            <!-- ── Title ───────────────────────────────────────────────── -->
+            <TextView style="@style/FacultyFieldLabel" android:text="@string/notice_label_title" />
+            <EditText
+                android:id="@+id/etTitle"
+                style="@style/FacultyInput"
+                android:inputType="textCapSentences"
+                android:hint="@string/notice_hint_title" />
+
             <!-- ── Notice text ─────────────────────────────────────────── -->
             <TextView style="@style/FacultyFieldLabel" android:text="@string/notice_label_text" />
             <EditText

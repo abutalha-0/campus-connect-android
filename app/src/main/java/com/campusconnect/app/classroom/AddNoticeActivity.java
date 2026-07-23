@@ -52,6 +52,7 @@ public class AddNoticeActivity extends BaseActivity {
 
     private static final String EXTRA_SUBJECT_ID = "subject_id";
     private static final String EXTRA_NOTICE_ID = "notice_id";
+    private static final String EXTRA_TITLE = "title";
     private static final String EXTRA_TEXT = "text";
     private static final String EXTRA_HIGHLIGHT = "highlight";
     private static final String EXTRA_EVENT_DATE = "event_date";
@@ -66,6 +67,7 @@ public class AddNoticeActivity extends BaseActivity {
     public static Intent editIntent(Context ctx, int subjectId, Notice n) {
         Intent i = createIntent(ctx, subjectId);
         i.putExtra(EXTRA_NOTICE_ID, n.getId());
+        i.putExtra(EXTRA_TITLE, n.getTitle());
         i.putExtra(EXTRA_TEXT, n.getText());
         i.putExtra(EXTRA_HIGHLIGHT, n.getHighlight());
         i.putExtra(EXTRA_EVENT_DATE, n.getEventDate());
@@ -76,7 +78,7 @@ public class AddNoticeActivity extends BaseActivity {
     private int subjectId;
     private int noticeId = -1;
 
-    private EditText etText, etHighlight;
+    private EditText etTitle, etText, etHighlight;
     private SwitchMaterial swHighlight;
     private View highlightDetails, previewBox;
     private TextView chipToday, chipTomorrow, chipNextWeek;
@@ -98,6 +100,7 @@ public class AddNoticeActivity extends BaseActivity {
         subjectId = getIntent().getIntExtra(EXTRA_SUBJECT_ID, -1);
         noticeId = getIntent().getIntExtra(EXTRA_NOTICE_ID, -1);
 
+        etTitle = findViewById(R.id.etTitle);
         etText = findViewById(R.id.etText);
         etHighlight = findViewById(R.id.etHighlight);
         swHighlight = findViewById(R.id.swHighlight);
@@ -129,6 +132,7 @@ public class AddNoticeActivity extends BaseActivity {
         btnPickDate.setOnClickListener(v -> openDatePicker());
         btnPickTime.setOnClickListener(v -> openTimePicker());
 
+        etTitle.addTextChangedListener(simpleWatcher(this::updateSaveEnabled));
         etText.addTextChangedListener(simpleWatcher(this::updateSaveEnabled));
 
         filePicker = registerForActivityResult(
@@ -153,6 +157,7 @@ public class AddNoticeActivity extends BaseActivity {
 
     private void prefillIfEditing() {
         if (noticeId == -1) return;
+        etTitle.setText(getIntent().getStringExtra(EXTRA_TITLE));
         etText.setText(getIntent().getStringExtra(EXTRA_TEXT));
 
         String highlight = getIntent().getStringExtra(EXTRA_HIGHLIGHT);
@@ -299,14 +304,16 @@ public class AddNoticeActivity extends BaseActivity {
     // ── Save ──────────────────────────────────────────────────────────────
 
     private void updateSaveEnabled() {
-        boolean valid = !etText.getText().toString().trim().isEmpty();
+        boolean valid = !etTitle.getText().toString().trim().isEmpty()
+                && !etText.getText().toString().trim().isEmpty();
         btnSave.setEnabled(valid);
         btnSave.setAlpha(valid ? 1f : 0.5f);
     }
 
     private void save() {
+        String title = etTitle.getText().toString().trim();
         String text = etText.getText().toString().trim();
-        if (text.isEmpty()) {
+        if (title.isEmpty() || text.isEmpty()) {
             Toast.makeText(this, getString(R.string.error_fields), Toast.LENGTH_SHORT).show();
             return;
         }
@@ -322,18 +329,19 @@ public class AddNoticeActivity extends BaseActivity {
         btnSave.setText(getString(R.string.loading));
 
         if (pickedFileUri != null) {
-            saveMultipart(text, highlight, eventDate, eventTime);
+            saveMultipart(title, text, highlight, eventDate, eventTime);
         } else {
-            saveJson(text, highlight, eventDate, eventTime);
+            saveJson(title, text, highlight, eventDate, eventTime);
         }
     }
 
     // Built as a raw JSON body (not a typed Gson model) so event_date/
     // event_time can be sent as explicit null to clear them — the default
     // Gson used elsewhere in the app omits null fields entirely.
-    private void saveJson(String text, String highlight, String eventDate, String eventTime) {
+    private void saveJson(String title, String text, String highlight, String eventDate, String eventTime) {
         JSONObject json = new JSONObject();
         try {
+            json.put("title", title);
             json.put("text", text);
             json.put("highlight", highlight);
             json.put("event_date", eventDate != null ? eventDate : JSONObject.NULL);
@@ -355,7 +363,7 @@ public class AddNoticeActivity extends BaseActivity {
         call.enqueue(saveCallback());
     }
 
-    private void saveMultipart(String text, String highlight, String eventDate, String eventTime) {
+    private void saveMultipart(String title, String text, String highlight, String eventDate, String eventTime) {
         File file;
         try {
             file = FileUtils.copyToCache(this, pickedFileUri);
@@ -366,6 +374,7 @@ public class AddNoticeActivity extends BaseActivity {
         }
 
         Map<String, RequestBody> fields = new HashMap<>();
+        fields.put("title", text(title));
         fields.put("text", text(text));
         fields.put("highlight", text(highlight));
         // Multipart form fields can't carry a literal JSON null, so clearing

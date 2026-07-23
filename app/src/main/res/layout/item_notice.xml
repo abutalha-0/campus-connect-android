@@ -91,10 +91,20 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/tvText"
+        android:id="@+id/tvTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
+        android:textColor="@color/color_text_primary"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:lineSpacingMultiplier="1.25" />
+
+    <TextView
+        android:id="@+id/tvText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:textColor="@color/color_text_body"
         android:textSize="13.5sp"
         android:lineSpacingMultiplier="1.4" />

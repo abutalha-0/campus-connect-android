@@ -2,6 +2,7 @@ package com.campusconnect.app.classroom.model;
 
 public class Notice {
     private int id;
+    private String title;
     private String text;
     private String highlight;
     private String event_date;
@@ -14,6 +15,7 @@ public class Notice {
     private boolean has_highlight;
 
     public int getId() { return id; }
+    public String getTitle() { return title; }
     public String getText() { return text; }
     public String getHighlight() { return highlight; }
     public String getEventDate() { return event_date; }

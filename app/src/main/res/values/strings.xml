@@ -121,6 +121,8 @@
     <string name="notices_empty">No notices posted yet.</string>
     <string name="post_notice_title">Post Notice</string>
     <string name="edit_notice_title">Edit Notice</string>
+    <string name="notice_label_title">Title</string>
+    <string name="notice_hint_title">e.g. Midterm Exam Announcement</string>
     <string name="notice_label_text">Notice</string>
     <string name="notice_hint_text">Write the notice for your students</string>
     <string name="notice_hint_highlight">e.g. Exam date, New deadline</string>
