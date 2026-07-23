@@ -18,6 +18,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import com.campusconnect.app.R;
 import com.campusconnect.app.classroom.model.Notice;
 import com.campusconnect.app.classroom.model.Resource;
+import com.campusconnect.app.classroom.model.Subject;
 import com.campusconnect.app.classroom.util.ResourceTypes;
 import com.campusconnect.app.classroom.util.Weeks;
 import com.campusconnect.app.core.api.RetrofitClient;
@@ -55,6 +56,14 @@ public class SubjectDetailActivity extends BaseActivity {
     private View contentResources, contentNotice, contentWork;
     private LinearLayout resourcesContainer, noticesContainer;
     private ActivityResultLauncher<Intent> settingsLauncher;
+    private View btnSettings, btnPostResource, btnPostNotice;
+
+    // Whether the current viewer owns this subject (faculty) / may post
+    // content here (faculty or CR). Resolved from the subject detail call;
+    // conservative (false) until then so controls don't flash on for a
+    // read-only viewer.
+    private boolean isOwner = false;
+    private boolean canPost = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +84,14 @@ public class SubjectDetailActivity extends BaseActivity {
         contentWork = findViewById(R.id.tabContentWork);
         resourcesContainer = findViewById(R.id.resourcesContainer);
         noticesContainer = findViewById(R.id.noticesContainer);
+        btnSettings = findViewById(R.id.btnSettings);
+        btnPostResource = findViewById(R.id.btnPostResource);
+        btnPostNotice = findViewById(R.id.btnPostNotice);
+
+        // Hidden until the subject detail call resolves who's viewing.
+        btnSettings.setVisibility(View.GONE);
+        btnPostResource.setVisibility(View.GONE);
+        btnPostNotice.setVisibility(View.GONE);
 
         settingsLauncher = registerForActivityResult(
                 new ActivityResultContracts.StartActivityForResult(),
@@ -95,11 +112,11 @@ public class SubjectDetailActivity extends BaseActivity {
         tabNotice.setOnClickListener(v -> selectTab(1));
         tabWork.setOnClickListener(v -> selectTab(2));
 
-        findViewById(R.id.btnPostResource).setOnClickListener(v ->
+        btnPostResource.setOnClickListener(v ->
                 startActivity(AddResourceActivity.createIntent(this, subjectId)));
-        findViewById(R.id.btnPostNotice).setOnClickListener(v ->
+        btnPostNotice.setOnClickListener(v ->
                 startActivity(AddNoticeActivity.createIntent(this, subjectId)));
-        findViewById(R.id.btnSettings).setOnClickListener(v ->
+        btnSettings.setOnClickListener(v ->
                 settingsLauncher.launch(SubjectSettingsActivity.createIntent(this, subjectId)));
 
         selectTab(0);
@@ -108,8 +125,38 @@ public class SubjectDetailActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        loadSubject();
         loadResources();
         loadNotices();
+    }
+
+    private void loadSubject() {
+        String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
+        RetrofitClient.createService(SubjectApiService.class)
+                .getSubject(token, subjectId)
+                .enqueue(new Callback<Subject>() {
+                    @Override
+                    public void onResponse(Call<Subject> call, Response<Subject> response) {
+                        if (isFinishing()) return;
+                        if (response.isSuccessful() && response.body() != null) {
+                            Subject subject = response.body();
+                            ((TextView) findViewById(R.id.tvSubjectName)).setText(subject.getName());
+                            ((TextView) findViewById(R.id.tvFacultyName))
+                                    .setText(subject.getFacultyName());
+
+                            isOwner = subject.isOwner();
+                            canPost = subject.canPost();
+                            btnSettings.setVisibility(isOwner ? View.VISIBLE : View.GONE);
+                            btnPostResource.setVisibility(canPost ? View.VISIBLE : View.GONE);
+                            btnPostNotice.setVisibility(canPost ? View.VISIBLE : View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<Subject> call, Throwable t) {
+                        // header/permissions stay as last known
+                    }
+                });
     }
 
     private void selectTab(int index) {
@@ -203,9 +250,19 @@ public class SubjectDetailActivity extends BaseActivity {
         ((TextView) row.findViewById(R.id.tvMeta)).setText(ResourceTypes.labelFor(this, key));
 
         row.findViewById(R.id.resourceBody).setOnClickListener(v -> showDetailDialog(r));
-        row.findViewById(R.id.btnEdit).setOnClickListener(v ->
-                startActivity(AddResourceActivity.editIntent(this, subjectId, r)));
-        row.findViewById(R.id.btnDelete).setOnClickListener(v -> confirmDelete(r));
+
+        View btnEdit = row.findViewById(R.id.btnEdit);
+        View btnDelete = row.findViewById(R.id.btnDelete);
+        if (r.canEdit()) {
+            btnEdit.setVisibility(View.VISIBLE);
+            btnDelete.setVisibility(View.VISIBLE);
+            btnEdit.setOnClickListener(v ->
+                    startActivity(AddResourceActivity.editIntent(this, subjectId, r)));
+            btnDelete.setOnClickListener(v -> confirmDelete(r));
+        } else {
+            btnEdit.setVisibility(View.GONE);
+            btnDelete.setVisibility(View.GONE);
+        }
 
         return row;
     }
@@ -333,11 +390,14 @@ public class SubjectDetailActivity extends BaseActivity {
 
         View btnEdit = card.findViewById(R.id.btnEdit);
         View btnDelete = card.findViewById(R.id.btnDelete);
-        if (n.isMine()) {
+        if (n.canEdit()) {
             btnEdit.setVisibility(View.VISIBLE);
             btnDelete.setVisibility(View.VISIBLE);
             btnEdit.setOnClickListener(v -> startActivity(AddNoticeActivity.editIntent(this, subjectId, n)));
             btnDelete.setOnClickListener(v -> confirmDeleteNotice(n));
+        } else {
+            btnEdit.setVisibility(View.GONE);
+            btnDelete.setVisibility(View.GONE);
         }
         return card;
     }

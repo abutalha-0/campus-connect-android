@@ -205,4 +205,6 @@
     <string name="class_left">You left the class</string>
     <string name="class_settings_title">Class settings</string>
     <string name="class_share_note">Share this code with students so they can join your class.</string>
+    <string name="class_create_not_cr_title">CR only</string>
+    <string name="class_create_not_cr">Only a CR can create a class. Configure it from your profile.</string>
 </resources>

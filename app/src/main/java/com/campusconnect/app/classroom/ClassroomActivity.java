@@ -136,7 +136,8 @@ public class ClassroomActivity extends BaseActivity {
             ((TextView) row.findViewById(R.id.tvSubjectName)).setText(s.getName());
             TextView instructor = row.findViewById(R.id.tvInstructor);
             instructor.setText(s.getFacultyName() != null ? s.getFacultyName() : "");
-            // Opening a subject's content is a later round.
+            row.setOnClickListener(v -> SubjectDetailActivity.start(
+                    this, s.getId(), s.getName(), s.getFacultyName()));
             subjectsContainer.addView(row);
         }
     }

@@ -8,6 +8,8 @@ public class Subject {
     private String room;
     private String code;
     private String faculty_name;
+    private boolean is_owner;
+    private boolean can_post;
     private String created_at;
 
     public int getId() { return id; }
@@ -17,5 +19,7 @@ public class Subject {
     public String getRoom() { return room; }
     public String getCode() { return code; }
     public String getFacultyName() { return faculty_name; }
+    public boolean isOwner() { return is_owner; }
+    public boolean canPost() { return can_post; }
     public String getCreatedAt() { return created_at; }
 }

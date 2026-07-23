@@ -8,6 +8,7 @@ public class Notice {
     private String created_at;
     private Author author;
     private boolean mine;
+    private boolean can_edit;
 
     public int getId() { return id; }
     public String getText() { return text; }
@@ -16,6 +17,7 @@ public class Notice {
     public String getCreatedAt() { return created_at; }
     public Author getAuthor() { return author; }
     public boolean isMine() { return mine; }
+    public boolean canEdit() { return can_edit; }
 
     public static class Author {
         private int id;

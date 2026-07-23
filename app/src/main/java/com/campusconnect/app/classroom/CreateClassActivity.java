@@ -135,6 +135,12 @@ public class CreateClassActivity extends BaseActivity {
                         btnCreate.setEnabled(true);
                         if (response.isSuccessful()) {
                             finish();  // ClassroomActivity will show the new class
+                        } else if (response.code() == 403) {
+                            new androidx.appcompat.app.AlertDialog.Builder(CreateClassActivity.this)
+                                    .setTitle(getString(R.string.class_create_not_cr_title))
+                                    .setMessage(getString(R.string.class_create_not_cr))
+                                    .setPositiveButton("OK", null)
+                                    .show();
                         } else {
                             Toast.makeText(CreateClassActivity.this,
                                     getString(R.string.create_class_failed), Toast.LENGTH_SHORT).show();
