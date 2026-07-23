@@ -138,6 +138,12 @@ public class ClassroomActivity extends BaseActivity {
             ((TextView) row.findViewById(R.id.tvSubjectName)).setText(s.getName());
             TextView instructor = row.findViewById(R.id.tvInstructor);
             instructor.setText(s.getFacultyName() != null ? s.getFacultyName() : "");
+            // Tapping the instructor name opens their public profile instead
+            // of the subject — this child click target takes the touch
+            // before it reaches the row's own listener below.
+            instructor.setOnClickListener(v ->
+                    com.campusconnect.app.faculty.FacultyPublicProfileActivity
+                            .start(this, s.getFacultyUserId()));
             row.setOnClickListener(v -> SubjectDetailActivity.start(
                     this, s.getId(), s.getName(), s.getFacultyName()));
             subjectsContainer.addView(row);

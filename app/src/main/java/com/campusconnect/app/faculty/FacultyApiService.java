@@ -6,6 +6,7 @@ import com.campusconnect.app.faculty.model.FacultyLink;
 import com.campusconnect.app.faculty.model.FacultyLinkRequest;
 import com.campusconnect.app.faculty.model.FacultyProfile;
 import com.campusconnect.app.faculty.model.FacultyProfileUpdateRequest;
+import com.campusconnect.app.faculty.model.FacultyPublicProfile;
 
 import okhttp3.MultipartBody;
 import retrofit2.Call;
@@ -50,5 +51,11 @@ public interface FacultyApiService {
     Call<Void> deleteLink(
             @Header("Authorization") String token,
             @Path("id") int id
+    );
+
+    @GET("api/faculty/{userId}/")
+    Call<FacultyPublicProfile> getPublicProfile(
+            @Header("Authorization") String token,
+            @Path("userId") int userId
     );
 }

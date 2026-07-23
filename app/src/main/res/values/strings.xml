@@ -240,4 +240,9 @@
     <string name="feed_comments_empty">No comments yet.</string>
     <string name="feed_hint_comment">Write a comment…</string>
     <string name="feed_comment_delete_title">Delete comment?</string>
+
+    <!-- Faculty public profile -->
+    <string name="faculty_public_title">Faculty Profile</string>
+    <string name="faculty_message_coming_soon">Messaging is coming in a future update.</string>
+    <string name="faculty_no_subjects">No subjects taught yet.</string>
 </resources>

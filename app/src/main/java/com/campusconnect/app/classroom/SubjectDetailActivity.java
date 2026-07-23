@@ -142,8 +142,11 @@ public class SubjectDetailActivity extends BaseActivity {
                         if (response.isSuccessful() && response.body() != null) {
                             Subject subject = response.body();
                             ((TextView) findViewById(R.id.tvSubjectName)).setText(subject.getName());
-                            ((TextView) findViewById(R.id.tvFacultyName))
-                                    .setText(subject.getFacultyName());
+                            TextView tvFacultyName = findViewById(R.id.tvFacultyName);
+                            tvFacultyName.setText(subject.getFacultyName());
+                            tvFacultyName.setOnClickListener(v ->
+                                    com.campusconnect.app.faculty.FacultyPublicProfileActivity
+                                            .start(SubjectDetailActivity.this, subject.getFacultyUserId()));
 
                             isOwner = subject.isOwner();
                             canPost = subject.canPost();
