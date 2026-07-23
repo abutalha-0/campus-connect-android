@@ -7,7 +7,8 @@ import java.util.Locale;
 
 /**
  * Buckets an upload timestamp into the Saturday→Friday week it falls in, for
- * grouping resources. Uses the date portion of the ISO created_at string.
+ * grouping resources (and, via the relative-label helpers below, Schedule).
+ * Uses the date portion of the ISO created_at string.
  */
 public final class Weeks {
 
@@ -19,6 +20,8 @@ public final class Weeks {
             new SimpleDateFormat("yyyyMMdd", Locale.US);
     private static final SimpleDateFormat LABEL_FMT =
             new SimpleDateFormat("MMM d", Locale.US);
+    private static final SimpleDateFormat DAY_FMT =
+            new SimpleDateFormat("EEE", Locale.US);
 
     /** Stable key for the Saturday that starts this timestamp's week. */
     public static String weekKey(String isoDateTime) {
@@ -34,6 +37,39 @@ public final class Weeks {
         saturday.add(Calendar.DAY_OF_MONTH, 6);
         Date end = saturday.getTime();
         return LABEL_FMT.format(start) + " – " + LABEL_FMT.format(end);
+    }
+
+    /** Short day-of-week label, e.g. "Sat", "Mon". */
+    public static String dayLabel(String isoDateTime) {
+        Calendar saturday = saturdayOf(isoDateTime);
+        // saturdayOf() rewinds to the week's Saturday; parse the original
+        // date directly instead so the label reflects the actual day.
+        if (isoDateTime == null || isoDateTime.length() < 10) return "";
+        try {
+            Date d = ISO_DATE.parse(isoDateTime.substring(0, 10));
+            return DAY_FMT.format(d);
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    /** "This Week", "Next Week", or null if further out (caller supplies a fallback). */
+    public static String relativeWeekLabel(String isoDateTime) {
+        String key = weekKey(isoDateTime);
+        String todayKey = weekKey(new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date()));
+        if (key.equals(todayKey)) return "This Week";
+
+        Calendar todaySaturday = saturdayOf(new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(new Date()));
+        if (todaySaturday != null) {
+            todaySaturday.add(Calendar.DAY_OF_MONTH, 7);
+            if (key.equals(KEY_FMT.format(todaySaturday.getTime()))) return "Next Week";
+        }
+        return null;
+    }
+
+    /** The Calendar (set to midnight) for the Saturday that starts this date's week. */
+    public static Calendar weekStart(String isoDateTime) {
+        return saturdayOf(isoDateTime);
     }
 
     private static Calendar saturdayOf(String isoDateTime) {

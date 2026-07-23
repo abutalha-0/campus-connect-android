@@ -245,4 +245,11 @@
     <string name="faculty_public_title">Faculty Profile</string>
     <string name="faculty_message_coming_soon">Messaging is coming in a future update.</string>
     <string name="faculty_no_subjects">No subjects taught yet.</string>
+
+    <!-- Schedule -->
+    <string name="tab_schedule">Schedule</string>
+    <string name="schedule_title">Schedule</string>
+    <string name="schedule_subtitle">Auto-collected from all subject notices</string>
+    <string name="schedule_empty">No upcoming dates. Faculty and CRs can add one when posting a notice.</string>
+    <string name="schedule_all_day">All day</string>
 </resources>

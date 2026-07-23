@@ -39,6 +39,7 @@
         <activity android:name=".classroom.AddFeedPostActivity" />
         <activity android:name=".classroom.FeedPostDetailActivity" />
         <activity android:name=".faculty.FacultyPublicProfileActivity" />
+        <activity android:name=".classroom.ScheduleActivity" />
         <activity android:name=".classroom.ClassSettingsActivity" />
         <activity android:name=".home.HomeActivity" />
         <activity android:name=".profile.PublicProfileActivity"/>

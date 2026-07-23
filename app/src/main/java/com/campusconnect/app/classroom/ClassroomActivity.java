@@ -59,6 +59,8 @@ public class ClassroomActivity extends BaseActivity {
         findViewById(R.id.btnJoinSubmit).setOnClickListener(v -> joinClass());
         btnSettings.setOnClickListener(v ->
                 startActivity(new Intent(this, ClassSettingsActivity.class)));
+        findViewById(R.id.tabSchedule).setOnClickListener(v ->
+                startActivity(new Intent(this, ScheduleActivity.class)));
         findViewById(R.id.tabFeed).setOnClickListener(v ->
                 startActivity(new Intent(this, FeedActivity.class)));
     }

@@ -184,6 +184,20 @@
                         android:textColor="@color/color_cyan" />
 
                     <TextView
+                        android:id="@+id/tabSchedule"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp"
+                        android:gravity="center"
+                        android:text="@string/tab_schedule"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:background="@drawable/bg_tab_pill_inactive"
+                        android:textColor="@color/color_muted" />
+
+                    <TextView
                         android:id="@+id/tabFeed"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"

@@ -44,6 +44,7 @@ public class SubjectDetailActivity extends BaseActivity {
     public static final String EXTRA_SUBJECT_ID = "subject_id";
     public static final String EXTRA_SUBJECT_NAME = "subject_name";
     public static final String EXTRA_FACULTY_NAME = "faculty_name";
+    public static final String EXTRA_TARGET_NOTICE_ID = "target_notice_id";
 
     public static void start(Context ctx, int id, String name, String facultyName) {
         Intent i = new Intent(ctx, SubjectDetailActivity.class);
@@ -53,7 +54,18 @@ public class SubjectDetailActivity extends BaseActivity {
         ctx.startActivity(i);
     }
 
+    /** Opens straight to the Notice tab, scrolled to and briefly highlighting noticeId — used from Schedule. */
+    public static void startAtNotice(Context ctx, int subjectId, String subjectName, int noticeId) {
+        Intent i = new Intent(ctx, SubjectDetailActivity.class);
+        i.putExtra(EXTRA_SUBJECT_ID, subjectId);
+        i.putExtra(EXTRA_SUBJECT_NAME, subjectName);
+        i.putExtra(EXTRA_FACULTY_NAME, "");
+        i.putExtra(EXTRA_TARGET_NOTICE_ID, noticeId);
+        ctx.startActivity(i);
+    }
+
     private int subjectId;
+    private int targetNoticeId;
     private TextView tabResources, tabNotice, tabWork;
     private View contentResources, contentNotice, contentWork;
     private LinearLayout resourcesContainer, noticesContainer;
@@ -73,6 +85,7 @@ public class SubjectDetailActivity extends BaseActivity {
         setContentView(R.layout.activity_subject_detail);
 
         subjectId = getIntent().getIntExtra(EXTRA_SUBJECT_ID, -1);
+        targetNoticeId = getIntent().getIntExtra(EXTRA_TARGET_NOTICE_ID, -1);
         ((TextView) findViewById(R.id.tvSubjectName))
                 .setText(getIntent().getStringExtra(EXTRA_SUBJECT_NAME));
         ((TextView) findViewById(R.id.tvFacultyName))
@@ -121,7 +134,7 @@ public class SubjectDetailActivity extends BaseActivity {
         btnSettings.setOnClickListener(v ->
                 settingsLauncher.launch(SubjectSettingsActivity.createIntent(this, subjectId)));
 
-        selectTab(0);
+        selectTab(targetNoticeId != -1 ? 1 : 0);
     }
 
     @Override
@@ -359,9 +372,29 @@ public class SubjectDetailActivity extends BaseActivity {
             noticesContainer.addView(empty);
             return;
         }
+        View targetRow = null;
         for (Notice n : notices) {
-            noticesContainer.addView(buildNoticeRow(n));
+            View row = buildNoticeRow(n);
+            noticesContainer.addView(row);
+            if (targetNoticeId != -1 && n.getId() == targetNoticeId) targetRow = row;
         }
+
+        if (targetRow != null) {
+            scrollToAndHighlight(targetRow);
+            targetNoticeId = -1;  // only jump once, not on every subsequent reload
+        }
+    }
+
+    private void scrollToAndHighlight(View row) {
+        View scrollView = findViewById(R.id.scrollView);
+        row.post(() -> {
+            if (scrollView instanceof android.widget.ScrollView) {
+                int y = row.getTop();
+                ((android.widget.ScrollView) scrollView).smoothScrollTo(0, Math.max(0, y - dp(16)));
+            }
+            row.setBackgroundResource(R.drawable.bg_card_highlight);
+            row.postDelayed(() -> row.setBackgroundResource(R.drawable.bg_card), 1600);
+        });
     }
 
     private View buildNoticeRow(Notice n) {
