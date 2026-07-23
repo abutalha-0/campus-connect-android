@@ -55,6 +55,58 @@
                 android:hint="@string/notice_hint_highlight"
                 android:visibility="gone" />
 
+            <!-- Structured date/time, independent of the free-text highlight
+                 above. Setting either is enough to trigger the callout. -->
+            <CheckBox
+                android:id="@+id/cbDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/notice_date_toggle"
+                android:textColor="@color/color_text_body"
+                android:textSize="12.5sp"
+                android:buttonTint="@color/color_cyan"
+                android:layout_marginBottom="8dp" />
+
+            <LinearLayout
+                android:id="@+id/dateTimeRow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                android:layout_marginBottom="16dp">
+
+                <TextView
+                    android:id="@+id/btnPickDate"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_input"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="@string/notice_pick_date"
+                    android:textColor="@color/color_muted"
+                    android:textSize="13.5sp"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/btnPickTime"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_input"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="@string/notice_pick_time"
+                    android:textColor="@color/color_muted"
+                    android:textSize="13.5sp"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+            </LinearLayout>
+
             <TextView style="@style/FacultyFieldLabel" android:text="@string/notice_label_attachment" />
             <TextView
                 android:id="@+id/btnPickFile"

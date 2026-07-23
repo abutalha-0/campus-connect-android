@@ -127,6 +127,9 @@
     <string name="notice_hint_highlight">e.g. Exam date: Jul 20, 10:00 AM</string>
     <string name="notice_label_attachment">Attachment (optional)</string>
     <string name="notice_delete_title">Delete notice?</string>
+    <string name="notice_date_toggle">Add a date (e.g. an exam or deadline)</string>
+    <string name="notice_pick_date">Select date</string>
+    <string name="notice_pick_time">Add time (optional)</string>
     <!-- Subject settings -->
     <string name="subject_settings_title">Subject Settings</string>
     <string name="subject_code_label">SHARE CODE</string>

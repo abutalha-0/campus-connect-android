@@ -19,6 +19,7 @@ import com.campusconnect.app.R;
 import com.campusconnect.app.classroom.model.Notice;
 import com.campusconnect.app.classroom.model.Resource;
 import com.campusconnect.app.classroom.model.Subject;
+import com.campusconnect.app.classroom.util.NoticeDates;
 import com.campusconnect.app.classroom.util.ResourceTypes;
 import com.campusconnect.app.classroom.util.Weeks;
 import com.campusconnect.app.core.api.RetrofitClient;
@@ -381,9 +382,9 @@ public class SubjectDetailActivity extends BaseActivity {
         ((TextView) card.findViewById(R.id.tvText)).setText(n.getText());
 
         View highlightBox = card.findViewById(R.id.highlightBox);
-        if (n.getHighlight() != null && !n.getHighlight().isEmpty()) {
+        if (n.hasHighlight()) {
             highlightBox.setVisibility(View.VISIBLE);
-            ((TextView) card.findViewById(R.id.tvHighlight)).setText(n.getHighlight());
+            ((TextView) card.findViewById(R.id.tvHighlight)).setText(highlightText(n));
         } else {
             highlightBox.setVisibility(View.GONE);
         }
@@ -400,6 +401,23 @@ public class SubjectDetailActivity extends BaseActivity {
             btnDelete.setVisibility(View.GONE);
         }
         return card;
+    }
+
+    /**
+     * Combines the free-text highlight label with the structured event
+     * date/time (either or both may be present) into one display line, e.g.
+     * "Exam date · Jul 20, 2026 · 10:00 AM".
+     */
+    private String highlightText(Notice n) {
+        String label = n.getHighlight();
+        String dateLabel = NoticeDates.format(n.getEventDate(), n.getEventTime());
+
+        boolean hasLabel = label != null && !label.isEmpty();
+        boolean hasDate = dateLabel != null;
+
+        if (hasLabel && hasDate) return label + " · " + dateLabel;
+        if (hasDate) return dateLabel;
+        return label;
     }
 
     private void confirmDeleteNotice(Notice n) {

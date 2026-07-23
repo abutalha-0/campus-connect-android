@@ -1,7 +1,6 @@
 package com.campusconnect.app.classroom;
 
 import com.campusconnect.app.classroom.model.Notice;
-import com.campusconnect.app.classroom.model.NoticeRequest;
 
 import java.util.List;
 import java.util.Map;
@@ -28,11 +27,14 @@ public interface NoticeApiService {
             @Path("subjectId") int subjectId
     );
 
+    // A pre-built JSON RequestBody (not a typed model) so event_date/event_time
+    // can be sent as explicit null to clear them — Gson omits null fields by
+    // default when serializing a typed object.
     @POST("api/classroom/subjects/{subjectId}/notices/")
     Call<Notice> addNotice(
             @Header("Authorization") String token,
             @Path("subjectId") int subjectId,
-            @Body NoticeRequest body
+            @Body RequestBody body
     );
 
     @PATCH("api/classroom/subjects/{subjectId}/notices/{id}/")
@@ -40,7 +42,7 @@ public interface NoticeApiService {
             @Header("Authorization") String token,
             @Path("subjectId") int subjectId,
             @Path("id") int id,
-            @Body NoticeRequest body
+            @Body RequestBody body
     );
 
     @Multipart
