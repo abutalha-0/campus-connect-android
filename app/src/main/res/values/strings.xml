@@ -123,13 +123,19 @@
     <string name="edit_notice_title">Edit Notice</string>
     <string name="notice_label_text">Notice</string>
     <string name="notice_hint_text">Write the notice for your students</string>
-    <string name="notice_highlight_toggle">Add a highlighted callout (e.g. a date or deadline)</string>
-    <string name="notice_hint_highlight">e.g. Exam date: Jul 20, 10:00 AM</string>
+    <string name="notice_hint_highlight">e.g. Exam date, New deadline</string>
     <string name="notice_label_attachment">Attachment (optional)</string>
     <string name="notice_delete_title">Delete notice?</string>
-    <string name="notice_date_toggle">Add a date (e.g. an exam or deadline)</string>
     <string name="notice_pick_date">Select date</string>
-    <string name="notice_pick_time">Add time (optional)</string>
+    <string name="notice_pick_time">Add time</string>
+    <string name="notice_highlight_title">Highlight this notice</string>
+    <string name="notice_highlight_subtitle">Add a label and/or a date to make it stand out — e.g. an exam or deadline.</string>
+    <string name="notice_label_optional">Label (optional)</string>
+    <string name="notice_date_optional">Date (optional)</string>
+    <string name="notice_chip_today">Today</string>
+    <string name="notice_chip_tomorrow">Tomorrow</string>
+    <string name="notice_chip_next_week">In a week</string>
+    <string name="notice_save">Save Notice</string>
     <!-- Subject settings -->
     <string name="subject_settings_title">Subject Settings</string>
     <string name="subject_code_label">SHARE CODE</string>

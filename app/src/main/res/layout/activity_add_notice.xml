@@ -23,6 +23,7 @@
             android:orientation="vertical"
             android:padding="20dp">
 
+            <!-- ── Notice text ─────────────────────────────────────────── -->
             <TextView style="@style/FacultyFieldLabel" android:text="@string/notice_label_text" />
             <EditText
                 android:id="@+id/etText"
@@ -36,105 +37,232 @@
                 android:hint="@string/notice_hint_text"
                 android:textColor="@color/color_text_primary"
                 android:textSize="14sp"
-                android:layout_marginBottom="16dp" />
-
-            <CheckBox
-                android:id="@+id/cbHighlight"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/notice_highlight_toggle"
-                android:textColor="@color/color_text_body"
-                android:textSize="12.5sp"
-                android:buttonTint="@color/color_cyan"
-                android:layout_marginBottom="8dp" />
-
-            <EditText
-                android:id="@+id/etHighlight"
-                style="@style/FacultyInput"
-                android:inputType="text"
-                android:hint="@string/notice_hint_highlight"
-                android:visibility="gone" />
-
-            <!-- Structured date/time, independent of the free-text highlight
-                 above. Setting either is enough to trigger the callout. -->
-            <CheckBox
-                android:id="@+id/cbDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/notice_date_toggle"
-                android:textColor="@color/color_text_body"
-                android:textSize="12.5sp"
-                android:buttonTint="@color/color_cyan"
-                android:layout_marginBottom="8dp" />
-
-            <LinearLayout
-                android:id="@+id/dateTimeRow"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:visibility="gone"
-                android:layout_marginBottom="16dp">
-
-                <TextView
-                    android:id="@+id/btnPickDate"
-                    android:layout_width="0dp"
-                    android:layout_height="52dp"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical"
-                    android:background="@drawable/bg_input"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:text="@string/notice_pick_date"
-                    android:textColor="@color/color_muted"
-                    android:textSize="13.5sp"
-                    android:maxLines="1"
-                    android:ellipsize="end" />
-
-                <TextView
-                    android:id="@+id/btnPickTime"
-                    android:layout_width="0dp"
-                    android:layout_height="52dp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="8dp"
-                    android:gravity="center_vertical"
-                    android:background="@drawable/bg_input"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="16dp"
-                    android:text="@string/notice_pick_time"
-                    android:textColor="@color/color_muted"
-                    android:textSize="13.5sp"
-                    android:maxLines="1"
-                    android:ellipsize="end" />
-            </LinearLayout>
-
-            <TextView style="@style/FacultyFieldLabel" android:text="@string/notice_label_attachment" />
-            <TextView
-                android:id="@+id/btnPickFile"
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:gravity="center_vertical"
-                android:background="@drawable/bg_input"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:text="@string/resource_attach_file"
-                android:textColor="@color/color_muted"
-                android:textSize="14sp"
-                android:maxLines="1"
-                android:ellipsize="end"
                 android:layout_marginBottom="20dp" />
 
-            <TextView
-                android:id="@+id/btnSaveNotice"
+            <!-- ── Highlight card ──────────────────────────────────────── -->
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:gravity="center"
-                android:text="Save"
-                android:textColor="@color/color_background"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:background="@drawable/bg_button_primary" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/bg_card"
+                android:padding="16dp"
+                android:layout_marginBottom="20dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/notice_highlight_title"
+                        android:textColor="@color/color_text_primary"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <com.google.android.material.switchmaterial.SwitchMaterial
+                        android:id="@+id/swHighlight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="@string/notice_highlight_subtitle"
+                    android:textColor="@color/color_muted"
+                    android:textSize="11.5sp"
+                    android:lineSpacingMultiplier="1.3" />
+
+                <LinearLayout
+                    android:id="@+id/highlightDetails"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginTop="14dp"
+                    android:visibility="gone">
+
+                    <TextView style="@style/FacultyFieldLabel" android:text="@string/notice_label_optional" />
+                    <EditText
+                        android:id="@+id/etHighlight"
+                        style="@style/FacultyInput"
+                        android:inputType="text"
+                        android:hint="@string/notice_hint_highlight"
+                        android:layout_marginBottom="14dp" />
+
+                    <TextView style="@style/FacultyFieldLabel" android:text="@string/notice_date_optional" />
+
+                    <!-- Quick-pick chips for the common cases -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="32dp"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="8dp">
+
+                        <TextView
+                            android:id="@+id/chipToday"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="4dp"
+                            android:gravity="center"
+                            android:text="@string/notice_chip_today"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:background="@drawable/bg_tab_pill_inactive"
+                            android:textColor="@color/color_muted" />
+
+                        <TextView
+                            android:id="@+id/chipTomorrow"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginEnd="4dp"
+                            android:gravity="center"
+                            android:text="@string/notice_chip_tomorrow"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:background="@drawable/bg_tab_pill_inactive"
+                            android:textColor="@color/color_muted" />
+
+                        <TextView
+                            android:id="@+id/chipNextWeek"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:layout_marginStart="4dp"
+                            android:gravity="center"
+                            android:text="@string/notice_chip_next_week"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:background="@drawable/bg_tab_pill_inactive"
+                            android:textColor="@color/color_muted" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="14dp">
+
+                        <TextView
+                            android:id="@+id/btnPickDate"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:gravity="center_vertical"
+                            android:background="@drawable/bg_input"
+                            android:paddingStart="14dp"
+                            android:paddingEnd="14dp"
+                            android:text="@string/notice_pick_date"
+                            android:textColor="@color/color_muted"
+                            android:textSize="13sp"
+                            android:maxLines="1"
+                            android:ellipsize="end" />
+
+                        <TextView
+                            android:id="@+id/btnPickTime"
+                            android:layout_width="0dp"
+                            android:layout_height="48dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="8dp"
+                            android:gravity="center_vertical"
+                            android:background="@drawable/bg_input"
+                            android:paddingStart="14dp"
+                            android:paddingEnd="14dp"
+                            android:text="@string/notice_pick_time"
+                            android:textColor="#4DFFFFFF"
+                            android:textSize="13sp"
+                            android:maxLines="1"
+                            android:ellipsize="end"
+                            android:enabled="false" />
+                    </LinearLayout>
+
+                    <!-- Live preview: exactly how the highlight will render -->
+                    <LinearLayout
+                        android:id="@+id/previewBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:background="@drawable/bg_info_banner"
+                        android:padding="10dp"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="ⓘ"
+                            android:textColor="@color/color_cyan"
+                            android:textSize="14sp"
+                            android:layout_marginEnd="8dp" />
+
+                        <TextView
+                            android:id="@+id/tvPreview"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textColor="@color/color_cyan"
+                            android:textSize="12.5sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- ── Attachment ──────────────────────────────────────────── -->
+            <TextView style="@style/FacultyFieldLabel" android:text="@string/notice_label_attachment" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/btnPickFile"
+                    android:layout_width="0dp"
+                    android:layout_height="52dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:background="@drawable/bg_input"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:text="@string/resource_attach_file"
+                    android:textColor="@color/color_muted"
+                    android:textSize="14sp"
+                    android:maxLines="1"
+                    android:ellipsize="end" />
+
+                <TextView
+                    android:id="@+id/btnClearFile"
+                    android:layout_width="44dp"
+                    android:layout_height="52dp"
+                    android:layout_marginStart="8dp"
+                    android:gravity="center"
+                    android:text="✕"
+                    android:textColor="@color/color_red"
+                    android:textSize="15sp"
+                    android:background="@drawable/bg_delete_button"
+                    android:visibility="gone" />
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
+
+    <!-- Sticky primary action, always reachable without scrolling -->
+    <TextView
+        android:id="@+id/btnSaveNotice"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_margin="20dp"
+        android:gravity="center"
+        android:text="@string/notice_save"
+        android:textColor="@color/color_background"
+        android:textSize="14.5sp"
+        android:textStyle="bold"
+        android:background="@drawable/bg_button_primary" />
 
 </LinearLayout>

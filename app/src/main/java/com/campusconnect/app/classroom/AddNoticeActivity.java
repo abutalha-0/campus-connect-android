@@ -6,8 +6,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.base.BaseActivity;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.core.utils.FileUtils;
+import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -40,7 +42,12 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/** Post or edit a notice. */
+/**
+ * Post or edit a notice. "Highlight" is one unified section — an optional
+ * free-text label and/or an optional date/time — since both feed the same
+ * highlighted callout on the notice card. A live preview shows exactly what
+ * that callout will look like as the faculty/CR builds it.
+ */
 public class AddNoticeActivity extends BaseActivity {
 
     private static final String EXTRA_SUBJECT_ID = "subject_id";
@@ -70,9 +77,11 @@ public class AddNoticeActivity extends BaseActivity {
     private int noticeId = -1;
 
     private EditText etText, etHighlight;
-    private CheckBox cbHighlight, cbDate;
-    private View dateTimeRow;
-    private TextView btnPickDate, btnPickTime, btnPickFile, btnSave;
+    private SwitchMaterial swHighlight;
+    private View highlightDetails, previewBox;
+    private TextView chipToday, chipTomorrow, chipNextWeek;
+    private TextView btnPickDate, btnPickTime, tvPreview;
+    private TextView btnPickFile, btnClearFile, btnSave;
 
     // -1 means "not set". A date must be set before a time is meaningful.
     private int year = -1, month = -1, day = -1;
@@ -91,32 +100,36 @@ public class AddNoticeActivity extends BaseActivity {
 
         etText = findViewById(R.id.etText);
         etHighlight = findViewById(R.id.etHighlight);
-        cbHighlight = findViewById(R.id.cbHighlight);
-        cbDate = findViewById(R.id.cbDate);
-        dateTimeRow = findViewById(R.id.dateTimeRow);
+        swHighlight = findViewById(R.id.swHighlight);
+        highlightDetails = findViewById(R.id.highlightDetails);
+        previewBox = findViewById(R.id.previewBox);
+        chipToday = findViewById(R.id.chipToday);
+        chipTomorrow = findViewById(R.id.chipTomorrow);
+        chipNextWeek = findViewById(R.id.chipNextWeek);
         btnPickDate = findViewById(R.id.btnPickDate);
         btnPickTime = findViewById(R.id.btnPickTime);
+        tvPreview = findViewById(R.id.tvPreview);
         btnPickFile = findViewById(R.id.btnPickFile);
+        btnClearFile = findViewById(R.id.btnClearFile);
         btnSave = findViewById(R.id.btnSaveNotice);
 
         ((TextView) findViewById(R.id.tvSheetTitle)).setText(getString(
                 noticeId == -1 ? R.string.post_notice_title : R.string.edit_notice_title));
         findViewById(R.id.btnSave).setVisibility(View.GONE);
 
-        cbHighlight.setOnCheckedChangeListener((b, checked) ->
-                etHighlight.setVisibility(checked ? View.VISIBLE : View.GONE));
-
-        cbDate.setOnCheckedChangeListener((b, checked) -> {
-            dateTimeRow.setVisibility(checked ? View.VISIBLE : View.GONE);
-            if (checked) {
-                if (year == -1) openDatePicker();
-            } else {
-                clearDateTime();
-            }
+        swHighlight.setOnCheckedChangeListener((b, checked) -> {
+            highlightDetails.setVisibility(checked ? View.VISIBLE : View.GONE);
+            updatePreview();
         });
+        etHighlight.addTextChangedListener(simpleWatcher(this::updatePreview));
 
+        chipToday.setOnClickListener(v -> pickPresetDate(0));
+        chipTomorrow.setOnClickListener(v -> pickPresetDate(1));
+        chipNextWeek.setOnClickListener(v -> pickPresetDate(7));
         btnPickDate.setOnClickListener(v -> openDatePicker());
         btnPickTime.setOnClickListener(v -> openTimePicker());
+
+        etText.addTextChangedListener(simpleWatcher(this::updateSaveEnabled));
 
         filePicker = registerForActivityResult(
                 new ActivityResultContracts.GetContent(),
@@ -125,14 +138,17 @@ public class AddNoticeActivity extends BaseActivity {
                         pickedFileUri = uri;
                         btnPickFile.setText(FileUtils.displayName(this, uri));
                         btnPickFile.setTextColor(getResources().getColor(R.color.color_text_primary, null));
+                        btnClearFile.setVisibility(View.VISIBLE);
                     }
                 });
 
         ((ImageButton) findViewById(R.id.btnBack)).setOnClickListener(v -> finish());
         btnPickFile.setOnClickListener(v -> filePicker.launch("*/*"));
+        btnClearFile.setOnClickListener(v -> clearFile());
         btnSave.setOnClickListener(v -> save());
 
         prefillIfEditing();
+        updateSaveEnabled();
     }
 
     private void prefillIfEditing() {
@@ -140,14 +156,17 @@ public class AddNoticeActivity extends BaseActivity {
         etText.setText(getIntent().getStringExtra(EXTRA_TEXT));
 
         String highlight = getIntent().getStringExtra(EXTRA_HIGHLIGHT);
-        if (highlight != null && !highlight.isEmpty()) {
-            cbHighlight.setChecked(true);
-            etHighlight.setVisibility(View.VISIBLE);
-            etHighlight.setText(highlight);
-        }
-
         String eventDate = getIntent().getStringExtra(EXTRA_EVENT_DATE);
         String eventTime = getIntent().getStringExtra(EXTRA_EVENT_TIME);
+
+        boolean hasHighlight = (highlight != null && !highlight.isEmpty())
+                || (eventDate != null && eventDate.length() >= 10);
+        if (!hasHighlight) return;
+
+        swHighlight.setChecked(true);
+        highlightDetails.setVisibility(View.VISIBLE);
+        if (highlight != null) etHighlight.setText(highlight);
+
         if (eventDate != null && eventDate.length() >= 10) {
             String[] parts = eventDate.substring(0, 10).split("-");
             year = Integer.parseInt(parts[0]);
@@ -158,13 +177,34 @@ public class AddNoticeActivity extends BaseActivity {
                 hour = Integer.parseInt(t[0]);
                 minute = Integer.parseInt(t[1]);
             }
-            cbDate.setChecked(true);
-            dateTimeRow.setVisibility(View.VISIBLE);
             updateDateTimeLabels();
         }
+        updatePreview();
     }
 
     // ── Date / time pickers ──────────────────────────────────────────────
+
+    private void pickPresetDate(int daysFromToday) {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DAY_OF_MONTH, daysFromToday);
+        year = cal.get(Calendar.YEAR);
+        month = cal.get(Calendar.MONTH);
+        day = cal.get(Calendar.DAY_OF_MONTH);
+        setActiveChip(daysFromToday);
+        updateDateTimeLabels();
+        updatePreview();
+    }
+
+    private void setActiveChip(int daysFromToday) {
+        styleChip(chipToday, daysFromToday == 0);
+        styleChip(chipTomorrow, daysFromToday == 1);
+        styleChip(chipNextWeek, daysFromToday == 7);
+    }
+
+    private void styleChip(TextView chip, boolean active) {
+        chip.setBackgroundResource(active ? R.drawable.bg_tab_pill_active : R.drawable.bg_tab_pill_inactive);
+        chip.setTextColor(getResources().getColor(active ? R.color.color_cyan : R.color.color_muted, null));
+    }
 
     private void openDatePicker() {
         Calendar cal = Calendar.getInstance();
@@ -176,11 +216,10 @@ public class AddNoticeActivity extends BaseActivity {
             year = pickedYear;
             month = pickedMonth;
             day = pickedDay;
+            setActiveChip(-1);  // a manually picked date matches no quick chip
             updateDateTimeLabels();
+            updatePreview();
         }, y, m, d).show();
-        // Note: if the user cancels without ever having picked a date, the
-        // checkbox stays checked but the row shows "Select date" — save()
-        // requires a date once the checkbox is on.
     }
 
     private void openTimePicker() {
@@ -192,11 +231,16 @@ public class AddNoticeActivity extends BaseActivity {
             hour = pickedHour;
             minute = pickedMinute;
             updateDateTimeLabels();
+            updatePreview();
         }, h, min, false).show();
     }
 
     private void updateDateTimeLabels() {
-        if (year != -1) {
+        boolean dateSet = year != -1;
+        btnPickTime.setEnabled(dateSet);
+        btnPickTime.setAlpha(dateSet ? 1f : 0.5f);
+
+        if (dateSet) {
             String dateStr = String.format(Locale.US, "%04d-%02d-%02d", year, month + 1, day);
             btnPickDate.setText(NoticeDates.format(dateStr, null));
             btnPickDate.setTextColor(getResources().getColor(R.color.color_text_primary, null));
@@ -205,33 +249,71 @@ public class AddNoticeActivity extends BaseActivity {
             String timeStr = String.format(Locale.US, "%02d:%02d:00", hour, minute);
             btnPickTime.setText(NoticeDates.formatTimeOnly(timeStr));
             btnPickTime.setTextColor(getResources().getColor(R.color.color_text_primary, null));
+        } else {
+            btnPickTime.setText(getString(R.string.notice_pick_time));
         }
     }
 
-    private void clearDateTime() {
-        year = month = day = hour = minute = -1;
-        btnPickDate.setText(getString(R.string.notice_pick_date));
-        btnPickDate.setTextColor(getResources().getColor(R.color.color_muted, null));
-        btnPickTime.setText(getString(R.string.notice_pick_time));
-        btnPickTime.setTextColor(getResources().getColor(R.color.color_muted, null));
+    // ── Live preview ──────────────────────────────────────────────────────
+
+    private void updatePreview() {
+        if (!swHighlight.isChecked()) {
+            previewBox.setVisibility(View.GONE);
+            return;
+        }
+
+        String label = etHighlight.getText().toString().trim();
+        String dateLabel = year != -1
+                ? NoticeDates.format(
+                        String.format(Locale.US, "%04d-%02d-%02d", year, month + 1, day),
+                        hour != -1 ? String.format(Locale.US, "%02d:%02d:00", hour, minute) : null)
+                : null;
+
+        String preview = combine(label, dateLabel);
+        if (preview == null) {
+            previewBox.setVisibility(View.GONE);
+        } else {
+            previewBox.setVisibility(View.VISIBLE);
+            tvPreview.setText(preview);
+        }
+    }
+
+    private String combine(String label, String dateLabel) {
+        boolean hasLabel = label != null && !label.isEmpty();
+        boolean hasDate = dateLabel != null;
+        if (hasLabel && hasDate) return label + " · " + dateLabel;
+        if (hasDate) return dateLabel;
+        if (hasLabel) return label;
+        return null;
+    }
+
+    // ── Attachment ────────────────────────────────────────────────────────
+
+    private void clearFile() {
+        pickedFileUri = null;
+        btnPickFile.setText(getString(R.string.resource_attach_file));
+        btnPickFile.setTextColor(getResources().getColor(R.color.color_muted, null));
+        btnClearFile.setVisibility(View.GONE);
     }
 
     // ── Save ──────────────────────────────────────────────────────────────
 
+    private void updateSaveEnabled() {
+        boolean valid = !etText.getText().toString().trim().isEmpty();
+        btnSave.setEnabled(valid);
+        btnSave.setAlpha(valid ? 1f : 0.5f);
+    }
+
     private void save() {
         String text = etText.getText().toString().trim();
-        String highlight = cbHighlight.isChecked() ? etHighlight.getText().toString().trim() : "";
-
         if (text.isEmpty()) {
             Toast.makeText(this, getString(R.string.error_fields), Toast.LENGTH_SHORT).show();
             return;
         }
-        if (cbDate.isChecked() && year == -1) {
-            Toast.makeText(this, getString(R.string.notice_pick_date), Toast.LENGTH_SHORT).show();
-            return;
-        }
 
-        String eventDate = cbDate.isChecked() && year != -1
+        boolean highlightOn = swHighlight.isChecked();
+        String highlight = highlightOn ? etHighlight.getText().toString().trim() : "";
+        String eventDate = highlightOn && year != -1
                 ? String.format(Locale.US, "%04d-%02d-%02d", year, month + 1, day) : null;
         String eventTime = eventDate != null && hour != -1
                 ? String.format(Locale.US, "%02d:%02d:00", hour, minute) : null;
@@ -288,7 +370,7 @@ public class AddNoticeActivity extends BaseActivity {
         fields.put("highlight", text(highlight));
         // Multipart form fields can't carry a literal JSON null, so clearing
         // the date while simultaneously attaching a new file isn't supported
-        // here — only include the fields when a date is actually set.
+        // here — only included when a date is actually set.
         if (eventDate != null) {
             fields.put("event_date", text(eventDate));
             if (eventTime != null) fields.put("event_time", text(eventTime));
@@ -330,11 +412,19 @@ public class AddNoticeActivity extends BaseActivity {
     }
 
     private void resetSaveButton() {
-        btnSave.setEnabled(true);
-        btnSave.setText("Save");
+        updateSaveEnabled();
+        btnSave.setText(getString(R.string.notice_save));
     }
 
     private RequestBody text(String value) {
         return RequestBody.create(MediaType.parse("text/plain"), value != null ? value : "");
+    }
+
+    private TextWatcher simpleWatcher(Runnable onChange) {
+        return new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override public void afterTextChanged(Editable s) { onChange.run(); }
+        };
     }
 }
