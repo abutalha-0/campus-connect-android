@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/bg_card"
+    android:padding="14dp"
+    android:layout_marginBottom="12dp"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- Header: avatar + name + role + time, tag chip, edit/delete -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/tvAvatar"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:background="@drawable/bg_avatar"
+            android:gravity="center"
+            android:textColor="@color/color_text_primary"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvAuthor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="9dp"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textColor="@color/color_text_primary"
+            android:textSize="12.5sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvRole"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:background="@drawable/bg_resource_badge"
+            android:paddingStart="7dp"
+            android:paddingEnd="7dp"
+            android:paddingTop="1dp"
+            android:paddingBottom="1dp"
+            android:textSize="9sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvTime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:textColor="@color/color_muted"
+            android:textSize="11sp" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/tvTag"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_resource_badge"
+            android:paddingStart="9dp"
+            android:paddingEnd="9dp"
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:textColor="@color/color_cyan"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/btnEdit"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_marginStart="6dp"
+            android:background="@drawable/bg_button_outline"
+            android:gravity="center"
+            android:text="✎"
+            android:textColor="@color/color_muted"
+            android:textSize="10sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/btnDelete"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
+            android:layout_marginStart="6dp"
+            android:background="@drawable/bg_delete_button"
+            android:gravity="center"
+            android:text="🗑"
+            android:textSize="10sp"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textColor="@color/color_text_primary"
+        android:textSize="14.5sp"
+        android:textStyle="bold"
+        android:lineSpacingMultiplier="1.25" />
+
+    <TextView
+        android:id="@+id/tvBody"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:textColor="@color/color_text_body"
+        android:textSize="13sp"
+        android:lineSpacingMultiplier="1.4" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="12dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="@drawable/bg_vote_pill"
+            android:paddingStart="10dp"
+            android:paddingEnd="4dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp">
+
+            <TextView
+                android:id="@+id/btnUpvote"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:gravity="center"
+                android:text="▲"
+                android:textSize="11sp"
+                android:textColor="@color/color_muted" />
+
+            <TextView
+                android:id="@+id/tvScore"
+                android:layout_width="22dp"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textColor="@color/color_text_primary"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/btnDownvote"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:gravity="center"
+                android:text="▼"
+                android:textSize="11sp"
+                android:textColor="@color/color_muted" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvCommentsCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:drawablePadding="6dp"
+            android:gravity="center_vertical"
+            android:text="💬"
+            android:textColor="@color/color_muted"
+            android:textSize="12sp" />
+    </LinearLayout>
+
+</LinearLayout>

@@ -216,4 +216,28 @@
     <string name="class_share_note">Share this code with students so they can join your class.</string>
     <string name="class_create_not_cr_title">CR only</string>
     <string name="class_create_not_cr">Only a CR can create a class. Configure it from your profile.</string>
+
+    <!-- Feed -->
+    <string name="tab_subjects">Subjects</string>
+    <string name="tab_feed">Feed</string>
+    <string name="feed_title">Feed</string>
+    <string name="feed_subtitle">Discuss and ask across your class</string>
+    <string name="feed_empty">No posts yet. Be the first to start a discussion.</string>
+    <string name="feed_no_tag">No tag</string>
+    <string name="feed_post_title">Post</string>
+    <string name="feed_new_post">New Post</string>
+    <string name="feed_edit_post">Edit Post</string>
+    <string name="feed_label_title">Title</string>
+    <string name="feed_hint_title">What\'s this about?</string>
+    <string name="feed_label_body">Details</string>
+    <string name="feed_hint_body">Share the details…</string>
+    <string name="feed_label_tag">Tag (optional)</string>
+    <string name="feed_post_btn">Post</string>
+    <string name="feed_post_failed">Couldn\'t post. Try again.</string>
+    <string name="feed_delete_title">Delete this post?</string>
+    <string name="feed_delete_message">This removes the post and its comments. This cannot be undone.</string>
+    <string name="feed_comments_heading">COMMENTS</string>
+    <string name="feed_comments_empty">No comments yet.</string>
+    <string name="feed_hint_comment">Write a comment…</string>
+    <string name="feed_comment_delete_title">Delete comment?</string>
 </resources>
