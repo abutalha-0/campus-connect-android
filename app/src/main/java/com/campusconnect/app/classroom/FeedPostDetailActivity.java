@@ -21,6 +21,7 @@ import com.campusconnect.app.classroom.util.RelativeTime;
 import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.base.BaseActivity;
 import com.campusconnect.app.core.utils.Constants;
+import com.campusconnect.app.core.utils.ProfileNavigator;
 
 import java.util.List;
 
@@ -127,6 +128,12 @@ public class FeedPostDetailActivity extends BaseActivity {
 
         tvAvatar.setText(initialsOf(name));
         tvAuthor.setText(name);
+        if (author != null) {
+            View.OnClickListener openAuthor = v ->
+                    ProfileNavigator.open(this, author.getId(), author.getRole());
+            tvAvatar.setOnClickListener(openAuthor);
+            tvAuthor.setOnClickListener(openAuthor);
+        }
 
         tvRole.setText(role);
         int roleColor = "FACULTY".equals(role) ? getResources().getColor(R.color.color_cyan, null)
@@ -260,8 +267,16 @@ public class FeedPostDetailActivity extends BaseActivity {
         String name = author != null ? author.getFullName() : "";
         String role = author != null ? author.getRole() : "";
 
-        ((TextView) row.findViewById(R.id.tvAvatar)).setText(initialsOf(name));
-        ((TextView) row.findViewById(R.id.tvAuthor)).setText(name);
+        TextView tvAvatar = row.findViewById(R.id.tvAvatar);
+        TextView tvAuthor = row.findViewById(R.id.tvAuthor);
+        tvAvatar.setText(initialsOf(name));
+        tvAuthor.setText(name);
+        if (author != null) {
+            View.OnClickListener openAuthor = v ->
+                    ProfileNavigator.open(this, author.getId(), author.getRole());
+            tvAvatar.setOnClickListener(openAuthor);
+            tvAuthor.setOnClickListener(openAuthor);
+        }
 
         TextView roleBadge = row.findViewById(R.id.tvRole);
         roleBadge.setText(role);

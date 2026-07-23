@@ -24,6 +24,7 @@ import com.campusconnect.app.classroom.model.Subject;
 import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.base.BaseActivity;
 import com.campusconnect.app.core.utils.Constants;
+import com.campusconnect.app.core.utils.ProfileNavigator;
 
 import java.util.List;
 
@@ -105,6 +106,10 @@ public class ClassSettingsActivity extends BaseActivity {
         String creator = classroom.getCreatorName() != null ? classroom.getCreatorName() : "";
         tvCreatorName.setText(creator);
         tvCreatorInitial.setText(initialsOf(creator));
+        View.OnClickListener openCreator = v ->
+                ProfileNavigator.open(this, classroom.getCreatorId(), "STUDENT");
+        tvCreatorName.setOnClickListener(openCreator);
+        tvCreatorInitial.setOnClickListener(openCreator);
 
         managementSection.setVisibility(isCreator ? View.VISIBLE : View.GONE);
         btnLeaveClass.setVisibility(isCreator ? View.GONE : View.VISIBLE);

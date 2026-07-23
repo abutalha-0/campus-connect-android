@@ -17,6 +17,7 @@ import com.campusconnect.app.classroom.util.RelativeTime;
 import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.base.BaseActivity;
 import com.campusconnect.app.core.utils.Constants;
+import com.campusconnect.app.core.utils.ProfileNavigator;
 
 import java.util.List;
 
@@ -91,8 +92,16 @@ public class FeedActivity extends BaseActivity {
         String name = author != null ? author.getFullName() : "";
         String role = author != null ? author.getRole() : "";
 
-        ((TextView) card.findViewById(R.id.tvAvatar)).setText(initialsOf(name));
-        ((TextView) card.findViewById(R.id.tvAuthor)).setText(name);
+        TextView tvAvatar = card.findViewById(R.id.tvAvatar);
+        TextView tvAuthor = card.findViewById(R.id.tvAuthor);
+        tvAvatar.setText(initialsOf(name));
+        tvAuthor.setText(name);
+        if (author != null) {
+            View.OnClickListener openAuthor = v ->
+                    ProfileNavigator.open(this, author.getId(), author.getRole());
+            tvAvatar.setOnClickListener(openAuthor);
+            tvAuthor.setOnClickListener(openAuthor);
+        }
 
         TextView roleBadge = card.findViewById(R.id.tvRole);
         roleBadge.setText(role);

@@ -1,6 +1,5 @@
 package com.campusconnect.app.home;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +14,6 @@ import com.campusconnect.app.R;
 import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.core.utils.TokenManager;
-import com.campusconnect.app.profile.PublicProfileActivity;
 import com.campusconnect.app.user.User;
 import com.campusconnect.app.user.UserApiService;
 import com.campusconnect.app.user.UserListResponse;
@@ -78,12 +76,9 @@ public class DiscoverFragment extends Fragment {
                             } else {
                                 tvStatus.setVisibility(View.GONE);
                                 recyclerView.setVisibility(View.VISIBLE);
-                                UserAdapter adapter = new UserAdapter(users, user -> {
-                                    Intent intent = new Intent(getActivity(),
-                                            PublicProfileActivity.class);
-                                    intent.putExtra("user_id", user.getId());
-                                    startActivity(intent);
-                                });
+                                UserAdapter adapter = new UserAdapter(users, user ->
+                                        com.campusconnect.app.core.utils.ProfileNavigator.open(
+                                                getActivity(), user.getId(), user.getRole()));
                                 recyclerView.setAdapter(adapter);
                             }
                         } else {
