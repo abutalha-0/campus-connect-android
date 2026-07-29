@@ -212,8 +212,24 @@ public class FacultyHomeActivity extends BaseActivity {
             empty.setText(getString(R.string.subjects_empty));
             empty.setTextColor(getResources().getColor(R.color.color_muted, null));
             empty.setTextSize(12.5f);
-            empty.setPadding(0, dp(8), 0, dp(8));
+            empty.setPadding(0, dp(8), 0, dp(4));
             subjectsContainer.addView(empty);
+
+            TextView cta = new TextView(this);
+            cta.setId(View.generateViewId());
+            cta.setText(getString(R.string.subjects_empty_cta));
+            cta.setTextColor(getResources().getColor(R.color.color_cyan, null));
+            cta.setTextSize(12.5f);
+            cta.setTypeface(cta.getTypeface(), android.graphics.Typeface.BOLD);
+            cta.setGravity(android.view.Gravity.CENTER);
+            cta.setPadding(0, dp(12), 0, dp(12));
+            cta.setBackgroundResource(R.drawable.bg_add_dashed);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            lp.topMargin = dp(4);
+            cta.setLayoutParams(lp);
+            cta.setOnClickListener(v -> startActivity(new Intent(this, AddSubjectActivity.class)));
+            subjectsContainer.addView(cta);
             return;
         }
 

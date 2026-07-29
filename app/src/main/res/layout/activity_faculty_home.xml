@@ -251,6 +251,19 @@
                     android:layout_height="1dp"
                     android:layout_weight="1"
                     android:background="@color/color_border" />
+
+                <TextView
+                    android:id="@+id/btnAddSubject"
+                    android:layout_width="26dp"
+                    android:layout_height="26dp"
+                    android:layout_marginStart="12dp"
+                    android:background="@drawable/bg_button_outline"
+                    android:gravity="center"
+                    android:text="＋"
+                    android:textColor="@color/color_cyan"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:contentDescription="@string/subject_add_btn" />
             </LinearLayout>
 
             <LinearLayout
@@ -258,18 +271,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
-
-            <TextView
-                android:id="@+id/btnAddSubject"
-                android:layout_width="match_parent"
-                android:layout_height="48dp"
-                android:layout_marginTop="6dp"
-                android:gravity="center"
-                android:text="＋  Add"
-                android:textColor="@color/color_cyan"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:background="@drawable/bg_add_dashed" />
 
         </LinearLayout>
     </ScrollView>
