@@ -57,6 +57,9 @@ public class FacultyHomeActivity extends BaseActivity {
     private LinearLayout linksContainer, subjectsContainer;
 
     private ActivityResultLauncher<PickVisualMediaRequest> photoPickerLauncher;
+    // Cancelled on every fresh call so a slow, stale response from an earlier
+    // onResume() can never land after (and overwrite) a newer one.
+    private Call<List<Subject>> subjectsCall;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,6 +160,9 @@ public class FacultyHomeActivity extends BaseActivity {
             ImageView icon = row.findViewById(R.id.ivLinkIcon);
             icon.setImageResource(platform.iconRes);
             icon.setColorFilter(platform.accentColor);
+            String name = link.getLinkName() != null && !link.getLinkName().isEmpty()
+                    ? link.getLinkName() : platform.label;
+            ((TextView) row.findViewById(R.id.tvLinkName)).setText(name);
             ((TextView) row.findViewById(R.id.tvLinkUrl)).setText(link.getUrl());
             row.setOnClickListener(v -> openUrl(link.getUrl()));
             linksContainer.addView(row);
@@ -185,23 +191,24 @@ public class FacultyHomeActivity extends BaseActivity {
     // ── Subjects Taught ───────────────────────────────────────────────────
 
     private void loadSubjects() {
-        String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
-        RetrofitClient.createService(SubjectApiService.class)
-                .getMySubjects(token)
-                .enqueue(new Callback<List<Subject>>() {
-                    @Override
-                    public void onResponse(Call<List<Subject>> call, Response<List<Subject>> response) {
-                        if (isFinishing()) return;
-                        if (response.isSuccessful() && response.body() != null) {
-                            renderSubjects(response.body());
-                        }
-                    }
+        if (subjectsCall != null) subjectsCall.cancel();
 
-                    @Override
-                    public void onFailure(Call<List<Subject>> call, Throwable t) {
-                        // leave section as-is
-                    }
-                });
+        String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
+        subjectsCall = RetrofitClient.createService(SubjectApiService.class).getMySubjects(token);
+        subjectsCall.enqueue(new Callback<List<Subject>>() {
+            @Override
+            public void onResponse(Call<List<Subject>> call, Response<List<Subject>> response) {
+                if (isFinishing() || call.isCanceled()) return;
+                if (response.isSuccessful() && response.body() != null) {
+                    renderSubjects(response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Subject>> call, Throwable t) {
+                // leave section as-is
+            }
+        });
     }
 
     private void renderSubjects(List<Subject> subjects) {
