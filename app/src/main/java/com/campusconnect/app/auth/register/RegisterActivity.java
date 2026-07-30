@@ -12,6 +12,8 @@ import com.campusconnect.app.auth.AuthResponse;
 import com.campusconnect.app.auth.login.LoginActivity;
 import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.base.BaseActivity;
+import com.campusconnect.app.core.utils.ApiError;
+import com.campusconnect.app.core.utils.PasswordToggle;
 import com.campusconnect.app.home.HomeActivity;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,6 +37,9 @@ public class RegisterActivity extends BaseActivity {
         btnRegister = findViewById(R.id.btnRegister);
         tvGoToLogin = findViewById(R.id.tvGoToLogin);
 
+        PasswordToggle.attach(etPassword, findViewById(R.id.btnTogglePassword));
+
+        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
         btnRegister.setOnClickListener(v -> handleRegister());
         tvGoToLogin.setOnClickListener(v -> {
             startActivity(new Intent(this, LoginActivity.class));
@@ -88,10 +93,12 @@ public class RegisterActivity extends BaseActivity {
                                         startActivity(intent);
                                         finish();
                                     }, 1000);
-                        }else {
-                            Toast.makeText(RegisterActivity.this,
-                                    "Registration failed. Email or username may already exist.",
-                                    Toast.LENGTH_LONG).show();
+                        } else {
+                            setLoading(false);
+                            String message = ApiError.extract(response,
+                                    "Registration failed. Please try again.",
+                                    "email", "username", "password");
+                            Toast.makeText(RegisterActivity.this, message, Toast.LENGTH_LONG).show();
                         }
                     }
 

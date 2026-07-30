@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-   Sample backup rules file; uncomment and customize as necessary.
+   Applies to API 23-30 (API 31+ uses data_extraction_rules.xml instead).
    See https://developer.android.com/guide/topics/data/autobackup
-   for details.
-   Note: This file is ignored for devices older than API 31
-   See https://developer.android.com/about/versions/12/backup-restore
 -->
 <full-backup-content>
-    <!--
-   <include domain="sharedpref" path="."/>
-   <exclude domain="sharedpref" path="device.xml"/>
--->
+    <!-- Never restore the "have you seen onboarding" flag — a reinstalling
+         user should see the intro slides again, not have this flag silently
+         restored from backup and skip straight past them. -->
+    <exclude domain="sharedpref" path="onboarding_prefs.xml"/>
+    <!-- Encrypted auth tokens are tied to this device's Keystore key, which
+         backup can't restore — shipping the ciphertext along just fails to
+         decrypt. Exclude it so a restore starts from a clean logged-out
+         state instead. -->
+    <exclude domain="sharedpref" path="secure_prefs.xml"/>
 </full-backup-content>

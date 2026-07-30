@@ -1,6 +1,5 @@
 package com.campusconnect.app.auth.login;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,10 +9,10 @@ import android.widget.Toast;
 import com.campusconnect.app.R;
 import com.campusconnect.app.auth.AuthApiService;
 import com.campusconnect.app.auth.AuthResponse;
-import com.campusconnect.app.auth.register.RegisterActivity;
 import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.base.BaseActivity;
-import com.campusconnect.app.role.RoleSelectionActivity;
+import com.campusconnect.app.core.utils.ApiError;
+import com.campusconnect.app.core.utils.PasswordToggle;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -41,18 +40,15 @@ public class LoginActivity extends BaseActivity {
         btnLogin = findViewById(R.id.btnLogin);
         tvGoToRegister = findViewById(R.id.tvGoToRegister);
 
-        btnLogin.setOnClickListener(v -> handleLogin());
-        tvGoToRegister.setOnClickListener(v ->
-                startActivity(new Intent(this, RegisterActivity.class))
-        );
-        findViewById(R.id.btnBack).setOnClickListener(v -> goToRoleSelection());
-    }
+        PasswordToggle.attach(etPassword, findViewById(R.id.btnTogglePassword));
 
-    private void goToRoleSelection() {
-        Intent intent = new Intent(this, RoleSelectionActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
+        btnLogin.setOnClickListener(v -> handleLogin());
+        // Login is always reached by navigating forward from RoleSelection,
+        // so finishing here naturally reveals it again underneath — same
+        // destination as the back button, letting the user pick Student or
+        // Faculty instead of assuming Student.
+        tvGoToRegister.setOnClickListener(v -> finish());
+        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
     }
 
     private void handleLogin() {
@@ -83,9 +79,8 @@ public class LoginActivity extends BaseActivity {
                             tokenManager.saveRole(auth.getUser().getRole());
                             goToRoleHome();
                         } else {
-                            Toast.makeText(LoginActivity.this,
-                                    getString(R.string.error_credentials),
-                                    Toast.LENGTH_SHORT).show();
+                            String message = ApiError.extract(response, getString(R.string.error_credentials));
+                            Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
                         }
                     }
 

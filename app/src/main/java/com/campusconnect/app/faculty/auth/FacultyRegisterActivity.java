@@ -14,6 +14,8 @@ import com.campusconnect.app.auth.AuthResponse;
 import com.campusconnect.app.auth.login.LoginActivity;
 import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.base.BaseActivity;
+import com.campusconnect.app.core.utils.ApiError;
+import com.campusconnect.app.core.utils.PasswordToggle;
 import com.campusconnect.app.faculty.FacultyApiService;
 
 import retrofit2.Call;
@@ -58,6 +60,9 @@ public class FacultyRegisterActivity extends BaseActivity {
         spinnerDesignation.setAdapter(adapter);
         // Default to "Assistant Professor" as in the design.
         spinnerDesignation.setSelection(1);
+
+        PasswordToggle.attach(etPassword, findViewById(R.id.btnTogglePassword));
+        PasswordToggle.attach(etConfirmPassword, findViewById(R.id.btnToggleConfirmPassword));
 
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
         btnCreateAccount.setOnClickListener(v -> handleRegister());
@@ -115,9 +120,10 @@ public class FacultyRegisterActivity extends BaseActivity {
                                     Toast.LENGTH_SHORT).show();
                             goToRoleHome();
                         } else {
-                            Toast.makeText(FacultyRegisterActivity.this,
+                            String message = ApiError.extract(response,
                                     getString(R.string.faculty_signup_failed),
-                                    Toast.LENGTH_LONG).show();
+                                    "email", "employee_id", "designation", "password");
+                            Toast.makeText(FacultyRegisterActivity.this, message, Toast.LENGTH_LONG).show();
                         }
                     }
 

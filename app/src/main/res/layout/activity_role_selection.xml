@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    "Who are you?" landing screen shown after onboarding. Student → Login,
-    Faculty → coming-soon message (see RoleSelectionActivity).
+    "Who are you?" landing screen shown after onboarding. Student and
+    Faculty both go to their own sign-up screen (see RoleSelectionActivity).
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -13,42 +13,51 @@
     android:paddingTop="26dp"
     android:paddingBottom="32dp">
 
-    <!-- ─── HEADER ───────────────────────────────────────────────────────── -->
-    <ImageView
-        android:layout_width="44dp"
-        android:layout_height="44dp"
-        android:background="@drawable/bg_role_logo"
-        android:padding="11dp"
-        android:src="@drawable/ic_grad_cap"
-        android:tint="#04121A"
-        android:contentDescription="@null" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="@string/role_title"
-        android:textColor="@color/color_text_primary"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:lineSpacingMultiplier="1.1" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/role_subtitle"
-        android:textColor="#73FFFFFF"
-        android:textSize="13.5sp"
-        android:lineSpacingMultiplier="1.5" />
-
-    <!-- ─── ROLE CARDS (vertically centered) ─────────────────────────────── -->
+    <!-- ─── HERO ─────────────────────────────────────────────────────────── -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
         android:orientation="vertical"
-        android:gravity="center_vertical">
+        android:gravity="center_horizontal">
+
+        <ImageView
+            android:layout_width="88dp"
+            android:layout_height="88dp"
+            android:background="@drawable/bg_role_logo_circle"
+            android:padding="22dp"
+            android:src="@drawable/ic_grad_cap"
+            android:tint="#04121A"
+            android:contentDescription="@null" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:text="@string/role_title"
+            android:textColor="@color/color_text_primary"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:lineSpacingMultiplier="1.1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:text="@string/role_subtitle"
+            android:textColor="#73FFFFFF"
+            android:textSize="13.5sp"
+            android:lineSpacingMultiplier="1.5" />
+    </LinearLayout>
+
+    <!-- ─── ROLE CARDS ───────────────────────────────────────────────────── -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:orientation="vertical">
 
         <!-- Student -->
         <LinearLayout
@@ -175,12 +184,20 @@
 
     </LinearLayout>
 
+    <!-- Absorbs leftover vertical space in one place, so the footer stays
+         anchored near the bottom instead of the cards floating mid-screen. -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
     <!-- ─── FOOTER ───────────────────────────────────────────────────────── -->
     <LinearLayout
         android:id="@+id/tvLogin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="14dp"
         android:orientation="horizontal"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:clickable="true"
