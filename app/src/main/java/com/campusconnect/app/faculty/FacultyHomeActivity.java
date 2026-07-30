@@ -24,6 +24,7 @@ import com.campusconnect.app.core.base.BaseActivity;
 import com.campusconnect.app.core.ui.ComingSoonActivity;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.core.utils.ImageUtils;
+import com.campusconnect.app.core.utils.SkeletonAnimator;
 import com.campusconnect.app.faculty.edit.FacultyAddLinkActivity;
 import com.campusconnect.app.faculty.edit.FacultyEditIdentityActivity;
 import com.campusconnect.app.faculty.model.FacultyLink;
@@ -55,11 +56,15 @@ public class FacultyHomeActivity extends BaseActivity {
     private TextView tvName, tvDesignation, tvEmail, tvAvatarInitials;
     private ImageView ivAvatar;
     private LinearLayout linksContainer, subjectsContainer;
+    private View skeletonGroup, contentGroup;
 
     private ActivityResultLauncher<PickVisualMediaRequest> photoPickerLauncher;
     // Cancelled on every fresh call so a slow, stale response from an earlier
     // onResume() can never land after (and overwrite) a newer one.
     private Call<List<Subject>> subjectsCall;
+
+    // Skeleton stays up until BOTH loads for this onResume cycle land.
+    private boolean profileLoaded, subjectsLoaded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +78,8 @@ public class FacultyHomeActivity extends BaseActivity {
         ivAvatar = findViewById(R.id.ivAvatar);
         linksContainer = findViewById(R.id.linksContainer);
         subjectsContainer = findViewById(R.id.subjectsContainer);
+        skeletonGroup = findViewById(R.id.skeletonGroup);
+        contentGroup = findViewById(R.id.contentGroup);
 
         photoPickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.PickVisualMedia(),
@@ -97,8 +104,18 @@ public class FacultyHomeActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        profileLoaded = false;
+        subjectsLoaded = false;
+        SkeletonAnimator.showLoading(skeletonGroup, contentGroup);
         loadProfile();
         loadSubjects();
+    }
+
+    /** Reveals the real content once both loads for this cycle have landed. */
+    private void checkLoadingDone() {
+        if (profileLoaded && subjectsLoaded) {
+            SkeletonAnimator.showContent(skeletonGroup, contentGroup);
+        }
     }
 
     private void loadProfile() {
@@ -112,11 +129,15 @@ public class FacultyHomeActivity extends BaseActivity {
                         if (response.isSuccessful() && response.body() != null) {
                             populate(response.body());
                         }
+                        profileLoaded = true;
+                        checkLoadingDone();
                     }
 
                     @Override
                     public void onFailure(Call<FacultyProfile> call, Throwable t) {
                         // leave the screen as-is; onResume will retry next time
+                        profileLoaded = true;
+                        checkLoadingDone();
                     }
                 });
     }
@@ -202,11 +223,16 @@ public class FacultyHomeActivity extends BaseActivity {
                 if (response.isSuccessful() && response.body() != null) {
                     renderSubjects(response.body());
                 }
+                subjectsLoaded = true;
+                checkLoadingDone();
             }
 
             @Override
             public void onFailure(Call<List<Subject>> call, Throwable t) {
                 // leave section as-is
+                if (call.isCanceled()) return;
+                subjectsLoaded = true;
+                checkLoadingDone();
             }
         });
     }

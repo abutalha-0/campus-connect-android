@@ -17,6 +17,7 @@ import com.campusconnect.app.classroom.model.Subject;
 import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.base.BaseActivity;
 import com.campusconnect.app.core.utils.Constants;
+import com.campusconnect.app.core.utils.SkeletonAnimator;
 
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class ClassroomActivity extends BaseActivity {
             0xFF22D3EE, 0xFFA855F7, 0xFFF59E0B, 0xFFF87171, 0xFF4ADE80
     };
 
-    private View emptyState, classState;
+    private View emptyState, classState, skeletonState;
     private TextView tvHeaderCode, btnCreateClass;
     private View btnSettings;
     private LinearLayout subjectsContainer;
@@ -47,11 +48,17 @@ public class ClassroomActivity extends BaseActivity {
 
         emptyState = findViewById(R.id.emptyState);
         classState = findViewById(R.id.classState);
+        skeletonState = findViewById(R.id.skeletonState);
         tvHeaderCode = findViewById(R.id.tvHeaderCode);
         btnCreateClass = findViewById(R.id.btnCreateClass);
         btnSettings = findViewById(R.id.btnSettings);
         subjectsContainer = findViewById(R.id.subjectsContainer);
         etJoinCode = findViewById(R.id.etJoinCode);
+
+        LinearLayout skeletonList = (LinearLayout) skeletonState;
+        for (int i = 0; i < 3; i++) {
+            LayoutInflater.from(this).inflate(R.layout.skeleton_class_subject, skeletonList, true);
+        }
 
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
         btnCreateClass.setOnClickListener(v ->
@@ -68,6 +75,10 @@ public class ClassroomActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        skeletonState.setVisibility(View.VISIBLE);
+        emptyState.setVisibility(View.GONE);
+        classState.setVisibility(View.GONE);
+        SkeletonAnimator.start(skeletonState);
         loadClass();
     }
 
@@ -95,6 +106,8 @@ public class ClassroomActivity extends BaseActivity {
     }
 
     private void showEmpty() {
+        SkeletonAnimator.stop(skeletonState);
+        skeletonState.setVisibility(View.GONE);
         emptyState.setVisibility(View.VISIBLE);
         classState.setVisibility(View.GONE);
         tvHeaderCode.setVisibility(View.GONE);
@@ -103,6 +116,8 @@ public class ClassroomActivity extends BaseActivity {
     }
 
     private void showClass(Classroom classroom) {
+        SkeletonAnimator.stop(skeletonState);
+        skeletonState.setVisibility(View.GONE);
         emptyState.setVisibility(View.GONE);
         classState.setVisibility(View.VISIBLE);
         btnCreateClass.setVisibility(View.GONE);

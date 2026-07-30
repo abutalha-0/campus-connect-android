@@ -70,6 +70,131 @@
                 android:layout_marginBottom="12dp"
                 android:visibility="gone" />
 
+            <!-- Skeleton: shown while loadProfile()/loadSubjects() are in
+                 flight, mirroring the shape of the real content below. -->
+            <LinearLayout
+                android:id="@+id/skeletonGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Profile card skeleton -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:background="@drawable/bg_card"
+                    android:padding="22dp">
+
+                    <View
+                        android:tag="skeleton_block"
+                        android:layout_width="76dp"
+                        android:layout_height="76dp"
+                        android:background="@drawable/bg_skeleton_circle" />
+
+                    <View
+                        android:tag="skeleton_block"
+                        android:layout_width="140dp"
+                        android:layout_height="16dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@drawable/bg_skeleton_block" />
+
+                    <View
+                        android:tag="skeleton_block"
+                        android:layout_width="100dp"
+                        android:layout_height="12dp"
+                        android:layout_marginTop="10dp"
+                        android:background="@drawable/bg_skeleton_block" />
+                </LinearLayout>
+
+                <!-- Contact card skeleton -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/bg_card"
+                    android:padding="16dp"
+                    android:layout_marginTop="12dp">
+
+                    <View
+                        android:tag="skeleton_block"
+                        android:layout_width="90dp"
+                        android:layout_height="11dp"
+                        android:layout_marginBottom="14dp"
+                        android:background="@drawable/bg_skeleton_block" />
+
+                    <View
+                        android:tag="skeleton_block"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:background="@drawable/bg_skeleton_block" />
+                </LinearLayout>
+
+                <!-- Subjects Taught skeleton: label + 2 rows of 2 cards -->
+                <View
+                    android:tag="skeleton_block"
+                    android:layout_width="120dp"
+                    android:layout_height="12dp"
+                    android:layout_marginTop="26dp"
+                    android:layout_marginBottom="14dp"
+                    android:background="@drawable/bg_skeleton_block" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="10dp">
+
+                    <View
+                        android:tag="skeleton_block"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="5dp"
+                        android:background="@drawable/bg_skeleton_block" />
+
+                    <View
+                        android:tag="skeleton_block"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:layout_marginStart="5dp"
+                        android:background="@drawable/bg_skeleton_block" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:tag="skeleton_block"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="5dp"
+                        android:background="@drawable/bg_skeleton_block" />
+
+                    <View
+                        android:tag="skeleton_block"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:layout_marginStart="5dp"
+                        android:background="@drawable/bg_skeleton_block" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- Real content — hidden until both loadProfile() and
+                 loadSubjects() land. -->
+            <LinearLayout
+                android:id="@+id/contentGroup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
             <!-- Profile card -->
             <RelativeLayout
                 android:layout_width="match_parent"
@@ -271,6 +396,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical" />
+
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

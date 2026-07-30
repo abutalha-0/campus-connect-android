@@ -23,6 +23,7 @@ import com.campusconnect.app.R;
 import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.core.utils.ImageUtils;
+import com.campusconnect.app.core.utils.SkeletonAnimator;
 import com.campusconnect.app.core.utils.TokenManager;
 import com.campusconnect.app.profile.ProfileApiService;
 import com.campusconnect.app.profile.edit.AddEducationActivity;
@@ -71,6 +72,7 @@ public class ProfileFragment extends Fragment {
     private TextView tvFullName, tvUsername, tvUserType, tvAbout;
     private ImageView ivAvatar;
     private View coverBanner;
+    private View skeletonFullNameLine, skeletonUsernameLine, skeletonUserTypeChip;
 
     // ── Tab views ─────────────────────────────────────────────────────────────
     private TextView tabProjects, tabExperience, tabEducation;
@@ -131,6 +133,9 @@ public class ProfileFragment extends Fragment {
         tvAbout      = view.findViewById(R.id.tvAbout);
         ivAvatar     = view.findViewById(R.id.ivAvatar);
         coverBanner  = view.findViewById(R.id.coverBanner);
+        skeletonFullNameLine  = view.findViewById(R.id.skeletonFullNameLine);
+        skeletonUsernameLine  = view.findViewById(R.id.skeletonUsernameLine);
+        skeletonUserTypeChip  = view.findViewById(R.id.skeletonUserTypeChip);
 
         tabProjects      = view.findViewById(R.id.tabProjects);
         tabExperience    = view.findViewById(R.id.tabExperience);
@@ -199,6 +204,8 @@ public class ProfileFragment extends Fragment {
     // ── Data loading ──────────────────────────────────────────────────────────
 
     private void loadProfile() {
+        showHeroSkeleton();
+
         String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
         ProfileApiService service = RetrofitClient.createService(ProfileApiService.class);
         Call<Profile> call = isOwnProfile
@@ -209,17 +216,50 @@ public class ProfileFragment extends Fragment {
                     @Override
                     public void onResponse(Call<Profile> call, Response<Profile> response) {
                         if (!isAdded()) return;
+                        hideHeroSkeleton();
                         if (response.isSuccessful() && response.body() != null) {
                             currentProfile = response.body();
                             populateProfile(currentProfile);
+                        } else {
+                            SkeletonAnimator.stop(tabContent);
+                            tabContent.removeAllViews();
                         }
                     }
 
                     @Override
                     public void onFailure(Call<Profile> call, Throwable t) {
-                        // no-op
+                        if (!isAdded()) return;
+                        hideHeroSkeleton();
+                        SkeletonAnimator.stop(tabContent);
+                        tabContent.removeAllViews();
                     }
                 });
+    }
+
+    private void showHeroSkeleton() {
+        SkeletonAnimator.showLoading(skeletonFullNameLine, tvFullName);
+        SkeletonAnimator.showLoading(skeletonUsernameLine, tvUsername);
+        SkeletonAnimator.showLoading(skeletonUserTypeChip, tvUserType);
+        SkeletonAnimator.pulse(ivAvatar);
+
+        // First paint only: currentProfile is null until the first response
+        // lands, so tabContent has nothing real to clear yet — show a couple
+        // of placeholder entry cards rather than a blank area.
+        if (currentProfile == null) {
+            tabContent.removeAllViews();
+            for (int i = 0; i < 2; i++) {
+                LayoutInflater.from(getContext())
+                        .inflate(R.layout.skeleton_profile_entry, tabContent, true);
+            }
+            SkeletonAnimator.start(tabContent);
+        }
+    }
+
+    private void hideHeroSkeleton() {
+        SkeletonAnimator.showContent(skeletonFullNameLine, tvFullName);
+        SkeletonAnimator.showContent(skeletonUsernameLine, tvUsername);
+        SkeletonAnimator.showContent(skeletonUserTypeChip, tvUserType);
+        SkeletonAnimator.stop(ivAvatar);
     }
 
     private void populateProfile(Profile profile) {
@@ -306,6 +346,7 @@ public class ProfileFragment extends Fragment {
         String label = tab.substring(0, 1).toUpperCase() + tab.substring(1);
         if (tvActiveTabTitle != null) tvActiveTabTitle.setText(label);
 
+        SkeletonAnimator.stop(tabContent);
         tabContent.removeAllViews();
         if (currentProfile == null) return;
 

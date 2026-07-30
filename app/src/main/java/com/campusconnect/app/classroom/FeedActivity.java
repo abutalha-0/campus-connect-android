@@ -18,6 +18,7 @@ import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.base.BaseActivity;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.core.utils.ProfileNavigator;
+import com.campusconnect.app.core.utils.SkeletonAnimator;
 
 import java.util.List;
 
@@ -28,7 +29,7 @@ import retrofit2.Response;
 /** Class-wide discussion feed: list of posts, voting, and entry to create/view. */
 public class FeedActivity extends BaseActivity {
 
-    private LinearLayout postsContainer;
+    private LinearLayout postsContainer, skeletonContainer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +37,10 @@ public class FeedActivity extends BaseActivity {
         setContentView(R.layout.activity_feed);
 
         postsContainer = findViewById(R.id.postsContainer);
+        skeletonContainer = findViewById(R.id.skeletonContainer);
+        for (int i = 0; i < 3; i++) {
+            LayoutInflater.from(this).inflate(R.layout.skeleton_feed_post, skeletonContainer, true);
+        }
 
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
         findViewById(R.id.btnNewPost).setOnClickListener(v ->
@@ -45,6 +50,7 @@ public class FeedActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        SkeletonAnimator.showLoading(skeletonContainer, postsContainer);
         loadPosts();
     }
 
@@ -56,6 +62,7 @@ public class FeedActivity extends BaseActivity {
                     @Override
                     public void onResponse(Call<List<FeedPost>> call, Response<List<FeedPost>> response) {
                         if (isFinishing()) return;
+                        SkeletonAnimator.showContent(skeletonContainer, postsContainer);
                         if (response.isSuccessful() && response.body() != null) {
                             renderPosts(response.body());
                         }
@@ -64,6 +71,8 @@ public class FeedActivity extends BaseActivity {
                     @Override
                     public void onFailure(Call<List<FeedPost>> call, Throwable t) {
                         // leave as-is
+                        if (isFinishing()) return;
+                        SkeletonAnimator.showContent(skeletonContainer, postsContainer);
                     }
                 });
     }

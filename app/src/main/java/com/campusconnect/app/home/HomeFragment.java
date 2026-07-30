@@ -17,6 +17,7 @@ import com.campusconnect.app.R;
 import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.ui.ComingSoonActivity;
 import com.campusconnect.app.core.utils.Constants;
+import com.campusconnect.app.core.utils.SkeletonAnimator;
 import com.campusconnect.app.core.utils.TokenManager;
 import com.campusconnect.app.profile.ProfileApiService;
 import com.campusconnect.app.profile.models.Profile;
@@ -38,6 +39,7 @@ public class HomeFragment extends Fragment {
     private TextView tvGreeting, tvUserName, tvAvatarInitials;
     private ImageView ivAvatar;
     private LinearLayout activityContainer;
+    private View skeletonNameLine;
 
     @Nullable
     @Override
@@ -58,6 +60,7 @@ public class HomeFragment extends Fragment {
         tvAvatarInitials = view.findViewById(R.id.tvAvatarInitials);
         ivAvatar = view.findViewById(R.id.ivAvatar);
         activityContainer = view.findViewById(R.id.activityContainer);
+        skeletonNameLine = view.findViewById(R.id.skeletonNameLine);
 
         tvGreeting.setText(greetingForCurrentTime());
 
@@ -101,6 +104,9 @@ public class HomeFragment extends Fragment {
     // ── Profile (greeting name + avatar) ─────────────────────────────────
 
     private void loadProfile() {
+        SkeletonAnimator.showLoading(skeletonNameLine, tvUserName);
+        SkeletonAnimator.pulse(tvAvatarInitials);
+
         String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
         RetrofitClient.createService(ProfileApiService.class)
                 .getMyProfile(token)
@@ -108,6 +114,8 @@ public class HomeFragment extends Fragment {
                     @Override
                     public void onResponse(Call<Profile> call, Response<Profile> response) {
                         if (!isAdded()) return;
+                        SkeletonAnimator.showContent(skeletonNameLine, tvUserName);
+                        SkeletonAnimator.stop(tvAvatarInitials);
                         if (response.isSuccessful() && response.body() != null) {
                             populateProfile(response.body());
                         }
@@ -115,7 +123,10 @@ public class HomeFragment extends Fragment {
 
                     @Override
                     public void onFailure(Call<Profile> call, Throwable t) {
-                        // no-op — greeting/avatar just stay blank until next load
+                        // greeting/avatar just stay blank until next load
+                        if (!isAdded()) return;
+                        SkeletonAnimator.showContent(skeletonNameLine, tvUserName);
+                        SkeletonAnimator.stop(tvAvatarInitials);
                     }
                 });
     }
