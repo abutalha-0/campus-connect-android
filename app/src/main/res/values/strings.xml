@@ -223,8 +223,6 @@
     <!-- Feed -->
     <string name="tab_subjects">Subjects</string>
     <string name="tab_feed">Feed</string>
-    <string name="feed_title">Feed</string>
-    <string name="feed_subtitle">Discuss and ask across your class</string>
     <string name="feed_empty">No posts yet. Be the first to start a discussion.</string>
     <string name="feed_no_tag">No tag</string>
     <string name="feed_post_title">Post</string>
@@ -251,8 +249,6 @@
 
     <!-- Schedule -->
     <string name="tab_schedule">Schedule</string>
-    <string name="schedule_title">Schedule</string>
-    <string name="schedule_subtitle">Auto-collected from all subject notices</string>
     <string name="schedule_empty">No upcoming dates. Faculty and CRs can add one when posting a notice.</string>
     <string name="schedule_all_day">All day</string>
 </resources>
