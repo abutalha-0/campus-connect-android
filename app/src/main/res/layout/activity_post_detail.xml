@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- NEW (Crew feature): full post view. Owner sees close/accept/reject/members;
+     everyone else sees a request-to-join box. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/color_background">
+
+    <include layout="@layout/top_bar_edit"/>
+    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/color_border"/>
+
+    <ScrollView android:layout_width="match_parent" android:layout_height="match_parent">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
+
+            <TextView android:id="@+id/tvStatus" android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="@string/loading" android:textColor="@color/color_muted" android:gravity="center" android:padding="24dp"/>
+
+            <LinearLayout android:id="@+id/contentContainer" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
+                    <TextView android:id="@+id/tvCategory" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                        android:textColor="@color/color_cyan" android:textSize="13sp" android:textStyle="bold"/>
+                    <TextView android:id="@+id/tvStatusBadge" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="12sp" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <TextView android:id="@+id/tvTitle" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:textColor="@color/color_text_primary" android:textSize="20sp" android:textStyle="bold" android:layout_marginTop="8dp"/>
+
+                <TextView android:id="@+id/tvAuthor" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:textColor="@color/color_muted" android:textSize="12sp" android:layout_marginTop="4dp"/>
+
+                <TextView android:id="@+id/tvDescription" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:textColor="@color/color_text_body" android:textSize="14sp" android:layout_marginTop="14dp"/>
+
+                <TextView android:id="@+id/tvLocation" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:textColor="@color/color_text_body" android:textSize="13sp" android:layout_marginTop="10dp"/>
+
+                <TextView android:id="@+id/tvContact" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:textColor="@color/color_text_body" android:textSize="13sp" android:layout_marginTop="4dp"/>
+
+                <TextView android:id="@+id/tvCapacity" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:textColor="@color/color_purple" android:textStyle="bold" android:textSize="13sp" android:layout_marginTop="4dp"/>
+
+                <LinearLayout android:id="@+id/detailsContainer" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:background="@drawable/bg_card" android:padding="14dp" android:layout_marginTop="16dp"/>
+
+                <TextView android:id="@+id/tvSkills" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:textColor="@color/color_cyan" android:textSize="12sp" android:layout_marginTop="12dp"/>
+
+                <!-- ── Non-owner: request to join ── -->
+                <LinearLayout android:id="@+id/joinActionsContainer" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:layout_marginTop="20dp" android:visibility="gone">
+                    <EditText android:id="@+id/etJoinMessage" android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="60dp"
+                        android:gravity="top|start" android:background="@drawable/bg_input" android:padding="12dp" android:inputType="textMultiLine"
+                        android:hint="@string/crew_hint_join_message" android:textColor="@color/color_text_primary" android:textSize="13sp"/>
+                    <TextView android:id="@+id/btnRequestJoin" android:layout_width="match_parent" android:layout_height="48dp" android:layout_marginTop="10dp"
+                        android:gravity="center" android:text="@string/crew_request_join" android:textColor="@color/color_background" android:textStyle="bold"
+                        android:background="@drawable/bg_button_primary"/>
+                </LinearLayout>
+
+                <!-- ── Owner: close post + manage requests + members ── -->
+                <LinearLayout android:id="@+id/ownerActionsContainer" android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical" android:layout_marginTop="20dp" android:visibility="gone">
+
+                    <TextView android:id="@+id/btnClosePost" android:layout_width="match_parent" android:layout_height="44dp" android:gravity="center"
+                        android:text="@string/crew_close_post" android:textColor="@color/color_red" android:textStyle="bold" android:background="@drawable/bg_input" android:layout_marginBottom="16dp"/>
+
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/crew_join_requests_header"
+                        android:textColor="@color/color_text_primary" android:textStyle="bold" android:textSize="14sp" android:layout_marginBottom="8dp"/>
+
+                    <LinearLayout android:id="@+id/joinRequestsContainer" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"/>
+
+                    <TextView android:id="@+id/tvNoRequests" android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:text="@string/crew_no_requests" android:textColor="@color/color_muted" android:textSize="12sp" android:visibility="gone"/>
+
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/crew_members_header"
+                        android:textColor="@color/color_text_primary" android:textStyle="bold" android:textSize="14sp" android:layout_marginTop="20dp" android:layout_marginBottom="8dp"/>
+
+                    <LinearLayout android:id="@+id/membersContainer" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

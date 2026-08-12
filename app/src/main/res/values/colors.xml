@@ -13,4 +13,6 @@
     <color name="color_cover_end">#8B5CF6</color>
     <color name="color_amber">#F59E0B</color>
     <color name="color_indigo">#6366F1</color>
+    <!-- NEW (Crew feature): used for the "OPEN" post-status badge -->
+    <color name="color_green">#22C55E</color>
 </resources>
