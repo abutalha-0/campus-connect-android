@@ -90,6 +90,8 @@ public class DiscoverFragment extends Fragment {
                     @Override
                     public void onFailure(Call<UserListResponse> call, Throwable t) {
                         if (!isAdded()) return;
+                        t.printStackTrace();
+                        android.util.Log.e("Discover", "Error loading users: " + t.getMessage());
                         tvStatus.setText(getString(R.string.error_network));
                         tvStatus.setVisibility(View.VISIBLE);
                     }

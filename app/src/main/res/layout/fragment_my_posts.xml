@@ -68,11 +68,12 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Active"
+                android:text="@string/status_active"
                 android:textAllCaps="false"
                 android:textColor="@color/text_dim"
                 android:textSize="13sp"
-                app:cornerRadius="10dp" />
+                app:cornerRadius="10dp"
+                app:rippleColor="@color/amber_dim" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnClosed"
@@ -80,11 +81,12 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Closed"
+                android:text="@string/status_closed"
                 android:textAllCaps="false"
                 android:textColor="@color/text_dim"
                 android:textSize="13sp"
-                app:cornerRadius="10dp" />
+                app:cornerRadius="10dp"
+                app:rippleColor="@color/amber_dim" />
         </com.google.android.material.button.MaterialButtonToggleGroup>
 
         <TextView
@@ -93,7 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:letterSpacing="0.1"
-            android:text="ACTIVE"
+            android:text="@string/label_active_caps"
             android:textColor="@color/text_dim"
             android:textSize="11sp"
             android:textStyle="bold"

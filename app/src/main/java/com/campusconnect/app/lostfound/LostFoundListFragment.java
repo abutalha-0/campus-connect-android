@@ -137,6 +137,7 @@ public class LostFoundListFragment extends Fragment {
                         if (response.isSuccessful() && response.body() != null) {
                             items.clear();
                             items.addAll(response.body());
+                            
                             adapter.notifyDataSetChanged();
                             
                             View emptyState = getView().findViewById(R.id.tvEmptyState);
@@ -155,6 +156,8 @@ public class LostFoundListFragment extends Fragment {
                     @Override
                     public void onFailure(Call<List<LostFoundItem>> call, Throwable t) {
                         if (!isAdded()) return;
+                        t.printStackTrace();
+                        android.util.Log.e("LostFound", "Error loading items: " + t.getMessage());
                         Toast.makeText(getContext(), R.string.error_network, Toast.LENGTH_SHORT).show();
                     }
                 });

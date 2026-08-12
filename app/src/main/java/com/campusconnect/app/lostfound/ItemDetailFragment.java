@@ -116,8 +116,8 @@ public class ItemDetailFragment extends Fragment {
         tvPostedBy.setText(item.getReportedBy());
 
         boolean isLost = LostFoundItem.TYPE_LOST.equalsIgnoreCase(item.getItemType());
-        int accentColor = ContextCompat.getColor(requireContext(), isLost ? R.color.orange : R.color.cyan);
-        int dimColor = ContextCompat.getColor(requireContext(), isLost ? R.color.orange_dim : R.color.cyan_dim);
+        int accentColor = ContextCompat.getColor(requireContext(), isLost ? R.color.amber : R.color.amber_gold);
+        int dimColor = ContextCompat.getColor(requireContext(), isLost ? R.color.amber_dim : R.color.amber_gold_dim);
 
         tvTypeBadge.setText(item.getItemType());
         tvTypeBadge.setTextColor(accentColor);
@@ -139,7 +139,7 @@ public class ItemDetailFragment extends Fragment {
 
     private void showContactDialog(LostFoundItem item) {
         Dialog dialog = new Dialog(requireContext());
-        dialog.requestWindowFeature(Window.FEATURE_NO_BAR_ACTION);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_contact_info);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 

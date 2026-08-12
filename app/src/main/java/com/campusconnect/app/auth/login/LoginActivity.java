@@ -92,6 +92,8 @@ public class LoginActivity extends BaseActivity {
                     @Override
                     public void onFailure(Call<AuthResponse> call, Throwable t) {
                         setLoading(false);
+                        t.printStackTrace();
+                        android.util.Log.e("Auth", "Login failed: " + t.getMessage());
                         Toast.makeText(LoginActivity.this,
                                 getString(R.string.error_network),
                                 Toast.LENGTH_SHORT).show();

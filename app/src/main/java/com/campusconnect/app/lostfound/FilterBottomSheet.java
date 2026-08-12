@@ -85,7 +85,7 @@ public class FilterBottomSheet extends BottomSheetDialogFragment {
         });
 
         view.findViewById(R.id.btnApply).setOnClickListener(v -> {
-            int checkedId = toggleGroup.getCheckedRadioButtonId();
+            int checkedId = toggleGroup.getCheckedButtonId();
             String status = null;
             if (checkedId == R.id.btnStatusOpen) status = "OPEN";
             else if (checkedId == R.id.btnStatusClaimed) status = "CLAIMED";

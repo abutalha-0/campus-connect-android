@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.campusconnect.app.R;
+import com.campusconnect.app.core.utils.TimeUtils;
 import com.campusconnect.app.lostfound.model.LostFoundItem;
 import java.util.List;
 
@@ -85,11 +86,12 @@ public class LostFoundAdapter extends RecyclerView.Adapter<LostFoundAdapter.View
         void bind(LostFoundItem item, OnItemClickListener listener,
                   OnActionClickListener actionListener, boolean showActions) {
             tvTitle.setText(item.getTitle());
-            tvMeta.setText(String.format("%s · %s", item.getLocation(), item.getCreatedAt())); // TODO: Relative time
+            String relativeTime = TimeUtils.getRelativeTime(item.getCreatedAt());
+            tvMeta.setText(String.format("%s · %s", item.getLocation(), relativeTime));
 
             boolean isLost = LostFoundItem.TYPE_LOST.equalsIgnoreCase(item.getItemType());
-            int accentColor = ContextCompat.getColor(itemView.getContext(), isLost ? R.color.orange : R.color.cyan);
-            int dimColor = ContextCompat.getColor(itemView.getContext(), isLost ? R.color.orange_dim : R.color.cyan_dim);
+            int accentColor = ContextCompat.getColor(itemView.getContext(), isLost ? R.color.amber : R.color.amber_gold);
+            int dimColor = ContextCompat.getColor(itemView.getContext(), isLost ? R.color.amber_dim : R.color.amber_gold_dim);
 
             tvStatusBadge.setText(item.getItemType());
             tvStatusBadge.setTextColor(accentColor);

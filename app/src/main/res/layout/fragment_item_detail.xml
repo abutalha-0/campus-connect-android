@@ -20,6 +20,7 @@
             android:layout_height="34dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="8dp"
+            android:contentDescription="@null"
             android:src="@drawable/ic_arrow_back"
             app:tint="@color/text_primary" />
 
@@ -39,6 +40,7 @@
             android:layout_height="34dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:padding="8dp"
+            android:contentDescription="@null"
             android:src="@drawable/ic_more_vert"
             app:tint="@color/text_primary" />
     </LinearLayout>
@@ -217,7 +219,7 @@
                     <TextView
                         android:layout_width="100dp"
                         android:layout_height="wrap_content"
-                        android:text="Posted by"
+                        android:text="@string/label_posted_by"
                         android:textColor="@color/text_dim"
                         android:textSize="13sp" />
 
@@ -238,10 +240,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="24dp"
-                android:backgroundTint="@color/cyan"
+                android:backgroundTint="@color/amber"
                 android:text="@string/btn_reveal_contact"
                 android:textAllCaps="false"
-                android:textColor="@color/btn_on_cyan_text"
+                android:textColor="@color/btn_on_amber_text"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 app:cornerRadius="14dp" />

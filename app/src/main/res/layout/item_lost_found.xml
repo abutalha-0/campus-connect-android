@@ -100,14 +100,14 @@
             android:layout_width="0dp"
             android:layout_height="36dp"
             android:layout_weight="1"
-            android:backgroundTint="@color/purple_dim"
+            android:backgroundTint="@color/amber_dim"
             android:padding="0dp"
             android:text="Mark closed"
             android:textAllCaps="false"
-            android:textColor="@color/purple"
+            android:textColor="@color/amber"
             android:textSize="12sp"
             app:cornerRadius="10dp"
-            app:strokeColor="@color/purple"
+            app:strokeColor="@color/amber"
             app:strokeWidth="1dp" />
 
     </LinearLayout>

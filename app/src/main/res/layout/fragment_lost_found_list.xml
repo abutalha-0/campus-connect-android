@@ -42,7 +42,7 @@
                     android:textColor="@color/text_dim"
                     android:textSize="13.5sp"
                     app:cornerRadius="10dp"
-                    app:rippleColor="@color/cyan_dim" />
+                    app:rippleColor="@color/amber_dim" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnLost"
@@ -55,7 +55,7 @@
                     android:textColor="@color/text_dim"
                     android:textSize="13.5sp"
                     app:cornerRadius="10dp"
-                    app:rippleColor="@color/cyan_dim" />
+                    app:rippleColor="@color/amber_dim" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnFound"
@@ -68,7 +68,7 @@
                     android:textColor="@color/text_dim"
                     android:textSize="13.5sp"
                     app:cornerRadius="10dp"
-                    app:rippleColor="@color/cyan_dim" />
+                    app:rippleColor="@color/amber_dim" />
 
             </com.google.android.material.button.MaterialButtonToggleGroup>
 
@@ -132,7 +132,7 @@
                         android:layout_height="8dp"
                         android:layout_gravity="top|end"
                         android:layout_margin="8dp"
-                        android:background="@drawable/bg_lf_dot_purple"
+                        android:background="@drawable/bg_lf_dot_amber"
                         android:visibility="gone" />
                 </FrameLayout>
             </LinearLayout>
@@ -174,8 +174,8 @@
         android:layout_margin="20dp"
         android:contentDescription="@null"
         android:src="@drawable/ic_plus"
-        app:backgroundTint="@color/cyan"
+        app:backgroundTint="@color/amber"
         app:fabCustomSize="52dp"
-        app:tint="@color/btn_on_cyan_text" />
+        app:tint="@color/btn_on_amber_text" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

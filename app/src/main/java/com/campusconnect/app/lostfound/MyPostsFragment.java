@@ -62,7 +62,11 @@ public class MyPostsFragment extends Fragment {
         adapter.setOnActionClickListener(new LostFoundAdapter.OnActionClickListener() {
             @Override
             public void onEditClick(LostFoundItem item) {
-                // TODO: Handle edit
+                Fragment postFragment = PostItemFragment.newInstance(item.getId());
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainer, postFragment)
+                        .addToBackStack(null)
+                        .commit();
             }
 
             @Override

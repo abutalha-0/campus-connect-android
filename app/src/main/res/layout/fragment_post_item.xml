@@ -24,6 +24,7 @@
             app:tint="@color/text_primary" />
 
         <TextView
+            android:id="@+id/tvPostTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -51,6 +52,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="64dp"
+                android:baselineAligned="false"
                 android:orientation="horizontal">
 
                 <FrameLayout
@@ -68,8 +70,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:text="Lost"
-                        android:textColor="@color/orange"
+                        android:text="@string/type_lost"
+                        android:textColor="@color/amber"
                         android:textSize="15sp"
                         android:textStyle="bold" />
                 </FrameLayout>
@@ -89,7 +91,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:text="Found"
+                        android:text="@string/type_found"
                         android:textColor="@color/text_dim"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -109,7 +111,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:background="@drawable/bg_lf_input"
-                android:hint="e.g. Brown Wallet"
+                android:autofillHints="none"
+                android:hint="@string/hint_item_name"
                 android:inputType="text"
                 android:paddingHorizontal="16dp"
                 android:textColor="@color/text_primary"
@@ -129,6 +132,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:background="@drawable/bg_lf_input"
+                android:autofillHints="none"
                 android:hint="@string/hint_category"
                 android:inputType="text"
                 android:paddingHorizontal="16dp"
@@ -150,7 +154,8 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_lf_input"
                 android:gravity="top"
-                android:hint="Describe the item…"
+                android:autofillHints="none"
+                android:hint="@string/hint_description"
                 android:inputType="textMultiLine"
                 android:minHeight="90dp"
                 android:padding="16dp"
@@ -171,6 +176,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:background="@drawable/bg_lf_input"
+                android:autofillHints="none"
                 android:hint="@string/hint_location"
                 android:inputType="text"
                 android:paddingHorizontal="16dp"
@@ -192,7 +198,7 @@
                 android:layout_height="52dp"
                 android:background="@drawable/bg_lf_input"
                 android:gravity="center_vertical"
-                android:hint="Select date and time"
+                android:hint="@string/hint_select_date_time"
                 android:paddingHorizontal="16dp"
                 android:textColor="@color/text_primary"
                 android:textColorHint="@color/text_faint"
@@ -215,6 +221,7 @@
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
+                        android:contentDescription="@null"
                         android:src="@drawable/ic_camera"
                         app:tint="@color/text_faint" />
 
@@ -241,10 +248,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="32dp"
-                android:backgroundTint="@color/cyan"
+                android:backgroundTint="@color/amber"
                 android:text="@string/btn_post_item"
                 android:textAllCaps="false"
-                android:textColor="@color/btn_on_cyan_text"
+                android:textColor="@color/btn_on_amber_text"
                 android:textSize="15sp"
                 android:textStyle="bold"
                 app:cornerRadius="14dp" />

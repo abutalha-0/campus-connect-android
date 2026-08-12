@@ -74,7 +74,7 @@
                 android:id="@+id/tvContactLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Contact Info"
+                android:text="@string/label_contact_info"
                 android:textColor="@color/text_dim"
                 android:textSize="14sp" />
 

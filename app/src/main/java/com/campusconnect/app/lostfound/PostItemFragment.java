@@ -37,10 +37,20 @@ import retrofit2.Response;
 public class PostItemFragment extends Fragment {
 
     private static final int PICK_IMAGE_REQUEST = 1;
+    private static final String ARG_ITEM_ID = "item_id";
 
+    private int editingItemId = -1;
     private String currentType = LostFoundItem.TYPE_LOST;
     private Uri selectedImageUri;
-    
+
+    public static PostItemFragment newInstance(int itemId) {
+        PostItemFragment fragment = new PostItemFragment();
+        Bundle args = new Bundle();
+        args.putInt(ARG_ITEM_ID, itemId);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     private View btnTypeLost, btnTypeFound;
     private TextView tvLostLabel, tvFoundLabel;
     private EditText etTitle, etCategory, etDescription, etLocation;
@@ -49,6 +59,14 @@ public class PostItemFragment extends Fragment {
     private View btnUploadPhoto;
 
     private TokenManager tokenManager;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            editingItemId = getArguments().getInt(ARG_ITEM_ID, -1);
+        }
+    }
 
     @Nullable
     @Override
@@ -82,6 +100,44 @@ public class PostItemFragment extends Fragment {
         btnUploadPhoto.setOnClickListener(v -> openImagePicker());
 
         view.findViewById(R.id.btnSubmit).setOnClickListener(v -> submitItem());
+
+        if (editingItemId != -1) {
+            loadItemForEdit();
+            ((TextView) view.findViewById(R.id.btnSubmit)).setText("Update item");
+            ((TextView) view.findViewById(R.id.tvPostTitle)).setText("Edit item");
+        }
+    }
+
+    private void loadItemForEdit() {
+        String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
+        RetrofitClient.createService(LostFoundApiService.class)
+                .getItemDetail(token, editingItemId)
+                .enqueue(new Callback<LostFoundItem>() {
+                    @Override
+                    public void onResponse(Call<LostFoundItem> call, Response<LostFoundItem> response) {
+                        if (!isAdded()) return;
+                        if (response.isSuccessful() && response.body() != null) {
+                            populateForEdit(response.body());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<LostFoundItem> call, Throwable t) {}
+                });
+    }
+
+    private void populateForEdit(LostFoundItem item) {
+        etTitle.setText(item.getTitle());
+        etCategory.setText(item.getCategory());
+        etDescription.setText(item.getDescription());
+        etLocation.setText(item.getLocation());
+        tvDateTime.setText(item.getDateSeen());
+        selectType(item.getItemType());
+        
+        if (item.getImageUrl() != null && !item.getImageUrl().isEmpty()) {
+            com.bumptech.glide.Glide.with(this).load(item.getImageUrl()).into(ivPreview);
+            ivPreview.setVisibility(View.VISIBLE);
+        }
     }
 
     private void selectType(String type) {
@@ -89,10 +145,10 @@ public class PostItemFragment extends Fragment {
         boolean isLost = LostFoundItem.TYPE_LOST.equals(type);
         
         btnTypeLost.setBackgroundResource(isLost ? R.drawable.bg_lf_type_lost_selected : R.drawable.bg_lf_type_unselected);
-        tvLostLabel.setTextColor(ContextCompat.getColor(requireContext(), isLost ? R.color.orange : R.color.text_dim));
+        tvLostLabel.setTextColor(ContextCompat.getColor(requireContext(), isLost ? R.color.amber : R.color.text_dim));
         
         btnTypeFound.setBackgroundResource(!isLost ? R.drawable.bg_lf_type_found_selected : R.drawable.bg_lf_type_unselected);
-        tvFoundLabel.setTextColor(ContextCompat.getColor(requireContext(), !isLost ? R.color.cyan : R.color.text_dim));
+        tvFoundLabel.setTextColor(ContextCompat.getColor(requireContext(), !isLost ? R.color.amber_gold : R.color.text_dim));
     }
 
     private void showDateTimePicker() {
@@ -102,15 +158,9 @@ public class PostItemFragment extends Fragment {
             calendar.set(Calendar.MONTH, month);
             calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
             
-            new TimePickerDialog(requireContext(), (view1, hourOfDay, minute) -> {
-                calendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-                calendar.set(Calendar.MINUTE, minute);
-                
-                String dateTime = String.format(Locale.US, "%04d-%02d-%02d %02d:%02d", 
-                        year, month + 1, dayOfMonth, hourOfDay, minute);
-                tvDateTime.setText(dateTime);
-            }, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), false).show();
-            
+            String dateOnly = String.format(Locale.US, "%04d-%02d-%02d", 
+                    year, month + 1, dayOfMonth);
+            tvDateTime.setText(dateOnly);
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show();
     }
 
@@ -142,6 +192,8 @@ public class PostItemFragment extends Fragment {
             return;
         }
 
+        String dateOnly = dateTime.split(" ")[0];
+
         String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
         LostFoundApiService api = RetrofitClient.createService(LostFoundApiService.class);
 
@@ -150,30 +202,42 @@ public class PostItemFragment extends Fragment {
         RequestBody typePart = RequestBody.create(MediaType.parse("text/plain"), currentType);
         RequestBody catPart = RequestBody.create(MediaType.parse("text/plain"), category);
         RequestBody locPart = RequestBody.create(MediaType.parse("text/plain"), location);
-        RequestBody datePart = RequestBody.create(MediaType.parse("text/plain"), dateTime);
+        RequestBody datePart = RequestBody.create(MediaType.parse("text/plain"), dateOnly);
         RequestBody contactPart = RequestBody.create(MediaType.parse("text/plain"), "Contact me via app"); // Placeholder
 
         MultipartBody.Part imagePart = null;
         if (selectedImageUri != null) {
-            File file = FileUtils.getFile(requireContext(), selectedImageUri);
-            if (file != null) {
-                RequestBody requestFile = RequestBody.create(MediaType.parse(requireContext().getContentResolver().getType(selectedImageUri)), file);
+            try {
+                File file = FileUtils.copyToCache(requireContext(), selectedImageUri);
+                RequestBody requestFile = RequestBody.create(
+                        MediaType.parse(requireContext().getContentResolver().getType(selectedImageUri)),
+                        file
+                );
                 imagePart = MultipartBody.Part.createFormData("image", file.getName(), requestFile);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
 
-        api.createItemWithImage(token, titlePart, descPart, typePart, catPart, locPart, datePart, contactPart, imagePart)
-                .enqueue(new Callback<LostFoundItem>() {
-                    @Override
-                    public void onResponse(Call<LostFoundItem> call, Response<LostFoundItem> response) {
-                        if (!isAdded()) return;
-                        if (response.isSuccessful()) {
-                            Toast.makeText(getContext(), "Item posted successfully", Toast.LENGTH_SHORT).show();
-                            getParentFragmentManager().popBackStack();
-                        } else {
-                            Toast.makeText(getContext(), "Failed to post item", Toast.LENGTH_SHORT).show();
-                        }
-                    }
+        Call<LostFoundItem> call;
+        if (editingItemId == -1) {
+            call = api.createItemWithImage(token, titlePart, descPart, typePart, catPart, locPart, datePart, contactPart, imagePart);
+        } else {
+            RequestBody statusPart = RequestBody.create(MediaType.parse("text/plain"), LostFoundItem.STATUS_OPEN); // Default for edit if not changed
+            call = api.updateItemWithImage(token, editingItemId, titlePart, descPart, typePart, catPart, locPart, datePart, contactPart, statusPart, imagePart);
+        }
+
+        call.enqueue(new Callback<LostFoundItem>() {
+            @Override
+            public void onResponse(Call<LostFoundItem> call, Response<LostFoundItem> response) {
+                if (!isAdded()) return;
+                if (response.isSuccessful()) {
+                    Toast.makeText(getContext(), editingItemId == -1 ? "Item posted successfully" : "Item updated successfully", Toast.LENGTH_SHORT).show();
+                    getParentFragmentManager().popBackStack();
+                } else {
+                    Toast.makeText(getContext(), "Failed to save item", Toast.LENGTH_SHORT).show();
+                }
+            }
 
                     @Override
                     public void onFailure(Call<LostFoundItem> call, Throwable t) {

@@ -62,11 +62,12 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Open"
+            android:text="@string/status_open"
             android:textAllCaps="false"
             android:textColor="@color/text_dim"
             android:textSize="13sp"
-            app:cornerRadius="10dp" />
+            app:cornerRadius="10dp"
+            app:rippleColor="@color/amber_dim" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnStatusClaimed"
@@ -74,11 +75,12 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Claimed"
+            android:text="@string/status_claimed"
             android:textAllCaps="false"
             android:textColor="@color/text_dim"
             android:textSize="13sp"
-            app:cornerRadius="10dp" />
+            app:cornerRadius="10dp"
+            app:rippleColor="@color/amber_dim" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnStatusClosed"
@@ -86,11 +88,12 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Closed"
+            android:text="@string/status_closed"
             android:textAllCaps="false"
             android:textColor="@color/text_dim"
             android:textSize="13sp"
-            app:cornerRadius="10dp" />
+            app:cornerRadius="10dp"
+            app:rippleColor="@color/amber_dim" />
     </com.google.android.material.button.MaterialButtonToggleGroup>
 
     <TextView
@@ -109,7 +112,8 @@
         android:layout_height="52dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/bg_lf_input"
-        android:hint="e.g. Electronics, ID card"
+        android:hint="@string/hint_category"
+        android:inputType="text"
         android:paddingHorizontal="16dp"
         android:textColor="@color/text_primary"
         android:textColorHint="@color/text_faint"
@@ -131,7 +135,8 @@
         android:layout_height="52dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/bg_lf_input"
-        android:hint="e.g. Library Gate"
+        android:hint="@string/hint_location"
+        android:inputType="text"
         android:paddingHorizontal="16dp"
         android:textColor="@color/text_primary"
         android:textColorHint="@color/text_faint"
@@ -154,7 +159,7 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/bg_lf_input"
         android:gravity="center_vertical"
-        android:hint="YYYY-MM-DD"
+        android:hint="@string/hint_date_format"
         android:paddingHorizontal="16dp"
         android:textColor="@color/text_primary"
         android:textColorHint="@color/text_faint"
@@ -165,10 +170,10 @@
         android:layout_width="match_parent"
         android:layout_height="56dp"
         android:layout_marginTop="32dp"
-        android:backgroundTint="@color/cyan"
+        android:backgroundTint="@color/amber"
         android:text="@string/btn_apply_filters"
         android:textAllCaps="false"
-        android:textColor="@color/btn_on_cyan_text"
+        android:textColor="@color/btn_on_amber_text"
         android:textSize="15sp"
         android:textStyle="bold"
         app:cornerRadius="14dp" />

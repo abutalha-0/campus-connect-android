@@ -85,6 +85,13 @@ public class HomeFragment extends Fragment {
                 startActivity(new android.content.Intent(getActivity(),
                         com.campusconnect.app.classroom.ClassroomActivity.class)));
 
+        // Lost & Found is live
+        view.findViewById(R.id.blockLost).setOnClickListener(v ->
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainer, new com.campusconnect.app.lostfound.LostFoundListFragment())
+                        .addToBackStack(null)
+                        .commit());
+
         renderActivity(mockActivity());
         loadProfile();
     }

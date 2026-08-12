@@ -22,8 +22,8 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="Lost &amp; Found"
-        android:textColor="@color/cyan"
+        android:text="@string/title_lost_found"
+        android:textColor="@color/amber"
         android:textSize="18sp"
         android:textStyle="bold"/>
 
