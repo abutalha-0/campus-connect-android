@@ -34,7 +34,16 @@
     <color name="amber_gold">#EAB308</color>
     <color name="amber_gold_dim">#382F0D</color>
 
+    <!-- Route Mate Design Tokens -->
+    <color name="indigo">#6366F1</color>
+    <color name="indigo_dim">#1E1F4B</color>
+    <color name="indigo_glow">#4D6366F1</color>
+    <color name="indigo_surface">#14172B</color>
+    <color name="indigo_light">#818CF8</color>
+    <color name="btn_on_indigo_text">#FFFFFF</color>
+
     <color name="text_primary">#EEF2F8</color>
+    <color name="text_body">#CBD5E1</color>
     <color name="text_dim">#8B95A7</color>
     <color name="text_faint">#5B6478</color>
 

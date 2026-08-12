@@ -92,6 +92,13 @@ public class HomeFragment extends Fragment {
                         .addToBackStack(null)
                         .commit());
 
+        // Route Mate is live
+        view.findViewById(R.id.blockRoute).setOnClickListener(v ->
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainer, new com.campusconnect.app.routemate.RouteMateListFragment())
+                        .addToBackStack(null)
+                        .commit());
+
         renderActivity(mockActivity());
         loadProfile();
     }

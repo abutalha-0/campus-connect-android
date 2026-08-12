@@ -295,4 +295,24 @@
     <string name="label_closed_caps">CLOSED</string>
     <string name="label_contact_info">Contact Info</string>
     <string name="my_lf_posts_label">My Lost &amp; Found Posts</string>
+
+    <!-- Route Mate -->
+    <string name="title_route_mate">Route Mate</string>
+    <string name="hint_search_routes">Search location, transport, notes…</string>
+    <string name="filter_routes_title">Filter Routes</string>
+    <string name="label_home_area">Home Area</string>
+    <string name="label_destination">Destination</string>
+    <string name="label_transport_mode">Transport Mode</string>
+    <string name="label_gender_pref">Gender Preference</string>
+    <string name="post_route_title">Post a Route</string>
+    <string name="edit_route_title">Edit Route</string>
+    <string name="route_detail_title">Route Details</string>
+    <string name="tab_explore_routes">Explore</string>
+    <string name="tab_my_routes">My Routes</string>
+    <string name="tab_history_routes">History</string>
+    <string name="btn_request_join">Request to Join</string>
+    <string name="btn_manage_requests">Manage Requests</string>
+    <string name="empty_routes">No routes match your filters</string>
+    <string name="empty_my_routes">No posted or requested routes yet</string>
+    <string name="empty_history_routes">No past matches or closed routes</string>
 </resources>
