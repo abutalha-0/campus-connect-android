@@ -297,6 +297,8 @@
     <string name="crew_members_header">Members</string>
     <string name="crew_accept">Accept</string>
     <string name="crew_reject">Reject</string>
+    <string name="crew_request_action_failed">Couldn\'t update the request. Try again.</string>
+    <string name="crew_owner_check_failed">Couldn\'t verify post ownership. Owner controls may be hidden — reopen the post to retry.</string>
 
     <!-- NEW (Notifications feature) -->
     <string name="notifications_title">Notifications</string>

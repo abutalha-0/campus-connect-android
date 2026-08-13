@@ -49,6 +49,7 @@ public class PostDetailActivity extends BaseActivity {
     private String slug;
     private Post currentPost;
     private int myUserId = -1;
+    private boolean profileFetchRetried = false;
 
     private TextView tvStatus;
     private LinearLayout contentContainer;
@@ -121,6 +122,12 @@ public class PostDetailActivity extends BaseActivity {
                     @Override
                     public void onFailure(Call<Profile> call, Throwable t) {
                         if (isFinishing()) return;
+                        if (!profileFetchRetried) {
+                            profileFetchRetried = true;
+                            loadMyProfileThenPost();
+                            return;
+                        }
+                        Toast.makeText(PostDetailActivity.this, getString(R.string.crew_owner_check_failed), Toast.LENGTH_LONG).show();
                         loadPost();
                     }
                 });
@@ -309,7 +316,12 @@ public class PostDetailActivity extends BaseActivity {
             @Override
             public void onResponse(Call<JoinRequestModel> call, Response<JoinRequestModel> response) {
                 if (isFinishing()) return;
-                loadPost();
+                if (response.isSuccessful()) {
+                    loadPost();
+                } else {
+                    String message = ApiError.extract(response, getString(R.string.crew_request_action_failed));
+                    Toast.makeText(PostDetailActivity.this, message, Toast.LENGTH_LONG).show();
+                }
             }
 
             @Override
