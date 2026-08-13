@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- NEW (Crew feature): create-post form. Modeled on activity_add_feed_post.xml
+     (top_bar_edit include, FacultyFieldLabel/FacultyInput styles, bottom Save
+     button). Three field groups show/hide based on category selection -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/color_background">
+
+    <include layout="@layout/top_bar_edit"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/color_border"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <TextView style="@style/FacultyFieldLabel" android:text="@string/crew_label_category"/>
+            <Spinner
+                android:id="@+id/spinnerCategory"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:background="@drawable/bg_input"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:popupBackground="@color/color_card"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView style="@style/FacultyFieldLabel" android:text="@string/crew_label_title"/>
+            <EditText android:id="@+id/etTitle" style="@style/FacultyInput" android:inputType="textCapSentences" android:hint="@string/crew_hint_title"/>
+
+            <TextView style="@style/FacultyFieldLabel" android:text="@string/crew_label_description"/>
+            <EditText
+                android:id="@+id/etDescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="100dp"
+                android:gravity="top|start"
+                android:background="@drawable/bg_input"
+                android:padding="14dp"
+                android:inputType="textMultiLine|textCapSentences"
+                android:hint="@string/crew_hint_description"
+                android:textColor="@color/color_text_primary"
+                android:textSize="14sp"
+                android:layout_marginBottom="16dp"/>
+
+            <TextView style="@style/FacultyFieldLabel" android:text="@string/crew_label_location"/>
+            <EditText android:id="@+id/etLocation" style="@style/FacultyInput" android:inputType="text" android:hint="@string/crew_hint_location"/>
+
+            <TextView style="@style/FacultyFieldLabel" android:text="@string/crew_label_contact"/>
+            <EditText android:id="@+id/etContactInfo" style="@style/FacultyInput" android:inputType="text" android:hint="@string/crew_hint_contact"/>
+
+            <TextView style="@style/FacultyFieldLabel" android:text="@string/crew_label_max_members"/>
+            <EditText android:id="@+id/etMaxMembers" style="@style/FacultyInput" android:inputType="number" android:hint="@string/crew_hint_max_members"/>
+
+            <!-- ── Study Partner fields ── -->
+            <LinearLayout android:id="@+id/studyFieldsContainer" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
+                <TextView style="@style/FacultyFieldLabel" android:text="@string/crew_label_course_code"/>
+                <EditText android:id="@+id/etCourseCode" style="@style/FacultyInput" android:inputType="textCapCharacters"/>
+                <TextView style="@style/FacultyFieldLabel" android:text="@string/crew_label_course_title"/>
+                <EditText android:id="@+id/etCourseTitle" style="@style/FacultyInput" android:inputType="textCapSentences"/>
+                <TextView style="@style/FacultyFieldLabel" android:text="@string/crew_label_topic"/>
+                <EditText android:id="@+id/etTopic" style="@style/FacultyInput" android:inputType="textCapSentences"/>
+            </LinearLayout>
+
+            <!-- ── Contest Team fields ── -->
+            <LinearLayout android:id="@+id/contestFieldsContainer" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
+                <TextView style="@style/FacultyFieldLabel" android:text="@string/crew_label_contest_name"/>
+                <EditText android:id="@+id/etContestName" style="@style/FacultyInput" android:inputType="textCapSentences"/>
+                <TextView style="@style/FacultyFieldLabel" android:text="@string/crew_label_tech_stack"/>
+                <EditText android:id="@+id/etTechStack" style="@style/FacultyInput" android:inputType="text"/>
+            </LinearLayout>
+
+            <!-- ── Travel Mate fields ── -->
+            <LinearLayout android:id="@+id/travelFieldsContainer" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
+                <TextView style="@style/FacultyFieldLabel" android:text="@string/crew_label_destination"/>
+                <EditText android:id="@+id/etDestination" style="@style/FacultyInput" android:inputType="textCapWords"/>
+                <TextView style="@style/FacultyFieldLabel" android:text="@string/crew_label_travel_date"/>
+                <EditText android:id="@+id/etTravelDate" style="@style/FacultyInput" android:inputType="text" android:hint="@string/crew_hint_travel_date"/>
+                <TextView style="@style/FacultyFieldLabel" android:text="@string/crew_label_budget"/>
+                <EditText android:id="@+id/etBudget" style="@style/FacultyInput" android:inputType="text"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <TextView
+        android:id="@+id/btnSavePost"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_margin="20dp"
+        android:gravity="center"
+        android:text="@string/crew_post_btn"
+        android:textColor="@color/color_background"
+        android:textSize="14.5sp"
+        android:textStyle="bold"
+        android:background="@drawable/bg_button_primary"/>
+</LinearLayout>

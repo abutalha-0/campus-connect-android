@@ -87,6 +87,9 @@ public class HomeFragment extends Fragment {
         view.findViewById(R.id.blockClassroom).setOnClickListener(v ->
                 startActivity(new android.content.Intent(getActivity(),
                         com.campusconnect.app.classroom.ClassroomActivity.class)));
+        // NEW (Crew feature): same override pattern — Crew is now live too.
+        view.findViewById(R.id.blockCrew).setOnClickListener(v ->
+                startActivity(com.campusconnect.app.crew.CrewActivity.createIntent(requireContext())));
 
         renderActivity(mockActivity());
         loadProfile();

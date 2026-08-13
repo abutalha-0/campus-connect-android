@@ -253,4 +253,52 @@
     <string name="tab_schedule">Schedule</string>
     <string name="schedule_empty">No upcoming dates. Faculty and CRs can add one when posting a notice.</string>
     <string name="schedule_all_day">All day</string>
+    <!-- NEW (Crew feature) -->
+    <string name="crew_filter_all">All</string>
+    <string name="crew_empty">No posts yet. Be the first to add one!</string>
+    <string name="crew_new_post">New Post</string>
+    <string name="crew_post_detail_title">Post</string>
+    <string name="crew_post_btn">Post</string>
+    <string name="crew_post_failed">Couldn\'t create the post. Please check the fields and try again.</string>
+    <string name="crew_label_category">Category</string>
+    <string name="crew_label_title">Title</string>
+    <string name="crew_hint_title">e.g. CSE321 Compiler Design study group</string>
+    <string name="crew_label_description">Description</string>
+    <string name="crew_hint_description">What\'s this about?</string>
+    <string name="crew_label_location">Location</string>
+    <string name="crew_hint_location">e.g. Library, 3rd floor</string>
+    <string name="crew_label_contact">Contact info</string>
+    <string name="crew_hint_contact">e.g. WhatsApp number or email</string>
+    <string name="crew_label_max_members">Max members (optional)</string>
+    <string name="crew_hint_max_members">Leave blank for no limit</string>
+    <string name="crew_label_course_code">Course code</string>
+    <string name="crew_label_course_title">Course title</string>
+    <string name="crew_label_topic">Topic</string>
+    <string name="crew_label_contest_name">Contest name</string>
+    <string name="crew_label_tech_stack">Tech stack</string>
+    <string name="crew_label_destination">Destination</string>
+    <string name="crew_label_travel_date">Travel date</string>
+    <string name="crew_hint_travel_date">e.g. 2026-08-20</string>
+    <string name="crew_label_budget">Budget</string>
+    <string name="crew_posted_by">Posted by %1$s</string>
+    <string name="crew_location_prefix">📍 %1$s</string>
+    <string name="crew_contact_prefix">📞 %1$s</string>
+    <string name="crew_no_limit">No member limit</string>
+    <string name="crew_capacity_format">%1$d/%2$d joined</string>
+    <string name="crew_skills_prefix">Skills: %1$s</string>
+    <string name="crew_hint_join_message">Add a short message (optional)</string>
+    <string name="crew_request_join">Request to Join</string>
+    <string name="crew_post_not_open">Not open for requests</string>
+    <string name="crew_join_request_sent">Request sent!</string>
+    <string name="crew_join_request_failed">Couldn\'t send the request. Try again.</string>
+    <string name="crew_close_post">Close Post</string>
+    <string name="crew_join_requests_header">Join Requests</string>
+    <string name="crew_no_requests">No pending requests</string>
+    <string name="crew_members_header">Members</string>
+    <string name="crew_accept">Accept</string>
+    <string name="crew_reject">Reject</string>
+
+    <!-- NEW (Notifications feature) -->
+    <string name="notifications_title">Notifications</string>
+    <string name="notifications_empty">You\'re all caught up!</string>
 </resources>

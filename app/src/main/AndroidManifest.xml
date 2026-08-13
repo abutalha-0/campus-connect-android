@@ -50,6 +50,12 @@
         <activity android:name=".profile.edit.AddSkillActivity"/>
         <activity android:name=".profile.edit.AddLinkActivity"/>
         <activity android:name=".core.ui.ComingSoonActivity"/>
+        <!-- NEW (Crew & Notifications feature) -->
+        <activity android:name=".crew.CrewActivity"/>
+        <activity android:name=".crew.AddPostActivity"/>
+        <activity android:name=".crew.PostDetailActivity"/>
+        <activity android:name=".notifications.NotificationsActivity"/>
+
 
     </application>
 
