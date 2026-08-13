@@ -168,8 +168,8 @@ public class AddPostActivity extends BaseActivity {
         Category category = categories.get(categoryPosition);
 
         Map<String, String> details = new HashMap<>();
-        String slug = normalizedSlug(category.getSlug());
-        switch (slug) {
+        String categorySlug = normalizedSlug(category.getSlug());
+        switch (categorySlug) {
             case "study-partner":
                 details.put("course_code", etCourseCode.getText().toString().trim());
                 details.put("course_title", etCourseTitle.getText().toString().trim());
