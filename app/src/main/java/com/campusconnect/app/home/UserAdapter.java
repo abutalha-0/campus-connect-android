@@ -10,11 +10,17 @@ import com.bumptech.glide.Glide;
 import com.campusconnect.app.R;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.faculty.util.Designations;
+import com.campusconnect.app.profile.edit.ProfileChipFactory;
 import com.campusconnect.app.user.User;
+import com.google.android.material.chip.ChipGroup;
 import de.hdodenhof.circleimageview.CircleImageView;
 import java.util.List;
 
 public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder> {
+
+    // Cards show up to this many skill chips before collapsing the rest
+    // into a "+N more" chip.
+    private static final int MAX_SKILL_CHIPS = 3;
 
     public interface OnUserClickListener {
         void onUserClick(User user);
@@ -76,6 +82,36 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             holder.ivAvatar.setVisibility(View.GONE);
         }
 
+        User.Education education = user.getCurrentEducation();
+        if (education != null && education.getDegree() != null && education.getInstitutionName() != null) {
+            holder.tvEducation.setText(ctx.getString(R.string.discover_education_line,
+                    education.getDegree(), education.getInstitutionName()));
+            holder.tvEducation.setVisibility(View.VISIBLE);
+        } else {
+            holder.tvEducation.setVisibility(View.GONE);
+        }
+
+        holder.skillsChipGroup.removeAllViews();
+        List<String> skills = user.getSkills();
+        if (skills != null && !skills.isEmpty()) {
+            int shown = Math.min(skills.size(), MAX_SKILL_CHIPS);
+            for (int i = 0; i < shown; i++) {
+                holder.skillsChipGroup.addView(ProfileChipFactory.create(ctx, skills.get(i)));
+            }
+            if (skills.size() > shown) {
+                holder.skillsChipGroup.addView(ProfileChipFactory.create(
+                        ctx, ctx.getString(R.string.discover_skills_more, skills.size() - shown)));
+            }
+        }
+
+        Integer projectCount = user.getProjectCount();
+        if (projectCount != null && projectCount > 0) {
+            holder.tvProjectCount.setText(ctx.getString(R.string.discover_project_count, projectCount));
+            holder.tvProjectCount.setVisibility(View.VISIBLE);
+        } else {
+            holder.tvProjectCount.setVisibility(View.GONE);
+        }
+
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onUserClick(user);
         });
@@ -95,8 +131,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     static class UserViewHolder extends RecyclerView.ViewHolder {
-        TextView tvFullName, tvUsername, tvBio, tvInitial, tvCrBadge;
+        TextView tvFullName, tvUsername, tvBio, tvInitial, tvCrBadge, tvEducation, tvProjectCount;
         CircleImageView ivAvatar;
+        ChipGroup skillsChipGroup;
 
         UserViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -106,6 +143,9 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             tvInitial = itemView.findViewById(R.id.tvInitial);
             tvCrBadge = itemView.findViewById(R.id.tvCrBadge);
             ivAvatar = itemView.findViewById(R.id.ivAvatar);
+            tvEducation = itemView.findViewById(R.id.tvEducation);
+            tvProjectCount = itemView.findViewById(R.id.tvProjectCount);
+            skillsChipGroup = itemView.findViewById(R.id.skillsChipGroup);
         }
     }
 }

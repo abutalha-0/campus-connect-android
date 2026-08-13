@@ -1,5 +1,7 @@
 package com.campusconnect.app.user;
 
+import java.util.List;
+
 public class User {
     private int id;
     private String email;
@@ -15,6 +17,9 @@ public class User {
     private String user_type;
     private String designation;
     private String department;
+    private List<String> skills;
+    private Integer project_count;
+    private Education current_education;
 
     public int getId() { return id; }
     public String getEmail() { return email; }
@@ -27,4 +32,19 @@ public class User {
     public String getUserType() { return user_type; }
     public String getDesignation() { return designation; }
     public String getDepartment() { return department; }
+    public List<String> getSkills() { return skills; }
+    public Integer getProjectCount() { return project_count; }
+    public Education getCurrentEducation() { return current_education; }
+
+    public static class Education {
+        private String institution_name;
+        private String degree;
+        private Integer start_year;
+        private Integer end_year;
+
+        public String getInstitutionName() { return institution_name; }
+        public String getDegree() { return degree; }
+        public Integer getStartYear() { return start_year; }
+        public Integer getEndYear() { return end_year; }
+    }
 }
