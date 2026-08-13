@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.campusconnect.app.R;
@@ -57,6 +58,16 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         boolean isFaculty = Constants.ROLE_FACULTY.equals(user.getRole());
         boolean isCr = "CR".equals(user.getUserType());
         holder.tvCrBadge.setVisibility(isCr ? View.VISIBLE : View.GONE);
+        holder.tvFacultyBadge.setVisibility(isFaculty ? View.VISIBLE : View.GONE);
+        holder.facultyAccentStripe.setVisibility(isFaculty ? View.VISIBLE : View.GONE);
+
+        int nameUsernameColor = ContextCompat.getColor(ctx, isFaculty ? R.color.color_amber : R.color.color_cyan);
+        holder.tvFullName.setTextColor(ContextCompat.getColor(ctx, isFaculty ? R.color.color_amber : R.color.color_text_primary));
+        holder.tvUsername.setTextColor(nameUsernameColor);
+
+        int avatarBorderPx = isFaculty ? Math.round(2 * ctx.getResources().getDisplayMetrics().density) : 0;
+        holder.ivAvatar.setBorderWidth(avatarBorderPx);
+        holder.ivAvatar.setBorderColor(ContextCompat.getColor(ctx, R.color.color_amber));
 
         String subtitle;
         if (isFaculty && user.getDepartment() != null && !user.getDepartment().isEmpty()) {
@@ -74,6 +85,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
 
         String initial = displayName.substring(0, 1).toUpperCase();
         holder.tvInitial.setText(initial);
+        holder.tvInitial.setTextColor(ContextCompat.getColor(ctx, isFaculty ? R.color.color_amber : R.color.color_cyan));
 
         if (user.getProfilePhoto() != null && !user.getProfilePhoto().isEmpty()) {
             holder.ivAvatar.setVisibility(View.VISIBLE);
@@ -131,9 +143,10 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
     }
 
     static class UserViewHolder extends RecyclerView.ViewHolder {
-        TextView tvFullName, tvUsername, tvBio, tvInitial, tvCrBadge, tvEducation, tvProjectCount;
+        TextView tvFullName, tvUsername, tvBio, tvInitial, tvCrBadge, tvFacultyBadge, tvEducation, tvProjectCount;
         CircleImageView ivAvatar;
         ChipGroup skillsChipGroup;
+        View facultyAccentStripe;
 
         UserViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -142,10 +155,12 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
             tvBio = itemView.findViewById(R.id.tvBio);
             tvInitial = itemView.findViewById(R.id.tvInitial);
             tvCrBadge = itemView.findViewById(R.id.tvCrBadge);
+            tvFacultyBadge = itemView.findViewById(R.id.tvFacultyBadge);
             ivAvatar = itemView.findViewById(R.id.ivAvatar);
             tvEducation = itemView.findViewById(R.id.tvEducation);
             tvProjectCount = itemView.findViewById(R.id.tvProjectCount);
             skillsChipGroup = itemView.findViewById(R.id.skillsChipGroup);
+            facultyAccentStripe = itemView.findViewById(R.id.facultyAccentStripe);
         }
     }
 }

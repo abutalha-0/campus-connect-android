@@ -1,148 +1,182 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:padding="16dp"
-    android:gravity="center_vertical"
-    android:background="@drawable/bg_card"
     android:layout_marginBottom="10dp">
 
-    <!-- Avatar circle: initial by default, real photo layered on top when present -->
-    <FrameLayout
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_marginEnd="14dp">
-
-        <View
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:background="@drawable/bg_avatar"/>
-
-        <TextView
-            android:id="@+id/tvInitial"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:textColor="@color/color_cyan"
-            android:textSize="18sp"
-            android:textStyle="bold"/>
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/ivAvatar"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:visibility="gone"/>
-
-    </FrameLayout>
-
-    <!-- Name, username, and a role-specific line: bio for Student, designation
-         + department for Faculty. CR gets a small badge next to the name. -->
     <LinearLayout
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical"
+        android:background="@drawable/bg_card">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+        <!-- Avatar circle: initial by default, real photo layered on top when
+             present. Faculty gets a gold ring around the photo too. -->
+        <FrameLayout
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="14dp">
+
+            <View
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:background="@drawable/bg_avatar"/>
 
             <TextView
-                android:id="@+id/tvFullName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/color_text_primary"
-                android:textSize="15sp"
+                android:id="@+id/tvInitial"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textColor="@color/color_cyan"
+                android:textSize="18sp"
                 android:textStyle="bold"/>
 
-            <TextView
-                android:id="@+id/tvCrBadge"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:paddingStart="6dp"
-                android:paddingEnd="6dp"
-                android:paddingTop="1dp"
-                android:paddingBottom="1dp"
-                android:text="@string/discover_cr_badge"
-                android:textColor="@color/color_background"
-                android:textSize="10sp"
-                android:textStyle="bold"
-                android:background="@drawable/bg_badge_purple"
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/ivAvatar"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:visibility="gone"/>
 
-        </LinearLayout>
+        </FrameLayout>
 
-        <TextView
-            android:id="@+id/tvUsername"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/color_cyan"
-            android:textSize="12sp"
-            android:layout_marginTop="2dp"/>
-
-        <TextView
-            android:id="@+id/tvBio"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/color_muted"
-            android:textSize="12sp"
-            android:layout_marginTop="3dp"
-            android:maxLines="1"
-            android:ellipsize="end"/>
-
-        <!-- Student/CR only: current education, then skills chips + project count -->
-        <TextView
-            android:id="@+id/tvEducation"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/color_text_body"
-            android:textSize="12sp"
-            android:layout_marginTop="4dp"
-            android:maxLines="1"
-            android:ellipsize="end"
-            android:visibility="gone"/>
-
+        <!-- Name, username, and a role-specific line: bio for Student,
+             designation + department for Faculty. CR/Faculty get a small
+             badge next to the name. -->
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginTop="6dp">
+            android:layout_weight="1"
+            android:orientation="vertical">
 
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/skillsChipGroup"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                app:chipSpacingHorizontal="4dp"
-                app:chipSpacingVertical="4dp"
-                app:singleLine="true"/>
-
-            <TextView
-                android:id="@+id/tvProjectCount"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/tvFullName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/color_text_primary"
+                    android:textSize="15sp"
+                    android:textStyle="bold"/>
+
+                <TextView
+                    android:id="@+id/tvCrBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="6dp"
+                    android:paddingTop="1dp"
+                    android:paddingBottom="1dp"
+                    android:text="@string/discover_cr_badge"
+                    android:textColor="@color/color_background"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/bg_badge_purple"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/tvFacultyBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:paddingStart="6dp"
+                    android:paddingEnd="6dp"
+                    android:paddingTop="1dp"
+                    android:paddingBottom="1dp"
+                    android:text="@string/discover_faculty_badge"
+                    android:textColor="@color/color_background"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/bg_badge_amber"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvUsername"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_cyan"
+                android:textSize="12sp"
+                android:layout_marginTop="2dp"/>
+
+            <TextView
+                android:id="@+id/tvBio"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:textColor="@color/color_muted"
-                android:textSize="11sp"
+                android:textSize="12sp"
+                android:layout_marginTop="3dp"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+
+            <!-- Student/CR only: current education, then skills chips + project count -->
+            <TextView
+                android:id="@+id/tvEducation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/color_text_body"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:visibility="gone"/>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_marginTop="6dp">
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/skillsChipGroup"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:chipSpacingHorizontal="4dp"
+                    app:chipSpacingVertical="4dp"
+                    app:singleLine="true"/>
+
+                <TextView
+                    android:id="@+id/tvProjectCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="6dp"
+                    android:textColor="@color/color_muted"
+                    android:textSize="11sp"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
+
         </LinearLayout>
+
+        <!-- Arrow indicator -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="›"
+            android:textColor="@color/color_muted"
+            android:textSize="22sp"
+            android:layout_marginStart="8dp"/>
 
     </LinearLayout>
 
-    <!-- Arrow indicator -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="›"
-        android:textColor="@color/color_muted"
-        android:textSize="22sp"
-        android:layout_marginStart="8dp"/>
+    <!-- Faculty-only accent stripe, flush with the card's left edge -->
+    <View
+        android:id="@+id/facultyAccentStripe"
+        android:layout_width="4dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@drawable/bg_accent_stripe_left"
+        android:backgroundTint="@color/color_amber"
+        android:visibility="gone"/>
 
-</LinearLayout>
+</FrameLayout>

@@ -24,6 +24,7 @@
     <string name="discover_search_hint">Search by username…</string>
     <string name="discover_search_empty">No users match \"%1$s\".</string>
     <string name="discover_cr_badge">CR</string>
+    <string name="discover_faculty_badge">Faculty</string>
     <string name="discover_faculty_line">%1$s, %2$s</string>
     <string name="discover_education_line">🎓 %1$s, %2$s</string>
     <string name="discover_project_count">%1$d projects</string>
