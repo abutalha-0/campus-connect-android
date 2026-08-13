@@ -20,11 +20,9 @@ import com.campusconnect.app.core.api.PageResponse;
 import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.base.BaseActivity;
 import com.campusconnect.app.core.utils.Constants;
+import com.campusconnect.app.core.utils.NotificationBellBinder;
 import com.campusconnect.app.crew.model.Category;
 import com.campusconnect.app.crew.model.Post;
-import com.campusconnect.app.notifications.NotificationApiService;
-import com.campusconnect.app.notifications.NotificationsActivity;
-import com.campusconnect.app.notifications.model.UnreadCountResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +46,7 @@ public class CrewActivity extends BaseActivity {
     private TextView tvStatus;
     private Spinner spinnerCategoryFilter;
     private PostAdapter adapter;
-    private View notificationDot;
+    private View contentRoot;
 
     private final List<Category> categories = new ArrayList<>();
 
@@ -57,10 +55,9 @@ public class CrewActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_crew);
 
+        contentRoot = findViewById(android.R.id.content);
         ((ImageView) findViewById(R.id.btnBack)).setOnClickListener(v -> finish());
-        notificationDot = findViewById(R.id.notificationDot);
-        findViewById(R.id.btnNotifications).setOnClickListener(v ->
-                startActivity(NotificationsActivity.createIntent(this)));
+        NotificationBellBinder.bindClick(contentRoot, this);
         findViewById(R.id.fabAddPost).setOnClickListener(v ->
                 startActivity(AddPostActivity.createIntent(this)));
 
@@ -75,7 +72,7 @@ public class CrewActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        refreshUnreadDot();
+        NotificationBellBinder.refreshUnreadDot(contentRoot, tokenManager, () -> !isFinishing());
         if (adapter != null) loadPosts(selectedCategorySlug());
     }
 
@@ -172,23 +169,6 @@ public class CrewActivity extends BaseActivity {
                         if (isFinishing()) return;
                         tvStatus.setText(getString(R.string.error_network));
                     }
-                });
-    }
-
-    private void refreshUnreadDot() {
-        String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
-        RetrofitClient.createService(NotificationApiService.class)
-                .getUnreadCount(token)
-                .enqueue(new Callback<UnreadCountResponse>() {
-                    @Override
-                    public void onResponse(Call<UnreadCountResponse> call, Response<UnreadCountResponse> response) {
-                        if (isFinishing()) return;
-                        boolean hasUnread = response.isSuccessful() && response.body() != null && response.body().getUnreadCount() > 0;
-                        notificationDot.setVisibility(hasUnread ? View.VISIBLE : View.GONE);
-                    }
-
-                    @Override
-                    public void onFailure(Call<UnreadCountResponse> call, Throwable t) {}
                 });
     }
 }

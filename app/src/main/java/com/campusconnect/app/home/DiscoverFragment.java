@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.campusconnect.app.R;
 import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.utils.Constants;
+import com.campusconnect.app.core.utils.NotificationBellBinder;
 import com.campusconnect.app.core.utils.TokenManager;
 import com.campusconnect.app.user.User;
 import com.campusconnect.app.user.UserApiService;
@@ -87,6 +88,7 @@ public class DiscoverFragment extends Fragment {
 
         view.findViewById(R.id.btnMenu).setOnClickListener(v ->
                 ((HomeActivity) requireActivity()).openDrawer());
+        NotificationBellBinder.bindClick(view, requireContext());
 
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
@@ -105,6 +107,14 @@ public class DiscoverFragment extends Fragment {
         });
 
         loadUsers("");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getView() != null) {
+            NotificationBellBinder.refreshUnreadDot(getView(), tokenManager, this::isAdded);
+        }
     }
 
     @Override

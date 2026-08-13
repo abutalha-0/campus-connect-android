@@ -15,6 +15,7 @@ import com.campusconnect.app.core.api.PageResponse;
 import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.base.BaseActivity;
 import com.campusconnect.app.core.utils.Constants;
+import com.campusconnect.app.core.utils.NotificationNavigator;
 import com.campusconnect.app.notifications.model.Notification;
 
 import java.util.List;
@@ -24,10 +25,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * NEW (Notifications feature): full notification list. Tapping an unread
- * notification marks it read and reloads the list. Does NOT navigate to the
- * related post — Notification only carries a post id, not the slug
- * PostDetailActivity needs — left as a known simplification.
+ * NEW (Notifications feature): full notification list. Tapping a
+ * notification marks it read (if it wasn't already) and navigates to
+ * whatever it's about, via NotificationNavigator + action_url.
  */
 public class NotificationsActivity extends BaseActivity {
 
@@ -105,6 +105,8 @@ public class NotificationsActivity extends BaseActivity {
     }
 
     private void onNotificationTapped(Notification notification) {
+        NotificationNavigator.open(this, notification.getActionUrl());
+
         if (notification.isRead()) return;
 
         String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();

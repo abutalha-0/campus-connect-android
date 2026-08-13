@@ -23,6 +23,7 @@ import com.campusconnect.app.R;
 import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.core.utils.ImageUtils;
+import com.campusconnect.app.core.utils.NotificationBellBinder;
 import com.campusconnect.app.core.utils.SkeletonAnimator;
 import com.campusconnect.app.core.utils.TokenManager;
 import com.campusconnect.app.profile.ProfileApiService;
@@ -163,6 +164,7 @@ public class ProfileFragment extends Fragment {
             // so the hamburger can safely open its drawer.
             view.findViewById(R.id.btnMenu).setOnClickListener(v ->
                     ((HomeActivity) requireActivity()).openDrawer());
+            NotificationBellBinder.bindClick(view, requireContext());
 
             view.findViewById(R.id.sectionLostFound).setOnClickListener(v ->
                     getParentFragmentManager().beginTransaction()
@@ -206,6 +208,9 @@ public class ProfileFragment extends Fragment {
         // and auto-refreshes whenever we return from one of the full-page
         // edit/add screens.
         loadProfile();
+        if (isOwnProfile && getView() != null) {
+            NotificationBellBinder.refreshUnreadDot(getView(), tokenManager, this::isAdded);
+        }
     }
 
     // ── Data loading ──────────────────────────────────────────────────────────

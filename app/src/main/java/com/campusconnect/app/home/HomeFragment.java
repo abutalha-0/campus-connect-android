@@ -17,6 +17,7 @@ import com.campusconnect.app.R;
 import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.ui.ComingSoonActivity;
 import com.campusconnect.app.core.utils.Constants;
+import com.campusconnect.app.core.utils.NotificationBellBinder;
 import com.campusconnect.app.core.utils.SkeletonAnimator;
 import com.campusconnect.app.core.utils.TokenManager;
 import com.campusconnect.app.profile.ProfileApiService;
@@ -66,6 +67,7 @@ public class HomeFragment extends Fragment {
 
         view.findViewById(R.id.btnMenu).setOnClickListener(v ->
                 ((HomeActivity) requireActivity()).openDrawer());
+        NotificationBellBinder.bindClick(view, requireContext());
 
         setUpBlock(view, R.id.blockClassroom, R.id.ivClassroomIcon, R.id.tvClassroomBadge,
                 R.drawable.ic_classroom, R.color.color_cyan, "3 new",
@@ -107,6 +109,14 @@ public class HomeFragment extends Fragment {
 
         renderActivity(mockActivity());
         loadProfile();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (getView() != null) {
+            NotificationBellBinder.refreshUnreadDot(getView(), tokenManager, this::isAdded);
+        }
     }
 
     // ── Greeting ──────────────────────────────────────────────────────────

@@ -1,5 +1,7 @@
 package com.campusconnect.app.home;
 
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -21,6 +23,18 @@ import com.campusconnect.app.core.ui.ComingSoonActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class HomeActivity extends BaseActivity {
+
+    // Route Mate lives inside this Activity's fragmentContainer (like Lost &
+    // Found), not as its own Activity — so a notification pointing at a
+    // route has to come through here rather than being launched directly.
+    private static final String EXTRA_OPEN_ROUTE_MATE = "open_route_mate";
+
+    public static Intent createRouteMateIntent(Context ctx) {
+        Intent i = new Intent(ctx, HomeActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        i.putExtra(EXTRA_OPEN_ROUTE_MATE, true);
+        return i;
+    }
 
     private BottomNavigationView bottomNav;
     private DrawerLayout drawerLayout;
@@ -54,6 +68,7 @@ public class HomeActivity extends BaseActivity {
         if (savedInstanceState == null) {
             loadFragment(new HomeFragment());
         }
+        handleOpenRouteMateExtra(getIntent());
 
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -190,5 +205,18 @@ public class HomeActivity extends BaseActivity {
                 .beginTransaction()
                 .replace(R.id.fragmentContainer, fragment)
                 .commit();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        handleOpenRouteMateExtra(intent);
+    }
+
+    private void handleOpenRouteMateExtra(Intent intent) {
+        if (intent != null && intent.getBooleanExtra(EXTRA_OPEN_ROUTE_MATE, false)) {
+            loadFragment(new com.campusconnect.app.routemate.RouteMateListFragment());
+        }
     }
 }
