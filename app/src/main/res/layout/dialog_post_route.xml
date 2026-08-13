@@ -52,6 +52,15 @@
             android:textColorHint="@color/text_faint"
             android:textSize="13.5sp" />
 
+        <TextView
+            android:id="@+id/tvHomeAreaError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/color_red"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
         <!-- Destination -->
         <TextView
             android:layout_width="wrap_content"
@@ -75,71 +84,50 @@
             android:textColorHint="@color/text_faint"
             android:textSize="13.5sp" />
 
-        <!-- Departure Window: Start & End -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tvDestinationError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/color_red"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <!-- Departure Time -->
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:orientation="horizontal">
+            android:text="@string/label_departure_time"
+            android:textColor="@color/text_dim"
+            android:textSize="12sp"
+            android:textStyle="bold" />
 
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
+        <EditText
+            android:id="@+id/etDepartureTime"
+            android:layout_width="match_parent"
+            android:layout_height="46dp"
+            android:layout_marginTop="6dp"
+            android:background="@drawable/bg_rm_input"
+            android:clickable="true"
+            android:drawableEnd="@drawable/ic_calendar"
+            android:drawableTint="@color/indigo"
+            android:focusable="false"
+            android:hint="@string/hint_departure_time"
+            android:inputType="none"
+            android:paddingHorizontal="14dp"
+            android:textColor="@color/text_primary"
+            android:textColorHint="@color/text_faint"
+            android:textSize="13.5sp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="DEPARTURE START"
-                    android:textColor="@color/text_dim"
-                    android:textSize="11sp"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/etDepartureStart"
-                    android:layout_width="match_parent"
-                    android:layout_height="46dp"
-                    android:layout_marginTop="6dp"
-                    android:background="@drawable/bg_rm_input"
-                    android:hint="08:00:00"
-                    android:inputType="text"
-                    android:paddingHorizontal="14dp"
-                    android:textColor="@color/text_primary"
-                    android:textColorHint="@color/text_faint"
-                    android:textSize="13.5sp" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="6dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="DEPARTURE END"
-                    android:textColor="@color/text_dim"
-                    android:textSize="11sp"
-                    android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/etDepartureEnd"
-                    android:layout_width="match_parent"
-                    android:layout_height="46dp"
-                    android:layout_marginTop="6dp"
-                    android:background="@drawable/bg_rm_input"
-                    android:hint="08:30:00"
-                    android:inputType="text"
-                    android:paddingHorizontal="14dp"
-                    android:textColor="@color/text_primary"
-                    android:textColorHint="@color/text_faint"
-                    android:textSize="13.5sp" />
-            </LinearLayout>
-        </LinearLayout>
+        <TextView
+            android:id="@+id/tvDepartureTimeError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/color_red"
+            android:textSize="12sp"
+            android:visibility="gone" />
 
         <!-- Transport Mode -->
         <TextView
@@ -267,6 +255,15 @@
             android:textColor="@color/text_primary"
             android:textColorHint="@color/text_faint"
             android:textSize="13.5sp" />
+
+        <TextView
+            android:id="@+id/tvContactInfoError"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textColor="@color/color_red"
+            android:textSize="12sp"
+            android:visibility="gone" />
 
         <!-- Note (Optional) -->
         <TextView

@@ -73,6 +73,8 @@ public class ItemDetailFragment extends Fragment {
             if (currentItem != null) showContactDialog(currentItem);
         });
 
+        view.findViewById(R.id.btnReport).setOnClickListener(v -> showReportDialog());
+
         loadItemDetail();
     }
 
@@ -147,7 +149,10 @@ public class ItemDetailFragment extends Fragment {
         Dialog dialog = new Dialog(requireContext());
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_contact_info);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        }
 
         TextView tvName = dialog.findViewById(R.id.tvContactName);
         TextView tvInitials = dialog.findViewById(R.id.tvContactInitials);
@@ -214,6 +219,25 @@ public class ItemDetailFragment extends Fragment {
 
         dialog.findViewById(R.id.btnCloseDialog).setOnClickListener(v -> dialog.dismiss());
         dialog.show();
+    }
+
+    private void showReportDialog() {
+        String[] reasons = new String[]{
+                getString(R.string.report_reason_inaccurate),
+                getString(R.string.report_reason_claimed),
+                getString(R.string.report_reason_inappropriate),
+                getString(R.string.report_reason_other)
+        };
+
+        com.google.android.material.dialog.MaterialAlertDialogBuilder builder =
+                new com.google.android.material.dialog.MaterialAlertDialogBuilder(requireContext());
+        builder.setTitle(R.string.report_dialog_title);
+        builder.setSingleChoiceItems(reasons, 0, null);
+        builder.setPositiveButton(R.string.btn_submit_report, (dialog, which) -> {
+            Toast.makeText(getContext(), R.string.report_success_toast, Toast.LENGTH_LONG).show();
+        });
+        builder.setNegativeButton(R.string.btn_close, (dialog, which) -> dialog.dismiss());
+        builder.show();
     }
 
     private String initialsOf(String name) {

@@ -106,8 +106,9 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
 
             String start = route.getDepartureTimeStart() != null ? route.getDepartureTimeStart() : "";
             String end = route.getDepartureTimeEnd() != null ? route.getDepartureTimeEnd() : "";
-            if (!start.isEmpty() || !end.isEmpty()) {
-                tvTimeWindow.setText(start + " - " + end);
+            String formattedTime = formatDepartureTime(start, end);
+            if (!formattedTime.isEmpty()) {
+                tvTimeWindow.setText(formattedTime);
                 tvTimeWindow.setVisibility(View.VISIBLE);
             } else {
                 tvTimeWindow.setVisibility(View.GONE);
@@ -158,6 +159,32 @@ public class RouteAdapter extends RecyclerView.Adapter<RouteAdapter.RouteViewHol
                 }
             }
             return sb.length() > 0 ? sb.toString() : "RM";
+        }
+
+        private String formatDepartureTime(String start, String end) {
+            if (start == null || start.isEmpty()) {
+                return (end != null && !end.isEmpty()) ? formatTimeSingle(end) : "";
+            }
+            if (end == null || end.isEmpty() || start.equalsIgnoreCase(end)) {
+                return formatTimeSingle(start);
+            }
+            return formatTimeSingle(start) + " - " + formatTimeSingle(end);
+        }
+
+        private String formatTimeSingle(String rawTime) {
+            if (rawTime == null || rawTime.isEmpty()) return "";
+            try {
+                String[] parts = rawTime.split(":");
+                int hour = Integer.parseInt(parts[0]);
+                int min = Integer.parseInt(parts[1]);
+
+                int displayHour = hour % 12;
+                if (displayHour == 0) displayHour = 12;
+                String amPm = hour >= 12 ? "PM" : "AM";
+                return String.format(java.util.Locale.US, "%02d:%02d %s", displayHour, min, amPm);
+            } catch (Exception e) {
+                return rawTime;
+            }
         }
     }
 }
