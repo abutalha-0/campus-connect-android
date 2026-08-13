@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.campusconnect.app.R;
+import com.campusconnect.app.core.api.PageResponse;
 import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.base.BaseActivity;
 import com.campusconnect.app.core.utils.ApiError;
@@ -92,17 +93,19 @@ public class AddPostActivity extends BaseActivity {
         String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
         RetrofitClient.createService(CrewApiService.class)
                 .getCategories(token)
-                .enqueue(new Callback<List<Category>>() {
+                .enqueue(new Callback<PageResponse<Category>>() {
                     @Override
-                    public void onResponse(Call<List<Category>> call, Response<List<Category>> response) {
+                    public void onResponse(Call<PageResponse<Category>> call, Response<PageResponse<Category>> response) {
                         if (isFinishing()) return;
                         categories.clear();
-                        if (response.isSuccessful() && response.body() != null) categories.addAll(response.body());
+                        if (response.isSuccessful() && response.body() != null && response.body().getResults() != null) {
+                            categories.addAll(response.body().getResults());
+                        }
                         populateCategorySpinner();
                     }
 
                     @Override
-                    public void onFailure(Call<List<Category>> call, Throwable t) {
+                    public void onFailure(Call<PageResponse<Category>> call, Throwable t) {
                         if (isFinishing()) return;
                         Toast.makeText(AddPostActivity.this, getString(R.string.error_network), Toast.LENGTH_SHORT).show();
                     }

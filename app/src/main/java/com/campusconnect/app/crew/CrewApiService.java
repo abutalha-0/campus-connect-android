@@ -1,13 +1,12 @@
 package com.campusconnect.app.crew;
 
+import com.campusconnect.app.core.api.PageResponse;
 import com.campusconnect.app.crew.model.Category;
 import com.campusconnect.app.crew.model.JoinRequestModel;
 import com.campusconnect.app.crew.model.JoinRequestRequest;
 import com.campusconnect.app.crew.model.Post;
 import com.campusconnect.app.crew.model.PostMember;
 import com.campusconnect.app.crew.model.PostRequest;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -21,10 +20,10 @@ import retrofit2.http.Query;
 public interface CrewApiService {
 
     @GET("api/crew/categories/")
-    Call<List<Category>> getCategories(@Header("Authorization") String token);
+    Call<PageResponse<Category>> getCategories(@Header("Authorization") String token);
 
     @GET("api/crew/posts/")
-    Call<List<Post>> getPosts(
+    Call<PageResponse<Post>> getPosts(
             @Header("Authorization") String token,
             @Query("category") String categorySlug,
             @Query("status") String status,
@@ -41,10 +40,10 @@ public interface CrewApiService {
     Call<Post> closePost(@Header("Authorization") String token, @Path("slug") String slug);
 
     @GET("api/crew/posts/{slug}/members/")
-    Call<List<PostMember>> getPostMembers(@Header("Authorization") String token, @Path("slug") String slug);
+    Call<PageResponse<PostMember>> getPostMembers(@Header("Authorization") String token, @Path("slug") String slug);
 
     @GET("api/crew/join-requests/")
-    Call<List<JoinRequestModel>> getJoinRequests(@Header("Authorization") String token, @Query("post") String postSlug);
+    Call<PageResponse<JoinRequestModel>> getJoinRequests(@Header("Authorization") String token, @Query("post") String postSlug);
 
     @POST("api/crew/join-requests/")
     Call<JoinRequestModel> createJoinRequest(@Header("Authorization") String token, @Body JoinRequestRequest body);

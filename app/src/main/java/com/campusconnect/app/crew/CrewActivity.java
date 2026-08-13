@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.campusconnect.app.R;
+import com.campusconnect.app.core.api.PageResponse;
 import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.base.BaseActivity;
 import com.campusconnect.app.core.utils.Constants;
@@ -82,17 +83,19 @@ public class CrewActivity extends BaseActivity {
         String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
         RetrofitClient.createService(CrewApiService.class)
                 .getCategories(token)
-                .enqueue(new Callback<List<Category>>() {
+                .enqueue(new Callback<PageResponse<Category>>() {
                     @Override
-                    public void onResponse(Call<List<Category>> call, Response<List<Category>> response) {
+                    public void onResponse(Call<PageResponse<Category>> call, Response<PageResponse<Category>> response) {
                         if (isFinishing()) return;
                         categories.clear();
-                        if (response.isSuccessful() && response.body() != null) categories.addAll(response.body());
+                        if (response.isSuccessful() && response.body() != null && response.body().getResults() != null) {
+                            categories.addAll(response.body().getResults());
+                        }
                         populateCategorySpinner();
                     }
 
                     @Override
-                    public void onFailure(Call<List<Category>> call, Throwable t) {
+                    public void onFailure(Call<PageResponse<Category>> call, Throwable t) {
                         if (isFinishing()) return;
                         populateCategorySpinner();
                     }
@@ -136,17 +139,17 @@ public class CrewActivity extends BaseActivity {
         String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
         RetrofitClient.createService(CrewApiService.class)
                 .getPosts(token, categorySlug, null, null)
-                .enqueue(new Callback<List<Post>>() {
+                .enqueue(new Callback<PageResponse<Post>>() {
                     @Override
-                    public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                    public void onResponse(Call<PageResponse<Post>> call, Response<PageResponse<Post>> response) {
                         if (isFinishing()) return;
 
-                        if (!response.isSuccessful() || response.body() == null) {
+                        if (!response.isSuccessful() || response.body() == null || response.body().getResults() == null) {
                             tvStatus.setText(getString(R.string.error_network));
                             return;
                         }
 
-                        List<Post> posts = response.body();
+                        List<Post> posts = response.body().getResults();
                         if (posts.isEmpty()) {
                             tvStatus.setText(getString(R.string.crew_empty));
                             return;
@@ -165,7 +168,7 @@ public class CrewActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<List<Post>> call, Throwable t) {
+                    public void onFailure(Call<PageResponse<Post>> call, Throwable t) {
                         if (isFinishing()) return;
                         tvStatus.setText(getString(R.string.error_network));
                     }

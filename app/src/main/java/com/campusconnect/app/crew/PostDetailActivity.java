@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.campusconnect.app.R;
+import com.campusconnect.app.core.api.PageResponse;
 import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.base.BaseActivity;
 import com.campusconnect.app.core.utils.ApiError;
@@ -260,14 +261,14 @@ public class PostDetailActivity extends BaseActivity {
         String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
         RetrofitClient.createService(CrewApiService.class)
                 .getJoinRequests(token, slug)
-                .enqueue(new Callback<List<JoinRequestModel>>() {
+                .enqueue(new Callback<PageResponse<JoinRequestModel>>() {
                     @Override
-                    public void onResponse(Call<List<JoinRequestModel>> call, Response<List<JoinRequestModel>> response) {
+                    public void onResponse(Call<PageResponse<JoinRequestModel>> call, Response<PageResponse<JoinRequestModel>> response) {
                         if (isFinishing()) return;
                         joinRequestsContainer.removeAllViews();
 
-                        List<JoinRequestModel> all = response.isSuccessful() && response.body() != null
-                                ? response.body() : java.util.Collections.emptyList();
+                        List<JoinRequestModel> all = response.isSuccessful() && response.body() != null && response.body().getResults() != null
+                                ? response.body().getResults() : java.util.Collections.emptyList();
 
                         boolean anyPending = false;
                         for (JoinRequestModel jr : all) {
@@ -279,7 +280,7 @@ public class PostDetailActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<List<JoinRequestModel>> call, Throwable t) {}
+                    public void onFailure(Call<PageResponse<JoinRequestModel>> call, Throwable t) {}
                 });
     }
 
@@ -323,14 +324,14 @@ public class PostDetailActivity extends BaseActivity {
         String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
         RetrofitClient.createService(CrewApiService.class)
                 .getPostMembers(token, slug)
-                .enqueue(new Callback<List<PostMember>>() {
+                .enqueue(new Callback<PageResponse<PostMember>>() {
                     @Override
-                    public void onResponse(Call<List<PostMember>> call, Response<List<PostMember>> response) {
+                    public void onResponse(Call<PageResponse<PostMember>> call, Response<PageResponse<PostMember>> response) {
                         if (isFinishing()) return;
                         membersContainer.removeAllViews();
-                        if (!response.isSuccessful() || response.body() == null) return;
+                        if (!response.isSuccessful() || response.body() == null || response.body().getResults() == null) return;
 
-                        for (PostMember member : response.body()) {
+                        for (PostMember member : response.body().getResults()) {
                             TextView row = new TextView(PostDetailActivity.this);
                             row.setTextColor(getResources().getColor(R.color.color_text_body, null));
                             row.setTextSize(13f);
@@ -341,7 +342,7 @@ public class PostDetailActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<List<PostMember>> call, Throwable t) {}
+                    public void onFailure(Call<PageResponse<PostMember>> call, Throwable t) {}
                 });
     }
 }

@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.campusconnect.app.R;
+import com.campusconnect.app.core.api.PageResponse;
 import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.base.BaseActivity;
 import com.campusconnect.app.core.utils.Constants;
@@ -62,19 +63,19 @@ public class NotificationsActivity extends BaseActivity {
         String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
         RetrofitClient.createService(NotificationApiService.class)
                 .getNotifications(token, null)
-                .enqueue(new Callback<List<Notification>>() {
+                .enqueue(new Callback<PageResponse<Notification>>() {
                     @Override
-                    public void onResponse(Call<List<Notification>> call, Response<List<Notification>> response) {
+                    public void onResponse(Call<PageResponse<Notification>> call, Response<PageResponse<Notification>> response) {
                         if (isFinishing()) return;
 
-                        if (!response.isSuccessful() || response.body() == null) {
+                        if (!response.isSuccessful() || response.body() == null || response.body().getResults() == null) {
                             tvStatus.setText(getString(R.string.error_network));
                             tvStatus.setVisibility(View.VISIBLE);
                             recyclerView.setVisibility(View.GONE);
                             return;
                         }
 
-                        List<Notification> notifications = response.body();
+                        List<Notification> notifications = response.body().getResults();
                         if (notifications.isEmpty()) {
                             tvStatus.setText(getString(R.string.notifications_empty));
                             tvStatus.setVisibility(View.VISIBLE);
@@ -94,7 +95,7 @@ public class NotificationsActivity extends BaseActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<List<Notification>> call, Throwable t) {
+                    public void onFailure(Call<PageResponse<Notification>> call, Throwable t) {
                         if (isFinishing()) return;
                         tvStatus.setText(getString(R.string.error_network));
                         tvStatus.setVisibility(View.VISIBLE);

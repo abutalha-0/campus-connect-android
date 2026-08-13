@@ -1,9 +1,8 @@
 package com.campusconnect.app.notifications;
 
+import com.campusconnect.app.core.api.PageResponse;
 import com.campusconnect.app.notifications.model.Notification;
 import com.campusconnect.app.notifications.model.UnreadCountResponse;
-
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -16,7 +15,7 @@ import retrofit2.http.Query;
 public interface NotificationApiService {
 
     @GET("api/notifications/")
-    Call<List<Notification>> getNotifications(@Header("Authorization") String token, @Query("unread") Boolean unreadOnly);
+    Call<PageResponse<Notification>> getNotifications(@Header("Authorization") String token, @Query("unread") Boolean unreadOnly);
 
     @GET("api/notifications/unread-count/")
     Call<UnreadCountResponse> getUnreadCount(@Header("Authorization") String token);
