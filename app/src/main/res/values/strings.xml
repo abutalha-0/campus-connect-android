@@ -23,6 +23,8 @@
     <string name="no_users">No other users found.</string>
     <string name="discover_search_hint">Search by username…</string>
     <string name="discover_search_empty">No users match \"%1$s\".</string>
+    <string name="discover_cr_badge">CR</string>
+    <string name="discover_faculty_line">%1$s, %2$s</string>
 
     <string name="label_home">Home</string>
     <string name="label_settings">Settings</string>
