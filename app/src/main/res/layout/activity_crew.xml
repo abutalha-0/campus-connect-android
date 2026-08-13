@@ -108,6 +108,6 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="20dp"
         android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="@color/color_cyan"
+        app:backgroundTint="@color/color_purple"
         app:tint="@color/color_background"/>
 </FrameLayout>

@@ -17,7 +17,7 @@
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginTop="10dp">
         <TextView android:id="@+id/btnAccept" android:layout_width="0dp" android:layout_height="40dp" android:layout_weight="1" android:layout_marginEnd="6dp"
             android:gravity="center" android:text="@string/crew_accept" android:textColor="@color/color_background" android:textStyle="bold" android:textSize="12.5sp"
-            android:background="@drawable/bg_button_primary"/>
+            android:background="@drawable/bg_button_primary_purple"/>
         <TextView android:id="@+id/btnReject" android:layout_width="0dp" android:layout_height="40dp" android:layout_weight="1" android:layout_marginStart="6dp"
             android:gravity="center" android:text="@string/crew_reject" android:textColor="@color/color_red" android:textStyle="bold" android:textSize="12.5sp"
             android:background="@drawable/bg_input"/>

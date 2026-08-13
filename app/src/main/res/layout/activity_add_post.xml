@@ -105,5 +105,5 @@
         android:textColor="@color/color_background"
         android:textSize="14.5sp"
         android:textStyle="bold"
-        android:background="@drawable/bg_button_primary"/>
+        android:background="@drawable/bg_button_primary_purple"/>
 </LinearLayout>

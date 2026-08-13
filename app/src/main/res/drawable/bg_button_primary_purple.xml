@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Crew-only variant of bg_button_primary.xml, tinted to match the Crew
+     tile's accent color on Home instead of the app-wide cyan. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="@color/color_purple"/>
+    <corners android:radius="12dp"/>
+</shape>

@@ -20,7 +20,7 @@
 
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
                     <TextView android:id="@+id/tvCategory" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
-                        android:textColor="@color/color_cyan" android:textSize="13sp" android:textStyle="bold"/>
+                        android:textColor="@color/color_purple" android:textSize="13sp" android:textStyle="bold"/>
                     <TextView android:id="@+id/tvStatusBadge" android:layout_width="wrap_content" android:layout_height="wrap_content" android:textSize="12sp" android:textStyle="bold"/>
                 </LinearLayout>
 
@@ -46,7 +46,7 @@
                     android:orientation="vertical" android:background="@drawable/bg_card" android:padding="14dp" android:layout_marginTop="16dp"/>
 
                 <TextView android:id="@+id/tvSkills" android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:textColor="@color/color_cyan" android:textSize="12sp" android:layout_marginTop="12dp"/>
+                    android:textColor="@color/color_purple" android:textSize="12sp" android:layout_marginTop="12dp"/>
 
                 <!-- ── Non-owner: request to join ── -->
                 <LinearLayout android:id="@+id/joinActionsContainer" android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -56,7 +56,7 @@
                         android:hint="@string/crew_hint_join_message" android:textColor="@color/color_text_primary" android:textSize="13sp"/>
                     <TextView android:id="@+id/btnRequestJoin" android:layout_width="match_parent" android:layout_height="48dp" android:layout_marginTop="10dp"
                         android:gravity="center" android:text="@string/crew_request_join" android:textColor="@color/color_background" android:textStyle="bold"
-                        android:background="@drawable/bg_button_primary"/>
+                        android:background="@drawable/bg_button_primary_purple"/>
                 </LinearLayout>
 
                 <!-- ── Owner: close post + manage requests + members ── -->
