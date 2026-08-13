@@ -289,6 +289,8 @@
     <string name="crew_hint_join_message">Add a short message (optional)</string>
     <string name="crew_request_join">Request to Join</string>
     <string name="crew_post_not_open">Not open for requests</string>
+    <string name="crew_already_member">Already Joined</string>
+    <string name="crew_request_pending">Request Pending</string>
     <string name="crew_join_request_sent">Request sent!</string>
     <string name="crew_join_request_failed">Couldn\'t send the request. Try again.</string>
     <string name="crew_close_post">Close Post</string>

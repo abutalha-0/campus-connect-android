@@ -196,14 +196,87 @@ public class PostDetailActivity extends BaseActivity {
         joinActionsContainer.setVisibility(isOwner ? View.GONE : View.VISIBLE);
         ownerActionsContainer.setVisibility(isOwner ? View.VISIBLE : View.GONE);
 
-        boolean canJoin = "OPEN".equals(post.getStatus());
-        btnRequestJoin.setEnabled(canJoin);
-        btnRequestJoin.setText(canJoin ? getString(R.string.crew_request_join) : getString(R.string.crew_post_not_open));
-
         if (isOwner) {
             loadJoinRequests();
             loadMembers();
+        } else {
+            checkMyJoinStatus();
         }
+    }
+
+    /** Non-owner view: find out whether the viewer already joined or has a
+     * pending request, so "Request to Join" doesn't stay actionable after
+     * they've already joined (see loadMembers() for the owner-side list). */
+    private void checkMyJoinStatus() {
+        String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
+        RetrofitClient.createService(CrewApiService.class)
+                .getPostMembers(token, slug)
+                .enqueue(new Callback<PageResponse<PostMember>>() {
+                    @Override
+                    public void onResponse(Call<PageResponse<PostMember>> call, Response<PageResponse<PostMember>> response) {
+                        if (isFinishing()) return;
+                        boolean isMember = false;
+                        if (response.isSuccessful() && response.body() != null && response.body().getResults() != null) {
+                            for (PostMember member : response.body().getResults()) {
+                                if (member.getUser() != null && member.getUser().getId() == myUserId) {
+                                    isMember = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (isMember) {
+                            applyJoinButtonState(false, getString(R.string.crew_already_member));
+                        } else {
+                            checkMyPendingRequest();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<PageResponse<PostMember>> call, Throwable t) {
+                        if (isFinishing()) return;
+                        checkMyPendingRequest();
+                    }
+                });
+    }
+
+    private void checkMyPendingRequest() {
+        String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
+        RetrofitClient.createService(CrewApiService.class)
+                .getJoinRequests(token, null)
+                .enqueue(new Callback<PageResponse<JoinRequestModel>>() {
+                    @Override
+                    public void onResponse(Call<PageResponse<JoinRequestModel>> call, Response<PageResponse<JoinRequestModel>> response) {
+                        if (isFinishing() || currentPost == null) return;
+                        boolean pending = false;
+                        if (response.isSuccessful() && response.body() != null && response.body().getResults() != null) {
+                            for (JoinRequestModel jr : response.body().getResults()) {
+                                if (jr.getPost() == currentPost.getId() && "PENDING".equals(jr.getStatus())) {
+                                    pending = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (pending) {
+                            applyJoinButtonState(false, getString(R.string.crew_request_pending));
+                        } else {
+                            boolean canJoin = "OPEN".equals(currentPost.getStatus());
+                            applyJoinButtonState(canJoin, canJoin ? getString(R.string.crew_request_join) : getString(R.string.crew_post_not_open));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<PageResponse<JoinRequestModel>> call, Throwable t) {
+                        if (isFinishing() || currentPost == null) return;
+                        boolean canJoin = "OPEN".equals(currentPost.getStatus());
+                        applyJoinButtonState(canJoin, canJoin ? getString(R.string.crew_request_join) : getString(R.string.crew_post_not_open));
+                    }
+                });
+    }
+
+    private void applyJoinButtonState(boolean canJoin, String label) {
+        etJoinMessage.setVisibility(canJoin ? View.VISIBLE : View.GONE);
+        btnRequestJoin.setEnabled(canJoin);
+        btnRequestJoin.setText(label);
     }
 
     private String prettifyKey(String key) {
@@ -226,6 +299,7 @@ public class PostDetailActivity extends BaseActivity {
                         if (response.isSuccessful()) {
                             Toast.makeText(PostDetailActivity.this, getString(R.string.crew_join_request_sent), Toast.LENGTH_SHORT).show();
                             etJoinMessage.setText("");
+                            applyJoinButtonState(false, getString(R.string.crew_request_pending));
                         } else {
                             btnRequestJoin.setEnabled(true);
                             String msg = ApiError.extract(response, getString(R.string.crew_join_request_failed), "post", "non_field_errors");
