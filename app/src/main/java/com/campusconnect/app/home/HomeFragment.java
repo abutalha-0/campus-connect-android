@@ -91,6 +91,20 @@ public class HomeFragment extends Fragment {
         view.findViewById(R.id.blockCrew).setOnClickListener(v ->
                 startActivity(com.campusconnect.app.crew.CrewActivity.createIntent(requireContext())));
 
+        // Lost & Found is live
+        view.findViewById(R.id.blockLost).setOnClickListener(v ->
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainer, new com.campusconnect.app.lostfound.LostFoundListFragment())
+                        .addToBackStack(null)
+                        .commit());
+
+        // Route Mate is live
+        view.findViewById(R.id.blockRoute).setOnClickListener(v ->
+                getParentFragmentManager().beginTransaction()
+                        .replace(R.id.fragmentContainer, new com.campusconnect.app.routemate.RouteMateListFragment())
+                        .addToBackStack(null)
+                        .commit());
+
         renderActivity(mockActivity());
         loadProfile();
     }

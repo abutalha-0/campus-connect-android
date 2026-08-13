@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="12dp"
+    android:background="@drawable/bg_lf_card"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    android:padding="14dp">
+
+    <ImageView
+        android:id="@+id/ivThumbnail"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:background="@drawable/bg_lf_input"
+        android:clipToOutline="true"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ic_wallet" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="14dp"
+        android:layout_marginEnd="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/text_primary"
+        android:textSize="14.5sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/tvStatusBadge"
+        app:layout_constraintStart_toEndOf="@+id/ivThumbnail"
+        app:layout_constraintTop_toTopOf="@+id/ivThumbnail"
+        tools:text="Brown Leather Wallet" />
+
+    <TextView
+        android:id="@+id/tvStatusBadge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_lf_badge"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="3dp"
+        android:textAllCaps="true"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tvTitle"
+        tools:backgroundTint="@color/orange_dim"
+        tools:text="LOST"
+        tools:textColor="@color/orange" />
+
+    <TextView
+        android:id="@+id/tvMeta"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="@color/text_dim"
+        android:textSize="12.5sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tvTitle"
+        app:layout_constraintTop_toBottomOf="@+id/tvTitle"
+        tools:text="Library Gate · 2h ago" />
+
+    <!-- Action row for "My Posts" (hidden by default) -->
+    <LinearLayout
+        android:id="@+id/actionRow"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/tvTitle"
+        app:layout_constraintTop_toBottomOf="@+id/tvMeta"
+        tools:visibility="visible">
+
+        <Button
+            android:id="@+id/btnEdit"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:padding="0dp"
+            android:text="Edit"
+            android:textAllCaps="false"
+            android:textColor="@color/text_dim"
+            android:textSize="12sp"
+            app:cornerRadius="10dp"
+            app:strokeColor="@color/card_border" />
+
+        <Button
+            android:id="@+id/btnMarkClosed"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            android:layout_weight="1"
+            android:backgroundTint="@color/amber_dim"
+            android:padding="0dp"
+            android:text="Mark closed"
+            android:textAllCaps="false"
+            android:textColor="@color/amber"
+            android:textSize="12sp"
+            app:cornerRadius="10dp"
+            app:strokeColor="@color/amber"
+            app:strokeWidth="1dp" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

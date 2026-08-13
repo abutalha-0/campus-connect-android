@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_lf_card"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <FrameLayout
+        android:layout_width="64dp"
+        android:layout_height="64dp">
+
+        <TextView
+            android:id="@+id/tvContactInitials"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/bg_avatar_gradient"
+            android:gravity="center"
+            android:textColor="@color/btn_on_cyan_text"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            tools:text="T" />
+
+        <ImageView
+            android:id="@+id/ivContactAvatar"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/bg_avatar_gradient"
+            android:clipToOutline="true"
+            android:scaleType="centerCrop"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tvContactName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:textColor="@color/text_primary"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:text="talha12345" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:text="@string/contact_posted_subtitle"
+        android:textColor="@color/text_faint"
+        android:textSize="13sp" />
+
+    <LinearLayout
+        android:id="@+id/contactBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/bg_lf_input"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvContactLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/label_contact_info"
+            android:textColor="@color/text_dim"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvContactValue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textIsSelectable="true"
+            android:textColor="@color/amber"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="01712345678 / talha@univ.edu" />
+    </LinearLayout>
+
+    <!-- Action Buttons Row -->
+    <LinearLayout
+        android:id="@+id/actionRow"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnCallContact"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="46dp"
+            android:layout_marginEnd="6dp"
+            android:layout_weight="1"
+            android:text="@string/btn_call"
+            android:textAllCaps="false"
+            android:textColor="@color/amber"
+            android:textSize="13sp"
+            android:visibility="gone"
+            app:cornerRadius="12dp"
+            app:icon="@drawable/ic_phone"
+            app:iconTint="@color/amber"
+            app:strokeColor="@color/amber" />
+
+        <Button
+            android:id="@+id/btnEmailContact"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="46dp"
+            android:layout_marginHorizontal="3dp"
+            android:layout_weight="1"
+            android:text="@string/btn_email"
+            android:textAllCaps="false"
+            android:textColor="@color/purple"
+            android:textSize="13sp"
+            android:visibility="gone"
+            app:cornerRadius="12dp"
+            app:icon="@drawable/ic_email"
+            app:iconTint="@color/purple"
+            app:strokeColor="@color/purple" />
+
+        <Button
+            android:id="@+id/btnCopyContact"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="46dp"
+            android:layout_marginStart="6dp"
+            android:layout_weight="1"
+            android:text="@string/btn_copy"
+            android:textAllCaps="false"
+            android:textColor="@color/text_primary"
+            android:textSize="13sp"
+            app:cornerRadius="12dp"
+            app:icon="@drawable/ic_copy"
+            app:iconTint="@color/text_primary"
+            app:strokeColor="@color/card_border" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/btnCloseDialog"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/btn_close"
+        android:textAllCaps="false"
+        android:textColor="@color/text_dim"
+        android:textSize="14sp"
+        app:cornerRadius="12dp"
+        app:strokeColor="@color/card_border" />
+
+</LinearLayout>
