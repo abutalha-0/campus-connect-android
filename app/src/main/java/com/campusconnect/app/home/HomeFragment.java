@@ -9,31 +9,48 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.annotation.ColorInt;
+import androidx.annotation.ColorRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 import com.campusconnect.app.R;
+import com.campusconnect.app.core.api.PageResponse;
 import com.campusconnect.app.core.api.RetrofitClient;
-import com.campusconnect.app.core.ui.ComingSoonActivity;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.core.utils.NotificationBellBinder;
+import com.campusconnect.app.core.utils.NotificationNavigator;
 import com.campusconnect.app.core.utils.SkeletonAnimator;
+import com.campusconnect.app.core.utils.TimeUtils;
 import com.campusconnect.app.core.utils.TokenManager;
+import com.campusconnect.app.crew.CrewApiService;
+import com.campusconnect.app.crew.model.Post;
+import com.campusconnect.app.lostfound.api.LostFoundApiService;
+import com.campusconnect.app.lostfound.model.LostFoundItem;
+import com.campusconnect.app.notifications.NotificationApiService;
+import com.campusconnect.app.notifications.model.Notification;
 import com.campusconnect.app.profile.ProfileApiService;
 import com.campusconnect.app.profile.models.Profile;
+import com.campusconnect.app.routemate.api.RouteMateApiService;
+import com.campusconnect.app.routemate.model.Route;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
- * Dashboard tab: greeting + feature grid + recent activity. The four grid
- * blocks and the activity feed have no backend yet, so they're driven by
- * static config here — swap in real data sources once those APIs exist.
+ * Dashboard tab: greeting + feature grid + recent activity. Grid badges and
+ * the activity feed are backed by real data (Crew/Lost&Found/Route-Mate
+ * counts, and the shared notifications feed) — see loadXBadge()/
+ * loadRecentActivity() below.
  */
 public class HomeFragment extends Fragment {
+
+    // Keeps the dashboard preview short — the full list is one tap away via
+    // the notification bell.
+    private static final int MAX_ACTIVITY_ITEMS = 5;
 
     private TokenManager tokenManager;
 
@@ -69,45 +86,28 @@ public class HomeFragment extends Fragment {
                 ((HomeActivity) requireActivity()).openDrawer());
         NotificationBellBinder.bindClick(view, requireContext());
 
-        setUpBlock(view, R.id.blockClassroom, R.id.ivClassroomIcon, R.id.tvClassroomBadge,
-                R.drawable.ic_classroom, R.color.color_cyan, "3 new",
-                getString(R.string.label_classroom));
+        setUpBlock(view, R.id.ivClassroomIcon, R.id.tvClassroomBadge, R.drawable.ic_classroom, R.color.color_cyan);
+        setUpBlock(view, R.id.ivCrewIcon, R.id.tvCrewBadge, R.drawable.ic_crew, R.color.color_purple);
+        setUpBlock(view, R.id.ivLostIcon, R.id.tvLostBadge, R.drawable.ic_lost, R.color.color_amber);
+        setUpBlock(view, R.id.ivRouteIcon, R.id.tvRouteBadge, R.drawable.ic_route, R.color.color_indigo);
 
-        setUpBlock(view, R.id.blockCrew, R.id.ivCrewIcon, R.id.tvCrewBadge,
-                R.drawable.ic_crew, R.color.color_purple, "2 online",
-                getString(R.string.label_crew));
-
-        setUpBlock(view, R.id.blockLost, R.id.ivLostIcon, R.id.tvLostBadge,
-                R.drawable.ic_lost, R.color.color_amber, "All clear",
-                getString(R.string.label_lost));
-
-        setUpBlock(view, R.id.blockRoute, R.id.ivRouteIcon, R.id.tvRouteBadge,
-                R.drawable.ic_route, R.color.color_indigo, "1 match",
-                getString(R.string.label_route));
-
-        // Classroom is live — override its "coming soon" handler with the real screen.
         view.findViewById(R.id.blockClassroom).setOnClickListener(v ->
                 startActivity(new android.content.Intent(getActivity(),
                         com.campusconnect.app.classroom.ClassroomActivity.class)));
-        // NEW (Crew feature): same override pattern — Crew is now live too.
         view.findViewById(R.id.blockCrew).setOnClickListener(v ->
                 startActivity(com.campusconnect.app.crew.CrewActivity.createIntent(requireContext())));
-
-        // Lost & Found is live
         view.findViewById(R.id.blockLost).setOnClickListener(v ->
                 getParentFragmentManager().beginTransaction()
                         .replace(R.id.fragmentContainer, new com.campusconnect.app.lostfound.LostFoundListFragment())
                         .addToBackStack(null)
                         .commit());
-
-        // Route Mate is live
         view.findViewById(R.id.blockRoute).setOnClickListener(v ->
                 getParentFragmentManager().beginTransaction()
                         .replace(R.id.fragmentContainer, new com.campusconnect.app.routemate.RouteMateListFragment())
                         .addToBackStack(null)
                         .commit());
 
-        renderActivity(mockActivity());
+        loadDashboardData(view);
         loadProfile();
     }
 
@@ -116,16 +116,25 @@ public class HomeFragment extends Fragment {
         super.onResume();
         if (getView() != null) {
             NotificationBellBinder.refreshUnreadDot(getView(), tokenManager, this::isAdded);
+            loadDashboardData(getView());
         }
+    }
+
+    private void loadDashboardData(View view) {
+        loadClassroomBadge(view.findViewById(R.id.tvClassroomBadge));
+        loadCrewBadge(view.findViewById(R.id.tvCrewBadge));
+        loadLostFoundBadge(view.findViewById(R.id.tvLostBadge));
+        loadRouteMateBadge(view.findViewById(R.id.tvRouteBadge));
+        loadRecentActivity();
     }
 
     // ── Greeting ──────────────────────────────────────────────────────────
 
     private String greetingForCurrentTime() {
         int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-        if (hour < 12) return "Good morning";
-        if (hour < 17) return "Good afternoon";
-        return "Good evening";
+        if (hour < 12) return getString(R.string.greeting_morning);
+        if (hour < 17) return getString(R.string.greeting_afternoon);
+        return getString(R.string.greeting_evening);
     }
 
     // ── Profile (greeting name + avatar) ─────────────────────────────────
@@ -187,9 +196,7 @@ public class HomeFragment extends Fragment {
 
     // ── Feature grid ──────────────────────────────────────────────────────
 
-    private void setUpBlock(View root, int blockId, int iconId, int badgeId,
-                             int iconRes, int accentColorRes, String badgeText, String title) {
-        View block = root.findViewById(blockId);
+    private void setUpBlock(View root, int iconId, int badgeId, int iconRes, int accentColorRes) {
         ImageView icon = root.findViewById(iconId);
         TextView badge = root.findViewById(badgeId);
 
@@ -197,52 +204,167 @@ public class HomeFragment extends Fragment {
 
         icon.setImageResource(iconRes);
         icon.setImageTintList(ColorStateList.valueOf(accent));
-
-        badge.setText(badgeText);
         badge.setTextColor(accent);
+    }
 
-        block.setOnClickListener(v -> ComingSoonActivity.start(
-                requireContext(), title, iconRes, accent));
+    private void loadClassroomBadge(TextView badge) {
+        String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
+        RetrofitClient.createService(NotificationApiService.class)
+                .getNotifications(token, true)
+                .enqueue(new Callback<PageResponse<Notification>>() {
+                    @Override
+                    public void onResponse(Call<PageResponse<Notification>> call, Response<PageResponse<Notification>> response) {
+                        if (!isAdded()) return;
+                        int count = 0;
+                        if (response.isSuccessful() && response.body() != null && response.body().getResults() != null) {
+                            for (Notification n : response.body().getResults()) {
+                                if (isClassroomType(n.getNotificationType())) count++;
+                            }
+                        }
+                        badge.setText(count > 0
+                                ? getString(R.string.home_badge_new, count)
+                                : getString(R.string.home_badge_up_to_date));
+                    }
+
+                    @Override
+                    public void onFailure(Call<PageResponse<Notification>> call, Throwable t) {}
+                });
+    }
+
+    private void loadCrewBadge(TextView badge) {
+        String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
+        RetrofitClient.createService(CrewApiService.class)
+                .getPosts(token, null, "OPEN", null)
+                .enqueue(new Callback<PageResponse<Post>>() {
+                    @Override
+                    public void onResponse(Call<PageResponse<Post>> call, Response<PageResponse<Post>> response) {
+                        if (!isAdded()) return;
+                        int count = response.isSuccessful() && response.body() != null ? response.body().getCount() : 0;
+                        badge.setText(count > 0
+                                ? getString(R.string.home_badge_open, count)
+                                : getString(R.string.home_badge_none_open));
+                    }
+
+                    @Override
+                    public void onFailure(Call<PageResponse<Post>> call, Throwable t) {}
+                });
+    }
+
+    private void loadLostFoundBadge(TextView badge) {
+        String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
+        RetrofitClient.createService(LostFoundApiService.class)
+                .getItems(token, null, null, null, null, null, null)
+                .enqueue(new Callback<List<LostFoundItem>>() {
+                    @Override
+                    public void onResponse(Call<List<LostFoundItem>> call, Response<List<LostFoundItem>> response) {
+                        if (!isAdded()) return;
+                        int count = response.isSuccessful() && response.body() != null ? response.body().size() : 0;
+                        badge.setText(count > 0
+                                ? getString(R.string.home_badge_open, count)
+                                : getString(R.string.home_badge_all_clear));
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<LostFoundItem>> call, Throwable t) {}
+                });
+    }
+
+    private void loadRouteMateBadge(TextView badge) {
+        String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
+        RetrofitClient.createService(RouteMateApiService.class)
+                .getRoutes(token, null, null, null, null, null, null)
+                .enqueue(new Callback<List<Route>>() {
+                    @Override
+                    public void onResponse(Call<List<Route>> call, Response<List<Route>> response) {
+                        if (!isAdded()) return;
+                        int count = response.isSuccessful() && response.body() != null ? response.body().size() : 0;
+                        badge.setText(count > 0
+                                ? getString(R.string.home_badge_active, count)
+                                : getString(R.string.home_badge_none_active));
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<Route>> call, Throwable t) {}
+                });
     }
 
     // ── Recent activity ──────────────────────────────────────────────────
 
-    private void renderActivity(List<ActivityItem> items) {
+    private void loadRecentActivity() {
+        String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
+        RetrofitClient.createService(NotificationApiService.class)
+                .getNotifications(token, null)
+                .enqueue(new Callback<PageResponse<Notification>>() {
+                    @Override
+                    public void onResponse(Call<PageResponse<Notification>> call, Response<PageResponse<Notification>> response) {
+                        if (!isAdded()) return;
+                        List<Notification> results = response.isSuccessful() && response.body() != null
+                                && response.body().getResults() != null
+                                ? response.body().getResults() : Collections.emptyList();
+                        renderActivity(results.subList(0, Math.min(results.size(), MAX_ACTIVITY_ITEMS)));
+                    }
+
+                    @Override
+                    public void onFailure(Call<PageResponse<Notification>> call, Throwable t) {
+                        if (!isAdded()) return;
+                        renderActivity(Collections.emptyList());
+                    }
+                });
+    }
+
+    private void renderActivity(List<Notification> items) {
         activityContainer.removeAllViews();
-        for (ActivityItem item : items) {
+
+        if (items.isEmpty()) {
+            TextView empty = new TextView(getContext());
+            empty.setText(getString(R.string.home_activity_empty));
+            empty.setTextColor(getResources().getColor(R.color.color_muted, null));
+            empty.setTextSize(12f);
+            activityContainer.addView(empty);
+            return;
+        }
+
+        for (Notification n : items) {
             View row = LayoutInflater.from(getContext())
                     .inflate(R.layout.item_activity, activityContainer, false);
 
-            @ColorInt int accent = getResources().getColor(item.accentColorRes, null);
+            @ColorInt int accent = getResources().getColor(colorForNotificationType(n.getNotificationType()), null);
             row.findViewById(R.id.dot).setBackgroundTintList(ColorStateList.valueOf(accent));
 
-            ((TextView) row.findViewById(R.id.tvText)).setText(item.text);
+            ((TextView) row.findViewById(R.id.tvText)).setText(n.getMessage());
             TextView tvTime = row.findViewById(R.id.tvTime);
-            tvTime.setText(item.time);
+            tvTime.setText(TimeUtils.getRelativeTime(n.getCreatedAt()));
             tvTime.setTextColor(accent);
+
+            row.setOnClickListener(v -> NotificationNavigator.open(requireContext(), n.getActionUrl()));
 
             activityContainer.addView(row);
         }
     }
 
-    private List<ActivityItem> mockActivity() {
-        return java.util.Arrays.asList(
-                new ActivityItem("Assignment 2 deadline extended", "2h", R.color.color_cyan),
-                new ActivityItem("Sara Khan joined your Crew", "4h", R.color.color_purple),
-                new ActivityItem("Wallet found near Library Gate", "6h", R.color.color_amber),
-                new ActivityItem("New Route Mate match: Dhanmondi", "8h", R.color.color_indigo)
-        );
+    private boolean isClassroomType(@Nullable String notificationType) {
+        return "NOTICE_POSTED".equals(notificationType)
+                || "RESOURCE_POSTED".equals(notificationType)
+                || "FEED_POST".equals(notificationType);
     }
 
-    private static class ActivityItem {
-        final String text;
-        final String time;
-        final int accentColorRes;
-
-        ActivityItem(String text, String time, int accentColorRes) {
-            this.text = text;
-            this.time = time;
-            this.accentColorRes = accentColorRes;
+    @ColorRes
+    private int colorForNotificationType(@Nullable String notificationType) {
+        if (notificationType == null) return R.color.color_muted;
+        switch (notificationType) {
+            case "JOIN_REQUEST":
+            case "JOIN_REQUEST_RESPONSE":
+            case "POST_FULL":
+                return R.color.color_purple;
+            case "NOTICE_POSTED":
+            case "RESOURCE_POSTED":
+            case "FEED_POST":
+                return R.color.color_cyan;
+            case "ROUTE_JOIN_REQUEST":
+            case "ROUTE_JOIN_REQUEST_RESPONSE":
+                return R.color.color_indigo;
+            default:
+                return R.color.color_muted;
         }
     }
 }

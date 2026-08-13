@@ -76,7 +76,7 @@
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
         android:paddingBottom="12dp"
-        android:text="MENU"
+        android:text="@string/drawer_menu_label"
         android:textColor="@color/color_muted"
         android:textSize="10.5sp"
         android:textStyle="bold"
