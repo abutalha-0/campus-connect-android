@@ -91,6 +91,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <!-- ── Skeleton state: shown while loadClass() is in flight ── -->
+            <LinearLayout
+                android:id="@+id/skeletonState"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingStart="18dp"
+                android:paddingEnd="18dp"
+                android:paddingTop="18dp" />
+
             <!-- ── Empty state: Join ── -->
             <LinearLayout
                 android:id="@+id/emptyState"
@@ -211,11 +221,61 @@
                         android:textColor="@color/color_muted" />
                 </LinearLayout>
 
+                <!-- ── Subjects tab content ── -->
                 <LinearLayout
                     android:id="@+id/subjectsContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" />
+
+                <!-- ── Schedule tab content ── -->
+                <LinearLayout
+                    android:id="@+id/weeksContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone" />
+
+                <!-- ── Feed tab content ── -->
+                <LinearLayout
+                    android:id="@+id/feedTabContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="end"
+                        android:layout_marginBottom="14dp">
+
+                        <TextView
+                            android:id="@+id/btnNewPost"
+                            android:layout_width="38dp"
+                            android:layout_height="38dp"
+                            android:gravity="center"
+                            android:text="＋"
+                            android:textColor="@color/color_background"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:background="@drawable/bg_button_primary" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/feedSkeletonContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+
+                    <LinearLayout
+                        android:id="@+id/postsContainer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:visibility="gone" />
+                </LinearLayout>
             </LinearLayout>
         </FrameLayout>
     </ScrollView>

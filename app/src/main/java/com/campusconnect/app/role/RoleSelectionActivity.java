@@ -11,9 +11,9 @@ import com.campusconnect.app.faculty.auth.FacultyRegisterActivity;
 /**
  * "Who are you?" landing screen shown right after onboarding.
  *
- *  - Student  → LoginActivity (the real sign-in flow)
- *  - Faculty  → coming-soon message (no backend yet)
- *  - Log in   → LoginActivity
+ *  - Student  → RegisterActivity (student sign-up)
+ *  - Faculty  → FacultyRegisterActivity (faculty sign-up)
+ *  - Log in   → LoginActivity (shared by both roles)
  *
  * A returning, already-authenticated user is bounced straight to Home so the
  * role picker never gets in the way of an existing session.

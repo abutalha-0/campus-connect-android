@@ -13,6 +13,23 @@
         android:layout_height="1dp"
         android:background="@color/color_border"/>
 
+    <!-- Search by username -->
+    <EditText
+        android:id="@+id/etSearch"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_margin="12dp"
+        android:background="@drawable/bg_input"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:inputType="text"
+        android:imeOptions="actionSearch"
+        android:maxLines="1"
+        android:hint="@string/discover_search_hint"
+        android:textColor="@color/color_text_primary"
+        android:textColorHint="@color/color_muted"
+        android:textSize="14sp"/>
+
     <!-- Status text (loading / empty / error) -->
     <TextView
         android:id="@+id/tvStatus"

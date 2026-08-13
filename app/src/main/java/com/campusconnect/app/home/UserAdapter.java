@@ -63,6 +63,14 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.UserViewHolder
         return users.size();
     }
 
+    /** Appends the next page's users (e.g. from infinite scroll) without
+     *  rebuilding the whole list. */
+    public void addUsers(List<User> more) {
+        int start = users.size();
+        users.addAll(more);
+        notifyItemRangeInserted(start, more.size());
+    }
+
     static class UserViewHolder extends RecyclerView.ViewHolder {
         TextView tvFullName, tvUsername, tvBio, tvInitial;
 

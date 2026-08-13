@@ -24,6 +24,7 @@ import com.campusconnect.app.core.base.BaseActivity;
 import com.campusconnect.app.core.ui.ComingSoonActivity;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.core.utils.ImageUtils;
+import com.campusconnect.app.core.utils.SkeletonAnimator;
 import com.campusconnect.app.faculty.edit.FacultyAddLinkActivity;
 import com.campusconnect.app.faculty.edit.FacultyEditIdentityActivity;
 import com.campusconnect.app.faculty.model.FacultyLink;
@@ -55,8 +56,15 @@ public class FacultyHomeActivity extends BaseActivity {
     private TextView tvName, tvDesignation, tvEmail, tvAvatarInitials;
     private ImageView ivAvatar;
     private LinearLayout linksContainer, subjectsContainer;
+    private View skeletonGroup, contentGroup;
 
     private ActivityResultLauncher<PickVisualMediaRequest> photoPickerLauncher;
+    // Cancelled on every fresh call so a slow, stale response from an earlier
+    // onResume() can never land after (and overwrite) a newer one.
+    private Call<List<Subject>> subjectsCall;
+
+    // Skeleton stays up until BOTH loads for this onResume cycle land.
+    private boolean profileLoaded, subjectsLoaded;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +78,8 @@ public class FacultyHomeActivity extends BaseActivity {
         ivAvatar = findViewById(R.id.ivAvatar);
         linksContainer = findViewById(R.id.linksContainer);
         subjectsContainer = findViewById(R.id.subjectsContainer);
+        skeletonGroup = findViewById(R.id.skeletonGroup);
+        contentGroup = findViewById(R.id.contentGroup);
 
         photoPickerLauncher = registerForActivityResult(
                 new ActivityResultContracts.PickVisualMedia(),
@@ -94,8 +104,18 @@ public class FacultyHomeActivity extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        profileLoaded = false;
+        subjectsLoaded = false;
+        SkeletonAnimator.showLoading(skeletonGroup, contentGroup);
         loadProfile();
         loadSubjects();
+    }
+
+    /** Reveals the real content once both loads for this cycle have landed. */
+    private void checkLoadingDone() {
+        if (profileLoaded && subjectsLoaded) {
+            SkeletonAnimator.showContent(skeletonGroup, contentGroup);
+        }
     }
 
     private void loadProfile() {
@@ -109,11 +129,15 @@ public class FacultyHomeActivity extends BaseActivity {
                         if (response.isSuccessful() && response.body() != null) {
                             populate(response.body());
                         }
+                        profileLoaded = true;
+                        checkLoadingDone();
                     }
 
                     @Override
                     public void onFailure(Call<FacultyProfile> call, Throwable t) {
                         // leave the screen as-is; onResume will retry next time
+                        profileLoaded = true;
+                        checkLoadingDone();
                     }
                 });
     }
@@ -157,6 +181,9 @@ public class FacultyHomeActivity extends BaseActivity {
             ImageView icon = row.findViewById(R.id.ivLinkIcon);
             icon.setImageResource(platform.iconRes);
             icon.setColorFilter(platform.accentColor);
+            String name = link.getLinkName() != null && !link.getLinkName().isEmpty()
+                    ? link.getLinkName() : platform.label;
+            ((TextView) row.findViewById(R.id.tvLinkName)).setText(name);
             ((TextView) row.findViewById(R.id.tvLinkUrl)).setText(link.getUrl());
             row.setOnClickListener(v -> openUrl(link.getUrl()));
             linksContainer.addView(row);
@@ -185,23 +212,29 @@ public class FacultyHomeActivity extends BaseActivity {
     // ── Subjects Taught ───────────────────────────────────────────────────
 
     private void loadSubjects() {
-        String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
-        RetrofitClient.createService(SubjectApiService.class)
-                .getMySubjects(token)
-                .enqueue(new Callback<List<Subject>>() {
-                    @Override
-                    public void onResponse(Call<List<Subject>> call, Response<List<Subject>> response) {
-                        if (isFinishing()) return;
-                        if (response.isSuccessful() && response.body() != null) {
-                            renderSubjects(response.body());
-                        }
-                    }
+        if (subjectsCall != null) subjectsCall.cancel();
 
-                    @Override
-                    public void onFailure(Call<List<Subject>> call, Throwable t) {
-                        // leave section as-is
-                    }
-                });
+        String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
+        subjectsCall = RetrofitClient.createService(SubjectApiService.class).getMySubjects(token);
+        subjectsCall.enqueue(new Callback<List<Subject>>() {
+            @Override
+            public void onResponse(Call<List<Subject>> call, Response<List<Subject>> response) {
+                if (isFinishing() || call.isCanceled()) return;
+                if (response.isSuccessful() && response.body() != null) {
+                    renderSubjects(response.body());
+                }
+                subjectsLoaded = true;
+                checkLoadingDone();
+            }
+
+            @Override
+            public void onFailure(Call<List<Subject>> call, Throwable t) {
+                // leave section as-is
+                if (call.isCanceled()) return;
+                subjectsLoaded = true;
+                checkLoadingDone();
+            }
+        });
     }
 
     private void renderSubjects(List<Subject> subjects) {
@@ -212,8 +245,24 @@ public class FacultyHomeActivity extends BaseActivity {
             empty.setText(getString(R.string.subjects_empty));
             empty.setTextColor(getResources().getColor(R.color.color_muted, null));
             empty.setTextSize(12.5f);
-            empty.setPadding(0, dp(8), 0, dp(8));
+            empty.setPadding(0, dp(8), 0, dp(4));
             subjectsContainer.addView(empty);
+
+            TextView cta = new TextView(this);
+            cta.setId(View.generateViewId());
+            cta.setText(getString(R.string.subjects_empty_cta));
+            cta.setTextColor(getResources().getColor(R.color.color_cyan, null));
+            cta.setTextSize(12.5f);
+            cta.setTypeface(cta.getTypeface(), android.graphics.Typeface.BOLD);
+            cta.setGravity(android.view.Gravity.CENTER);
+            cta.setPadding(0, dp(12), 0, dp(12));
+            cta.setBackgroundResource(R.drawable.bg_add_dashed);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            lp.topMargin = dp(4);
+            cta.setLayoutParams(lp);
+            cta.setOnClickListener(v -> startActivity(new Intent(this, AddSubjectActivity.class)));
+            subjectsContainer.addView(cta);
             return;
         }
 

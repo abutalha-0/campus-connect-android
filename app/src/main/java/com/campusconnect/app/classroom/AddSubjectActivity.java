@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +27,7 @@ public class AddSubjectActivity extends BaseActivity {
     private EditText etName, etIntake, etSection, etRoom;
     private TextView btnAddSubject, codeCardCode;
     private View codeCard;
+    private ScrollView scrollView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +41,14 @@ public class AddSubjectActivity extends BaseActivity {
         btnAddSubject = findViewById(R.id.btnAddSubject);
         codeCard = findViewById(R.id.codeCard);
         codeCardCode = findViewById(R.id.tvCode);
+        scrollView = findViewById(R.id.scrollView);
 
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+        findViewById(R.id.btnAddAnother).setOnClickListener(v -> {
+            codeCard.setVisibility(View.GONE);
+            scrollView.post(() -> scrollView.smoothScrollTo(0, 0));
+            etName.requestFocus();
+        });
         btnAddSubject.setOnClickListener(v -> addSubject());
     }
 
@@ -94,6 +102,7 @@ public class AddSubjectActivity extends BaseActivity {
     private void showCode(String code) {
         codeCardCode.setText(code);
         codeCard.setVisibility(View.VISIBLE);
+        scrollView.post(() -> scrollView.smoothScrollTo(0, codeCard.getTop()));
         TextView btnCopy = findViewById(R.id.btnCopyCode);
         btnCopy.setText(getString(R.string.subject_copy));
         btnCopy.setOnClickListener(v -> {

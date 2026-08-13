@@ -141,6 +141,16 @@
                                 android:maxLines="1"
                                 android:ellipsize="end"/>
 
+                            <!-- Skeleton stand-ins, shown instead of the three views
+                                 above while loadProfile() is in flight. -->
+                            <View
+                                android:id="@+id/skeletonFullNameLine"
+                                android:tag="skeleton_block"
+                                android:layout_width="140dp"
+                                android:layout_height="15dp"
+                                android:background="@drawable/bg_skeleton_block"
+                                android:visibility="gone"/>
+
                             <!-- Username in cyan -->
                             <TextView
                                 android:id="@+id/tvUsername"
@@ -151,6 +161,15 @@
                                 android:maxLines="1"
                                 android:ellipsize="end"
                                 android:layout_marginTop="1dp"/>
+
+                            <View
+                                android:id="@+id/skeletonUsernameLine"
+                                android:tag="skeleton_block"
+                                android:layout_width="90dp"
+                                android:layout_height="11dp"
+                                android:layout_marginTop="5dp"
+                                android:background="@drawable/bg_skeleton_block"
+                                android:visibility="gone"/>
 
                             <!-- User type pill -->
                             <TextView
@@ -166,6 +185,15 @@
                                 android:paddingTop="3dp"
                                 android:paddingBottom="3dp"
                                 android:layout_marginTop="6dp"/>
+
+                            <View
+                                android:id="@+id/skeletonUserTypeChip"
+                                android:tag="skeleton_block"
+                                android:layout_width="60dp"
+                                android:layout_height="18dp"
+                                android:layout_marginTop="6dp"
+                                android:background="@drawable/bg_skeleton_block"
+                                android:visibility="gone"/>
 
                         </LinearLayout>
 

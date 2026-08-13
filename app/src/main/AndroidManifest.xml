@@ -5,6 +5,8 @@
 
     <application
         android:allowBackup="true"
+        android:fullBackupContent="@xml/backup_rules"
+        android:dataExtractionRules="@xml/data_extraction_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
@@ -35,11 +37,9 @@
         <activity android:name=".classroom.SubjectSettingsActivity" />
         <activity android:name=".classroom.ClassroomActivity" />
         <activity android:name=".classroom.CreateClassActivity" />
-        <activity android:name=".classroom.FeedActivity" />
         <activity android:name=".classroom.AddFeedPostActivity" />
         <activity android:name=".classroom.FeedPostDetailActivity" />
         <activity android:name=".faculty.FacultyPublicProfileActivity" />
-        <activity android:name=".classroom.ScheduleActivity" />
         <activity android:name=".classroom.ClassSettingsActivity" />
         <activity android:name=".home.HomeActivity" />
         <activity android:name=".profile.PublicProfileActivity"/>
@@ -50,6 +50,12 @@
         <activity android:name=".profile.edit.AddSkillActivity"/>
         <activity android:name=".profile.edit.AddLinkActivity"/>
         <activity android:name=".core.ui.ComingSoonActivity"/>
+        <!-- NEW (Crew & Notifications feature) -->
+        <activity android:name=".crew.CrewActivity"/>
+        <activity android:name=".crew.AddPostActivity"/>
+        <activity android:name=".crew.PostDetailActivity"/>
+        <activity android:name=".notifications.NotificationsActivity"/>
+
 
     </application>
 

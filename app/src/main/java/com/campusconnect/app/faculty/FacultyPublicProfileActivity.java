@@ -138,6 +138,9 @@ public class FacultyPublicProfileActivity extends BaseActivity {
             ImageView icon = row.findViewById(R.id.ivLinkIcon);
             icon.setImageResource(platform.iconRes);
             icon.setColorFilter(platform.accentColor);
+            String name = link.getLinkName() != null && !link.getLinkName().isEmpty()
+                    ? link.getLinkName() : platform.label;
+            ((TextView) row.findViewById(R.id.tvLinkName)).setText(name);
             ((TextView) row.findViewById(R.id.tvLinkUrl)).setText(link.getUrl());
             row.setOnClickListener(v -> openUrl(link.getUrl()));
             linksContainer.addView(row);

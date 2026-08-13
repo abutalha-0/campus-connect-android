@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?><!--
-   Sample data extraction rules file; uncomment and customize as necessary.
+   API 31+ backup/restore rules.
    See https://developer.android.com/about/versions/12/backup-restore#xml-changes
-   for details.
 -->
 <data-extraction-rules>
     <cloud-backup>
-        <!-- TODO: Use <include> and <exclude> to control what is backed up.
-        <include .../>
-        <exclude .../>
-        -->
+        <!-- Never restore the "have you seen onboarding" flag — a
+             reinstalling user should see the intro slides again, not have
+             this flag silently restored from backup and skip past them. -->
+        <exclude domain="sharedpref" path="onboarding_prefs.xml"/>
+        <!-- Encrypted auth tokens are tied to this device's Keystore key,
+             which backup can't restore — exclude so a restore starts from a
+             clean logged-out state instead of undecryptable ciphertext. -->
+        <exclude domain="sharedpref" path="secure_prefs.xml"/>
     </cloud-backup>
-    <!--
     <device-transfer>
-        <include .../>
-        <exclude .../>
+        <exclude domain="sharedpref" path="onboarding_prefs.xml"/>
+        <exclude domain="sharedpref" path="secure_prefs.xml"/>
     </device-transfer>
-    -->
 </data-extraction-rules>

@@ -13,7 +13,6 @@
     <color name="color_cover_end">#8B5CF6</color>
     <color name="color_amber">#F59E0B</color>
     <color name="color_indigo">#6366F1</color>
-
     <!-- Lost & Found Design Tokens -->
     <color name="bg">#0A0E17</color>
     <color name="card">#121A2A</color>
@@ -49,4 +48,7 @@
 
     <color name="btn_on_cyan_text">#04202F</color>
     <color name="btn_on_amber_text">#120E04</color>
+
+    <!-- NEW (Crew feature): used for the "OPEN" post-status badge -->
+    <color name="color_green">#22C55E</color>
 </resources>

@@ -20,7 +20,9 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -31,10 +33,15 @@ public class FacultyAddLinkActivity extends BaseActivity {
 
     private ChipGroup currentLinksChipGroup;
     private EditText etLinkUrl;
+    private EditText etLinkName;
+    private TextView tvUrlHelper;
     private TextView platformGithub, platformLinkedin, platformFacebook, platformWebsite;
     private SocialPlatform selectedPlatform = SocialPlatform.LINKEDIN;
 
     private List<FacultyLink> links = new ArrayList<>();
+    // Single-instance platforms (github/linkedin/facebook) already linked —
+    // "website" is never in here since it's unlimited.
+    private final Set<String> usedSingleInstanceKeys = new HashSet<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +53,8 @@ public class FacultyAddLinkActivity extends BaseActivity {
 
         currentLinksChipGroup = findViewById(R.id.currentLinksChipGroup);
         etLinkUrl = findViewById(R.id.etLinkUrl);
+        etLinkName = findViewById(R.id.etLinkName);
+        tvUrlHelper = findViewById(R.id.tvUrlHelper);
         platformGithub = findViewById(R.id.platformGithub);
         platformLinkedin = findViewById(R.id.platformLinkedin);
         platformFacebook = findViewById(R.id.platformFacebook);
@@ -54,10 +63,10 @@ public class FacultyAddLinkActivity extends BaseActivity {
         ((ImageButton) findViewById(R.id.btnBack)).setOnClickListener(v -> finish());
         findViewById(R.id.btnSave).setOnClickListener(v -> finish());
 
-        platformGithub.setOnClickListener(v -> selectPlatform(SocialPlatform.GITHUB));
-        platformLinkedin.setOnClickListener(v -> selectPlatform(SocialPlatform.LINKEDIN));
-        platformFacebook.setOnClickListener(v -> selectPlatform(SocialPlatform.FACEBOOK));
-        platformWebsite.setOnClickListener(v -> selectPlatform(SocialPlatform.WEBSITE));
+        platformGithub.setOnClickListener(v -> tapPlatform(SocialPlatform.GITHUB));
+        platformLinkedin.setOnClickListener(v -> tapPlatform(SocialPlatform.LINKEDIN));
+        platformFacebook.setOnClickListener(v -> tapPlatform(SocialPlatform.FACEBOOK));
+        platformWebsite.setOnClickListener(v -> tapPlatform(SocialPlatform.WEBSITE));
         findViewById(R.id.btnAddLink).setOnClickListener(v -> addLink());
 
         // Default the picker to LinkedIn.
@@ -87,6 +96,18 @@ public class FacultyAddLinkActivity extends BaseActivity {
                 });
     }
 
+    /** A tap on a platform tab — blocked with an explanation if it's a single-instance
+     *  platform (GitHub/LinkedIn/Facebook) that's already linked. */
+    private void tapPlatform(SocialPlatform platform) {
+        if (platform.singleInstance && usedSingleInstanceKeys.contains(platform.key)) {
+            Toast.makeText(this,
+                    "You've already added a " + platform.label + " link. Remove it first to add another.",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        selectPlatform(platform);
+    }
+
     private void selectPlatform(SocialPlatform platform) {
         selectedPlatform = platform;
         for (TextView t : new TextView[]{platformGithub, platformLinkedin, platformFacebook, platformWebsite}) {
@@ -98,21 +119,50 @@ public class FacultyAddLinkActivity extends BaseActivity {
                 platform == SocialPlatform.FACEBOOK ? platformFacebook : platformWebsite;
         active.setBackgroundResource(R.drawable.bg_tab_pill_active);
         active.setTextColor(getResources().getColor(R.color.color_cyan, null));
+
+        tvUrlHelper.setText("Paste your " + platform.label + " profile link");
+        etLinkUrl.setHint(platform.exampleUrl);
+        etLinkUrl.setError(null);
+        etLinkName.setHint(platform.label);
+
+        applyUsedPlatformDimming();
+    }
+
+    /** Dim (but keep tappable, for the explanatory toast) any single-instance
+     *  platform tab that's already linked. */
+    private void applyUsedPlatformDimming() {
+        for (SocialPlatform platform : new SocialPlatform[]{SocialPlatform.GITHUB, SocialPlatform.LINKEDIN, SocialPlatform.FACEBOOK}) {
+            TextView tab = platform == SocialPlatform.GITHUB ? platformGithub :
+                    platform == SocialPlatform.LINKEDIN ? platformLinkedin : platformFacebook;
+            tab.setAlpha(usedSingleInstanceKeys.contains(platform.key) ? 0.35f : 1f);
+        }
     }
 
     private void renderCurrentLinks() {
         currentLinksChipGroup.removeAllViews();
+        usedSingleInstanceKeys.clear();
         for (FacultyLink link : links) {
             SocialPlatform platform = SocialPlatform.fromKey(link.getIcon());
+            if (platform.singleInstance) usedSingleInstanceKeys.add(platform.key);
+
             String label = link.getLinkName() != null ? link.getLinkName() : platform.label;
             Chip chip = ProfileChipFactory.create(this, label, platform.iconRes, platform.accentColor);
             chip.setCloseIconVisible(true);
-            chip.setOnCloseIconClickListener(v -> deleteLink(link, chip));
+            chip.setOnCloseIconClickListener(v -> deleteLink(link));
             currentLinksChipGroup.addView(chip);
+        }
+
+        // If the currently-selected platform just became unavailable (e.g. it
+        // was just linked), fall back to Website rather than leaving the form
+        // pointed at a platform the user can no longer submit.
+        if (selectedPlatform.singleInstance && usedSingleInstanceKeys.contains(selectedPlatform.key)) {
+            selectPlatform(SocialPlatform.WEBSITE);
+        } else {
+            applyUsedPlatformDimming();
         }
     }
 
-    private void deleteLink(FacultyLink link, Chip chip) {
+    private void deleteLink(FacultyLink link) {
         String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
         RetrofitClient.createService(FacultyApiService.class)
                 .deleteLink(token, link.getId())
@@ -121,7 +171,7 @@ public class FacultyAddLinkActivity extends BaseActivity {
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         if (response.isSuccessful()) {
                             links.remove(link);
-                            currentLinksChipGroup.removeView(chip);
+                            renderCurrentLinks();
                         } else {
                             Toast.makeText(FacultyAddLinkActivity.this,
                                     "Couldn't remove link. Try again.", Toast.LENGTH_SHORT).show();
@@ -139,7 +189,17 @@ public class FacultyAddLinkActivity extends BaseActivity {
     private void addLink() {
         String url = etLinkUrl.getText().toString().trim();
         if (url.isEmpty()) {
-            etLinkUrl.setError("Enter a profile URL");
+            etLinkUrl.setError("Paste a profile link");
+            return;
+        }
+        if (selectedPlatform.singleInstance && usedSingleInstanceKeys.contains(selectedPlatform.key)) {
+            Toast.makeText(this,
+                    "You've already added a " + selectedPlatform.label + " link. Remove it first to add another.",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (!selectedPlatform.matchesDomain(url)) {
+            etLinkUrl.setError("Enter a valid " + selectedPlatform.label + " link (e.g. " + selectedPlatform.exampleUrl + ")");
             return;
         }
 
@@ -147,9 +207,11 @@ public class FacultyAddLinkActivity extends BaseActivity {
         btnAdd.setEnabled(false);
         btnAdd.setText("Adding…");
 
+        String typedName = etLinkName.getText().toString().trim();
+        String name = typedName.isEmpty() ? selectedPlatform.label : typedName;
+
         String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
-        FacultyLinkRequest body = new FacultyLinkRequest(
-                selectedPlatform.label, selectedPlatform.key, url);
+        FacultyLinkRequest body = new FacultyLinkRequest(name, selectedPlatform.key, url);
 
         RetrofitClient.createService(FacultyApiService.class)
                 .addLink(token, body)
@@ -162,9 +224,10 @@ public class FacultyAddLinkActivity extends BaseActivity {
                             links.add(response.body());
                             renderCurrentLinks();
                             etLinkUrl.setText("");
+                            etLinkName.setText("");
                         } else {
                             Toast.makeText(FacultyAddLinkActivity.this,
-                                    "Failed to add link. Try again.", Toast.LENGTH_SHORT).show();
+                                    extractIconError(response), Toast.LENGTH_LONG).show();
                         }
                     }
 
@@ -176,5 +239,21 @@ public class FacultyAddLinkActivity extends BaseActivity {
                                 getString(R.string.error_network), Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    /** Surfaces the serializer's "icon" validation message (e.g. duplicate
+     *  platform) if present, falling back to a generic failure message. */
+    private String extractIconError(Response<?> response) {
+        try {
+            if (response.errorBody() != null) {
+                org.json.JSONObject json = new org.json.JSONObject(response.errorBody().string());
+                if (json.has("icon")) {
+                    return json.getJSONArray("icon").getString(0);
+                }
+            }
+        } catch (Exception ignored) {
+            // fall through to generic message
+        }
+        return "Failed to add link. Try again.";
     }
 }
