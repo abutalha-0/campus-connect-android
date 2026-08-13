@@ -1,14 +1,20 @@
 package com.campusconnect.app.lostfound;
 
 import android.app.Dialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -146,10 +152,65 @@ public class ItemDetailFragment extends Fragment {
         TextView tvName = dialog.findViewById(R.id.tvContactName);
         TextView tvInitials = dialog.findViewById(R.id.tvContactInitials);
         TextView tvValue = dialog.findViewById(R.id.tvContactValue);
+        Button btnCall = dialog.findViewById(R.id.btnCallContact);
+        Button btnEmail = dialog.findViewById(R.id.btnEmailContact);
+        Button btnCopy = dialog.findViewById(R.id.btnCopyContact);
 
         tvName.setText(item.getReportedBy());
         tvInitials.setText(initialsOf(item.getReportedBy()));
-        tvValue.setText(item.getContactInfo());
+
+        String contactInfo = item.getContactInfo();
+        if (contactInfo == null || contactInfo.trim().isEmpty()) {
+            contactInfo = "No contact details specified";
+        }
+        tvValue.setText(contactInfo);
+
+        final String finalContact = contactInfo;
+
+        // Check if contact contains phone digits
+        String digitsOnly = finalContact.replaceAll("[^0-9+]", "");
+        if (digitsOnly.length() >= 7) {
+            btnCall.setVisibility(View.VISIBLE);
+            btnCall.setOnClickListener(v -> {
+                try {
+                    Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + digitsOnly));
+                    startActivity(intent);
+                } catch (Exception e) {
+                    Toast.makeText(getContext(), "Unable to launch dialer", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        // Check if contact contains email address
+        if (finalContact.contains("@")) {
+            btnEmail.setVisibility(View.VISIBLE);
+            btnEmail.setOnClickListener(v -> {
+                try {
+                    String emailAddress = finalContact;
+                    for (String word : finalContact.split("\\s+")) {
+                        if (word.contains("@")) {
+                            emailAddress = word;
+                            break;
+                        }
+                    }
+                    Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.parse("mailto:" + emailAddress));
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "Campus Connect Lost & Found: " + item.getTitle());
+                    startActivity(intent);
+                } catch (Exception e) {
+                    Toast.makeText(getContext(), "Unable to launch email client", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
+
+        // Copy button action
+        btnCopy.setOnClickListener(v -> {
+            ClipboardManager clipboard = (ClipboardManager) requireContext().getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText("Contact Info", finalContact);
+            if (clipboard != null) {
+                clipboard.setPrimaryClip(clip);
+                Toast.makeText(getContext(), R.string.msg_copied, Toast.LENGTH_SHORT).show();
+            }
+        });
 
         dialog.findViewById(R.id.btnCloseDialog).setOnClickListener(v -> dialog.dismiss());
         dialog.show();

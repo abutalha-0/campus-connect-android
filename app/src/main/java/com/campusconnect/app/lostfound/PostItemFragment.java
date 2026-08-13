@@ -53,7 +53,7 @@ public class PostItemFragment extends Fragment {
 
     private View btnTypeLost, btnTypeFound;
     private TextView tvLostLabel, tvFoundLabel;
-    private EditText etTitle, etCategory, etDescription, etLocation;
+    private EditText etTitle, etCategory, etDescription, etLocation, etContactInfo;
     private TextView tvDateTime;
     private ImageView ivPreview;
     private View btnUploadPhoto;
@@ -87,6 +87,7 @@ public class PostItemFragment extends Fragment {
         etCategory = view.findViewById(R.id.etCategoryPost);
         etDescription = view.findViewById(R.id.etDescription);
         etLocation = view.findViewById(R.id.etLocationPost);
+        etContactInfo = view.findViewById(R.id.etContactInfo);
         tvDateTime = view.findViewById(R.id.tvDateTimePost);
         ivPreview = view.findViewById(R.id.ivPreview);
         btnUploadPhoto = view.findViewById(R.id.btnUploadPhoto);
@@ -131,6 +132,7 @@ public class PostItemFragment extends Fragment {
         etCategory.setText(item.getCategory());
         etDescription.setText(item.getDescription());
         etLocation.setText(item.getLocation());
+        etContactInfo.setText(item.getContactInfo());
         tvDateTime.setText(item.getDateSeen());
         selectType(item.getItemType());
         
@@ -192,6 +194,8 @@ public class PostItemFragment extends Fragment {
             return;
         }
 
+        String contactInfo = etContactInfo.getText().toString().trim();
+
         String dateOnly = dateTime.split(" ")[0];
 
         String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
@@ -203,7 +207,7 @@ public class PostItemFragment extends Fragment {
         RequestBody catPart = RequestBody.create(MediaType.parse("text/plain"), category);
         RequestBody locPart = RequestBody.create(MediaType.parse("text/plain"), location);
         RequestBody datePart = RequestBody.create(MediaType.parse("text/plain"), dateOnly);
-        RequestBody contactPart = RequestBody.create(MediaType.parse("text/plain"), "Contact me via app"); // Placeholder
+        RequestBody contactPart = RequestBody.create(MediaType.parse("text/plain"), contactInfo);
 
         MultipartBody.Part imagePart = null;
         if (selectedImageUri != null) {

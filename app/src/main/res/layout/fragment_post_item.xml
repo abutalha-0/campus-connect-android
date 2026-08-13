@@ -204,6 +204,27 @@
                 android:textColorHint="@color/text_faint"
                 android:textSize="14sp" />
 
+            <TextView
+                style="@style/FacultyFieldLabel"
+                android:layout_marginTop="20dp"
+                android:text="@string/label_contact_info"
+                android:textColor="@color/text_dim"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etContactInfo"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:background="@drawable/bg_lf_input"
+                android:autofillHints="none"
+                android:hint="@string/hint_contact_info"
+                android:inputType="text"
+                android:paddingHorizontal="16dp"
+                android:textColor="@color/text_primary"
+                android:textColorHint="@color/text_faint"
+                android:textSize="14sp" />
+
             <FrameLayout
                 android:id="@+id/btnUploadPhoto"
                 android:layout_width="match_parent"

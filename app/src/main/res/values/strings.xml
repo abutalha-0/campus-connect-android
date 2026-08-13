@@ -294,6 +294,11 @@
     <string name="label_active_caps">ACTIVE</string>
     <string name="label_closed_caps">CLOSED</string>
     <string name="label_contact_info">Contact Info</string>
+    <string name="hint_contact_info">e.g. Phone number, email, or WhatsApp</string>
+    <string name="btn_call">Call</string>
+    <string name="btn_email">Email</string>
+    <string name="btn_copy">Copy</string>
+    <string name="msg_copied">Contact info copied to clipboard</string>
     <string name="my_lf_posts_label">My Lost &amp; Found Posts</string>
 
     <!-- Route Mate -->
