@@ -319,6 +319,14 @@
     <string name="btn_copy">Copy</string>
     <string name="msg_copied">Contact info copied to clipboard</string>
     <string name="my_lf_posts_label">My Lost &amp; Found Posts</string>
+    <string name="report_dialog_title">Report a Problem</string>
+    <string name="report_dialog_subtitle">Select the reason for reporting this post</string>
+    <string name="report_reason_inaccurate">Inaccurate or misleading details</string>
+    <string name="report_reason_claimed">Item already claimed or spam</string>
+    <string name="report_reason_inappropriate">Inappropriate or offensive content</string>
+    <string name="report_reason_other">Other reason</string>
+    <string name="btn_submit_report">Submit Report</string>
+    <string name="report_success_toast">Report submitted. Thank you for keeping Campus Connect safe!</string>
 
     <!-- Route Mate -->
     <string name="title_route_mate">Route Mate</string>
@@ -326,6 +334,8 @@
     <string name="filter_routes_title">Filter Routes</string>
     <string name="label_home_area">Home Area</string>
     <string name="label_destination">Destination</string>
+    <string name="label_departure_time">DEPARTURE TIME</string>
+    <string name="hint_departure_time">Tap to pick departure time</string>
     <string name="label_transport_mode">Transport Mode</string>
     <string name="label_gender_pref">Gender Preference</string>
     <string name="post_route_title">Post a Route</string>
