@@ -164,6 +164,12 @@ public class ProfileFragment extends Fragment {
             view.findViewById(R.id.btnMenu).setOnClickListener(v ->
                     ((HomeActivity) requireActivity()).openDrawer());
 
+            view.findViewById(R.id.sectionLostFound).setOnClickListener(v ->
+                    getParentFragmentManager().beginTransaction()
+                            .replace(R.id.fragmentContainer, new com.campusconnect.app.lostfound.MyPostsFragment())
+                            .addToBackStack(null)
+                            .commit());
+
             btnEditHero.setOnClickListener(v ->
                     EditBasicInfoActivity.start(requireContext(), EditBasicInfoActivity.Mode.HERO));
             btnEditAbout.setOnClickListener(v ->
@@ -185,6 +191,7 @@ public class ProfileFragment extends Fragment {
             btnChangePhoto.setVisibility(View.GONE);
             btnEditSkills.setVisibility(View.GONE);
             btnAddSocial.setVisibility(View.GONE);
+            view.findViewById(R.id.sectionLostFound).setVisibility(View.GONE);
         }
 
         tabProjects.setOnClickListener(v   -> switchTab("projects"));

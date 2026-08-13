@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <include layout="@layout/top_bar_lost_found" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp">
+
+            <!-- Segmented Control -->
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/toggleGroupType"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/bg_lf_segment_container"
+                android:padding="4dp"
+                app:checkedButton="@+id/btnAll"
+                app:singleSelection="true"
+                app:selectionRequired="true">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAll"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="All"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_dim"
+                    android:textSize="13.5sp"
+                    app:cornerRadius="10dp"
+                    app:rippleColor="@color/amber_dim" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnLost"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Lost"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_dim"
+                    android:textSize="13.5sp"
+                    app:cornerRadius="10dp"
+                    app:rippleColor="@color/amber_dim" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnFound"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Found"
+                    android:textAllCaps="false"
+                    android:textColor="@color/text_dim"
+                    android:textSize="13.5sp"
+                    app:cornerRadius="10dp"
+                    app:rippleColor="@color/amber_dim" />
+
+            </com.google.android.material.button.MaterialButtonToggleGroup>
+
+            <!-- Search + Filter Row -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="42dp"
+                android:layout_marginTop="16dp"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_lf_input"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="12dp">
+
+                    <ImageView
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
+                        android:src="@drawable/ic_search"
+                        app:tint="@color/text_faint" />
+
+                    <EditText
+                        android:id="@+id/etSearch"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="8dp"
+                        android:background="@null"
+                        android:hint="@string/hint_search_items"
+                        android:imeOptions="actionSearch"
+                        android:inputType="text"
+                        android:textColor="@color/text_primary"
+                        android:textColorHint="@color/text_faint"
+                        android:textSize="13sp" />
+                </LinearLayout>
+
+                <FrameLayout
+                    android:id="@+id/btnFilter"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:layout_marginStart="12dp"
+                    android:background="@drawable/bg_lf_filter_btn"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:foreground="?attr/selectableItemBackground">
+
+                    <ImageView
+                        android:id="@+id/ivFilterIcon"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_filter"
+                        app:tint="@color/text_dim" />
+
+                    <View
+                        android:id="@+id/filterBadge"
+                        android:layout_width="8dp"
+                        android:layout_height="8dp"
+                        android:layout_gravity="top|end"
+                        android:layout_margin="8dp"
+                        android:background="@drawable/bg_lf_dot_amber"
+                        android:visibility="gone" />
+                </FrameLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="18dp"
+            android:paddingBottom="80dp" />
+
+    </LinearLayout>
+
+    <!-- Empty State -->
+    <TextView
+        android:id="@+id/tvEmptyState"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="32dp"
+        android:background="@drawable/bg_lf_card"
+        android:gravity="center"
+        android:padding="24dp"
+        android:text="@string/empty_no_items"
+        android:textColor="@color/text_faint"
+        android:textSize="14sp"
+        android:visibility="gone" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fabAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="20dp"
+        android:contentDescription="@null"
+        android:src="@drawable/ic_plus"
+        app:backgroundTint="@color/amber"
+        app:fabCustomSize="52dp"
+        app:tint="@color/btn_on_amber_text" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
