@@ -28,11 +28,27 @@ public class HomeActivity extends BaseActivity {
     // Found), not as its own Activity — so a notification pointing at a
     // route has to come through here rather than being launched directly.
     private static final String EXTRA_OPEN_ROUTE_MATE = "open_route_mate";
+    private static final String EXTRA_OPEN_LOST_FOUND_ITEM_ID = "open_lost_found_item_id";
+    private static final String EXTRA_OPEN_LOST_FOUND_LIST = "open_lost_found_list";
 
     public static Intent createRouteMateIntent(Context ctx) {
         Intent i = new Intent(ctx, HomeActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         i.putExtra(EXTRA_OPEN_ROUTE_MATE, true);
+        return i;
+    }
+
+    public static Intent createLostFoundDetailIntent(Context ctx, int itemId) {
+        Intent i = new Intent(ctx, HomeActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        i.putExtra(EXTRA_OPEN_LOST_FOUND_ITEM_ID, itemId);
+        return i;
+    }
+
+    public static Intent createLostFoundListIntent(Context ctx) {
+        Intent i = new Intent(ctx, HomeActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        i.putExtra(EXTRA_OPEN_LOST_FOUND_LIST, true);
         return i;
     }
 
@@ -68,7 +84,7 @@ public class HomeActivity extends BaseActivity {
         if (savedInstanceState == null) {
             loadFragment(new HomeFragment());
         }
-        handleOpenRouteMateExtra(getIntent());
+        handleIntentExtras(getIntent());
 
         bottomNav.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
@@ -211,12 +227,20 @@ public class HomeActivity extends BaseActivity {
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         setIntent(intent);
-        handleOpenRouteMateExtra(intent);
+        handleIntentExtras(intent);
     }
 
-    private void handleOpenRouteMateExtra(Intent intent) {
-        if (intent != null && intent.getBooleanExtra(EXTRA_OPEN_ROUTE_MATE, false)) {
+    private void handleIntentExtras(Intent intent) {
+        if (intent == null) return;
+        if (intent.getBooleanExtra(EXTRA_OPEN_ROUTE_MATE, false)) {
             loadFragment(new com.campusconnect.app.routemate.RouteMateListFragment());
+        } else if (intent.hasExtra(EXTRA_OPEN_LOST_FOUND_ITEM_ID)) {
+            int itemId = intent.getIntExtra(EXTRA_OPEN_LOST_FOUND_ITEM_ID, -1);
+            if (itemId != -1) {
+                loadFragment(com.campusconnect.app.lostfound.ItemDetailFragment.newInstance(itemId));
+            }
+        } else if (intent.getBooleanExtra(EXTRA_OPEN_LOST_FOUND_LIST, false)) {
+            loadFragment(new com.campusconnect.app.lostfound.LostFoundListFragment());
         }
     }
 }

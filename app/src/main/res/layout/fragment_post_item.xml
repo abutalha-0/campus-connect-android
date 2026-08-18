@@ -127,82 +127,112 @@
                 android:textSize="11sp"
                 android:textStyle="bold" />
 
-            <EditText
-                android:id="@+id/etCategoryPost"
+            <Spinner
+                android:id="@+id/spinnerCategoryPost"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:background="@drawable/bg_lf_input"
+                android:paddingHorizontal="12dp" />
+
+            <EditText
+                android:id="@+id/etCustomCategoryPost"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="8dp"
                 android:autofillHints="none"
-                android:hint="@string/hint_category"
+                android:background="@drawable/bg_lf_input"
+                android:hint="Specify custom category..."
                 android:inputType="text"
                 android:paddingHorizontal="16dp"
                 android:textColor="@color/text_primary"
                 android:textColorHint="@color/text_faint"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:visibility="gone" />
 
-            <TextView
-                style="@style/FacultyFieldLabel"
-                android:layout_marginTop="20dp"
-                android:text="@string/label_description"
-                android:textColor="@color/text_dim"
-                android:textSize="11sp"
-                android:textStyle="bold" />
-
-            <EditText
-                android:id="@+id/etDescription"
+            <LinearLayout
+                android:id="@+id/layoutDescriptionGroup"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_lf_input"
-                android:gravity="top"
-                android:autofillHints="none"
-                android:hint="@string/hint_description"
-                android:inputType="textMultiLine"
-                android:minHeight="90dp"
-                android:padding="16dp"
-                android:textColor="@color/text_primary"
-                android:textColorHint="@color/text_faint"
-                android:textSize="14sp" />
+                android:orientation="vertical">
 
-            <TextView
-                style="@style/FacultyFieldLabel"
-                android:layout_marginTop="20dp"
-                android:text="@string/label_location"
-                android:textColor="@color/text_dim"
-                android:textSize="11sp"
-                android:textStyle="bold" />
+                <TextView
+                    style="@style/FacultyFieldLabel"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/label_description"
+                    android:textColor="@color/text_dim"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
 
-            <EditText
-                android:id="@+id/etLocationPost"
+                <EditText
+                    android:id="@+id/etDescription"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:autofillHints="none"
+                    android:background="@drawable/bg_lf_input"
+                    android:gravity="top"
+                    android:hint="@string/hint_description"
+                    android:inputType="textMultiLine"
+                    android:minHeight="90dp"
+                    android:padding="16dp"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_faint"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutLocationGroup"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:background="@drawable/bg_lf_input"
-                android:autofillHints="none"
-                android:hint="@string/hint_location"
-                android:inputType="text"
-                android:paddingHorizontal="16dp"
-                android:textColor="@color/text_primary"
-                android:textColorHint="@color/text_faint"
-                android:textSize="14sp" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-            <TextView
-                style="@style/FacultyFieldLabel"
-                android:layout_marginTop="20dp"
-                android:text="@string/label_date_time"
-                android:textColor="@color/text_dim"
-                android:textSize="11sp"
-                android:textStyle="bold" />
+                <TextView
+                    style="@style/FacultyFieldLabel"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/label_location"
+                    android:textColor="@color/text_dim"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tvDateTimePost"
+                <EditText
+                    android:id="@+id/etLocationPost"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:autofillHints="none"
+                    android:background="@drawable/bg_lf_input"
+                    android:hint="@string/hint_location"
+                    android:inputType="text"
+                    android:paddingHorizontal="16dp"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_faint"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutDateTimeGroup"
                 android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:background="@drawable/bg_lf_input"
-                android:gravity="center_vertical"
-                android:hint="@string/hint_select_date_time"
-                android:paddingHorizontal="16dp"
-                android:textColor="@color/text_primary"
-                android:textColorHint="@color/text_faint"
-                android:textSize="14sp" />
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/FacultyFieldLabel"
+                    android:layout_marginTop="20dp"
+                    android:text="@string/label_date_time"
+                    android:textColor="@color/text_dim"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvDateTimePost"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:background="@drawable/bg_lf_input"
+                    android:gravity="center_vertical"
+                    android:hint="@string/hint_select_date_time"
+                    android:paddingHorizontal="16dp"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_faint"
+                    android:textSize="14sp" />
+            </LinearLayout>
 
             <TextView
                 style="@style/FacultyFieldLabel"
@@ -263,6 +293,64 @@
                     android:scaleType="centerCrop"
                     android:visibility="gone" />
             </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/layoutClaimQuestions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/FacultyFieldLabel"
+                    android:text="Verification Question (For Found Items)"
+                    android:textColor="@color/amber_gold"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="Ask a specific question to verify the true owner. Non-owners will see the question, but never your correct answer."
+                    android:textColor="@color/text_faint"
+                    android:textSize="12sp" />
+
+                <EditText
+                    android:id="@+id/etClaimQuestion"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:autofillHints="none"
+                    android:background="@drawable/bg_lf_input"
+                    android:hint="e.g. What color is the keychain?"
+                    android:inputType="text"
+                    android:paddingHorizontal="16dp"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_faint"
+                    android:textSize="14sp" />
+
+                <TextView
+                    style="@style/FacultyFieldLabel"
+                    android:layout_marginTop="12dp"
+                    android:text="Secret Correct Answer"
+                    android:textColor="@color/text_dim"
+                    android:textSize="11sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/etClaimAnswer"
+                    android:layout_width="match_parent"
+                    android:layout_height="52dp"
+                    android:autofillHints="none"
+                    android:background="@drawable/bg_lf_input"
+                    android:hint="e.g. Blue star keychain"
+                    android:inputType="text"
+                    android:paddingHorizontal="16dp"
+                    android:textColor="@color/text_primary"
+                    android:textColorHint="@color/text_faint"
+                    android:textSize="14sp" />
+            </LinearLayout>
 
             <Button
                 android:id="@+id/btnSubmit"

@@ -7,6 +7,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.campusconnect.app.R;
+import com.campusconnect.app.core.utils.ProfileNavigator;
 import com.campusconnect.app.routemate.model.RouteJoinRequest;
 import com.google.android.material.button.MaterialButton;
 import java.util.List;
@@ -78,6 +79,14 @@ public class RouteJoinRequestAdapter extends RecyclerView.Adapter<RouteJoinReque
             }
             tvRequesterName.setText(name);
             tvRequesterInitials.setText(getInitials(name));
+
+            View.OnClickListener onProfileClick = v -> {
+                if (req.getRequester() > 0) {
+                    ProfileNavigator.open(itemView.getContext(), req.getRequester(), "STUDENT");
+                }
+            };
+            tvRequesterName.setOnClickListener(onProfileClick);
+            tvRequesterInitials.setOnClickListener(onProfileClick);
 
             String routeSummary = "Route: " + (req.getRouteHomeArea() != null ? req.getRouteHomeArea() : "")
                     + " ➔ " + (req.getRouteDestination() != null ? req.getRouteDestination() : "");

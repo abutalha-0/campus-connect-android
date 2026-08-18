@@ -9,8 +9,11 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -38,6 +41,9 @@ public class PostItemFragment extends Fragment {
 
     private static final int PICK_IMAGE_REQUEST = 1;
     private static final String ARG_ITEM_ID = "item_id";
+    private static final String[] CATEGORIES = new String[]{
+        "Electronics", "Accessories", "Books & Stationery", "Clothing & Bags", "Cards & Documents", "Keys & Badges", "Others"
+    };
 
     private int editingItemId = -1;
     private String currentType = LostFoundItem.TYPE_LOST;
@@ -53,9 +59,14 @@ public class PostItemFragment extends Fragment {
 
     private View btnTypeLost, btnTypeFound;
     private TextView tvLostLabel, tvFoundLabel;
-    private EditText etTitle, etCategory, etDescription, etLocation, etContactInfo;
+    private EditText etTitle, etDescription, etLocation, etContactInfo;
+    private Spinner spinnerCategory;
+    private EditText etCustomCategory;
+    private EditText etClaimQuestion, etClaimAnswer;
+    private View layoutClaimQuestions;
     private TextView tvDateTime;
     private ImageView ivPreview;
+    private View layoutDescriptionGroup, layoutLocationGroup, layoutDateTimeGroup;
     private View btnUploadPhoto;
 
     private TokenManager tokenManager;
@@ -84,13 +95,38 @@ public class PostItemFragment extends Fragment {
         tvLostLabel = view.findViewById(R.id.tvLostLabel);
         tvFoundLabel = view.findViewById(R.id.tvFoundLabel);
         etTitle = view.findViewById(R.id.etTitle);
-        etCategory = view.findViewById(R.id.etCategoryPost);
+        spinnerCategory = view.findViewById(R.id.spinnerCategoryPost);
+        etCustomCategory = view.findViewById(R.id.etCustomCategoryPost);
         etDescription = view.findViewById(R.id.etDescription);
         etLocation = view.findViewById(R.id.etLocationPost);
         etContactInfo = view.findViewById(R.id.etContactInfo);
+        etClaimQuestion = view.findViewById(R.id.etClaimQuestion);
+        etClaimAnswer = view.findViewById(R.id.etClaimAnswer);
+        layoutClaimQuestions = view.findViewById(R.id.layoutClaimQuestions);
+        layoutDescriptionGroup = view.findViewById(R.id.layoutDescriptionGroup);
+        layoutLocationGroup = view.findViewById(R.id.layoutLocationGroup);
+        layoutDateTimeGroup = view.findViewById(R.id.layoutDateTimeGroup);
         tvDateTime = view.findViewById(R.id.tvDateTimePost);
         ivPreview = view.findViewById(R.id.ivPreview);
         btnUploadPhoto = view.findViewById(R.id.btnUploadPhoto);
+
+        ArrayAdapter<String> catAdapter = new ArrayAdapter<>(requireContext(), R.layout.item_spinner, CATEGORIES);
+        catAdapter.setDropDownViewResource(R.layout.item_spinner_dropdown);
+        spinnerCategory.setAdapter(catAdapter);
+
+        spinnerCategory.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == CATEGORIES.length - 1) {
+                    etCustomCategory.setVisibility(View.VISIBLE);
+                } else {
+                    etCustomCategory.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
 
         view.findViewById(R.id.btnClose).setOnClickListener(v -> getParentFragmentManager().popBackStack());
 
@@ -129,7 +165,26 @@ public class PostItemFragment extends Fragment {
 
     private void populateForEdit(LostFoundItem item) {
         etTitle.setText(item.getTitle());
-        etCategory.setText(item.getCategory());
+        
+        String cat = item.getCategory();
+        int catIndex = -1;
+        if (cat != null) {
+            for (int i = 0; i < CATEGORIES.length; i++) {
+                if (CATEGORIES[i].equalsIgnoreCase(cat.trim())) {
+                    catIndex = i;
+                    break;
+                }
+            }
+        }
+        if (catIndex != -1) {
+            spinnerCategory.setSelection(catIndex);
+            etCustomCategory.setVisibility(View.GONE);
+        } else {
+            spinnerCategory.setSelection(CATEGORIES.length - 1);
+            etCustomCategory.setText(cat != null ? cat : "");
+            etCustomCategory.setVisibility(View.VISIBLE);
+        }
+
         etDescription.setText(item.getDescription());
         etLocation.setText(item.getLocation());
         etContactInfo.setText(item.getContactInfo());
@@ -151,6 +206,15 @@ public class PostItemFragment extends Fragment {
         
         btnTypeFound.setBackgroundResource(!isLost ? R.drawable.bg_lf_type_found_selected : R.drawable.bg_lf_type_unselected);
         tvFoundLabel.setTextColor(ContextCompat.getColor(requireContext(), !isLost ? R.color.amber_gold : R.color.text_dim));
+
+        if (layoutClaimQuestions != null) {
+            layoutClaimQuestions.setVisibility(isLost ? View.GONE : View.VISIBLE);
+        }
+
+        int optionalFieldVisibility = isLost ? View.VISIBLE : View.GONE;
+        if (layoutDescriptionGroup != null) layoutDescriptionGroup.setVisibility(optionalFieldVisibility);
+        if (layoutLocationGroup != null) layoutLocationGroup.setVisibility(View.VISIBLE);
+        if (layoutDateTimeGroup != null) layoutDateTimeGroup.setVisibility(optionalFieldVisibility);
     }
 
     private void showDateTimePicker() {
@@ -184,18 +248,35 @@ public class PostItemFragment extends Fragment {
 
     private void submitItem() {
         String title = etTitle.getText().toString().trim();
-        String category = etCategory.getText().toString().trim();
+        
+        String selectedCat = (String) spinnerCategory.getSelectedItem();
+        String category;
+        if ("Others".equalsIgnoreCase(selectedCat)) {
+            String customCat = etCustomCategory.getText().toString().trim();
+            category = !customCat.isEmpty() ? customCat : "Others";
+        } else {
+            category = selectedCat != null ? selectedCat : "";
+        }
+
         String description = etDescription.getText().toString().trim();
         String location = etLocation.getText().toString().trim();
         String dateTime = tvDateTime.getText().toString().trim();
 
-        if (title.isEmpty() || category.isEmpty() || description.isEmpty() || location.isEmpty() || dateTime.isEmpty()) {
-            Toast.makeText(getContext(), R.string.error_fields, Toast.LENGTH_SHORT).show();
-            return;
+        boolean isLost = LostFoundItem.TYPE_LOST.equals(currentType);
+
+        if (isLost) {
+            if (title.isEmpty() || category.isEmpty() || description.isEmpty() || location.isEmpty() || dateTime.isEmpty()) {
+                Toast.makeText(getContext(), R.string.error_fields, Toast.LENGTH_SHORT).show();
+                return;
+            }
+        } else {
+            if (title.isEmpty() || category.isEmpty()) {
+                Toast.makeText(getContext(), "Please fill in title and category", Toast.LENGTH_SHORT).show();
+                return;
+            }
         }
 
         String contactInfo = etContactInfo.getText().toString().trim();
-
         String dateOnly = dateTime.split(" ")[0];
 
         String token = Constants.TOKEN_PREFIX + tokenManager.getAccessToken();
@@ -227,7 +308,7 @@ public class PostItemFragment extends Fragment {
         if (editingItemId == -1) {
             call = api.createItemWithImage(token, titlePart, descPart, typePart, catPart, locPart, datePart, contactPart, imagePart);
         } else {
-            RequestBody statusPart = RequestBody.create(MediaType.parse("text/plain"), LostFoundItem.STATUS_OPEN); // Default for edit if not changed
+            RequestBody statusPart = RequestBody.create(MediaType.parse("text/plain"), LostFoundItem.STATUS_OPEN);
             call = api.updateItemWithImage(token, editingItemId, titlePart, descPart, typePart, catPart, locPart, datePart, contactPart, statusPart, imagePart);
         }
 
@@ -235,19 +316,42 @@ public class PostItemFragment extends Fragment {
             @Override
             public void onResponse(Call<LostFoundItem> call, Response<LostFoundItem> response) {
                 if (!isAdded()) return;
-                if (response.isSuccessful()) {
-                    Toast.makeText(getContext(), editingItemId == -1 ? "Item posted successfully" : "Item updated successfully", Toast.LENGTH_SHORT).show();
-                    getParentFragmentManager().popBackStack();
+                if (response.isSuccessful() && response.body() != null) {
+                    LostFoundItem savedItem = response.body();
+                    String qText = etClaimQuestion != null ? etClaimQuestion.getText().toString().trim() : "";
+                    String aText = etClaimAnswer != null ? etClaimAnswer.getText().toString().trim() : "";
+
+                    if (LostFoundItem.TYPE_FOUND.equals(currentType) && !qText.isEmpty() && !aText.isEmpty()) {
+                        java.util.List<com.campusconnect.app.lostfound.model.ClaimQuestion> questions = new java.util.ArrayList<>();
+                        questions.add(new com.campusconnect.app.lostfound.model.ClaimQuestion(qText, aText));
+                        api.createClaimQuestions(token, savedItem.getId(), questions).enqueue(new Callback<java.util.List<com.campusconnect.app.lostfound.model.ClaimQuestion>>() {
+                            @Override
+                            public void onResponse(Call<java.util.List<com.campusconnect.app.lostfound.model.ClaimQuestion>> call, Response<java.util.List<com.campusconnect.app.lostfound.model.ClaimQuestion>> response) {
+                                if (!isAdded()) return;
+                                Toast.makeText(getContext(), editingItemId == -1 ? "Item posted successfully with claim question" : "Item updated successfully", Toast.LENGTH_SHORT).show();
+                                getParentFragmentManager().popBackStack();
+                            }
+
+                            @Override
+                            public void onFailure(Call<java.util.List<com.campusconnect.app.lostfound.model.ClaimQuestion>> call, Throwable t) {
+                                if (!isAdded()) return;
+                                getParentFragmentManager().popBackStack();
+                            }
+                        });
+                    } else {
+                        Toast.makeText(getContext(), editingItemId == -1 ? "Item posted successfully" : "Item updated successfully", Toast.LENGTH_SHORT).show();
+                        getParentFragmentManager().popBackStack();
+                    }
                 } else {
                     Toast.makeText(getContext(), "Failed to save item", Toast.LENGTH_SHORT).show();
                 }
             }
 
-                    @Override
-                    public void onFailure(Call<LostFoundItem> call, Throwable t) {
-                        if (!isAdded()) return;
-                        Toast.makeText(getContext(), R.string.error_network, Toast.LENGTH_SHORT).show();
-                    }
-                });
+            @Override
+            public void onFailure(Call<LostFoundItem> call, Throwable t) {
+                if (!isAdded()) return;
+                Toast.makeText(getContext(), R.string.error_network, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }
