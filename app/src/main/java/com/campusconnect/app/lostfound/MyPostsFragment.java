@@ -44,9 +44,9 @@ public class MyPostsFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        tokenManager = new TokenManager(requireContext());
-
         view.findViewById(R.id.btnBackMyPosts).setOnClickListener(v -> getParentFragmentManager().popBackStack());
+        view.findViewById(R.id.btnNotificationsMyPosts).setOnClickListener(v ->
+                startActivity(com.campusconnect.app.notifications.NotificationsActivity.createIntent(requireContext())));
 
         recyclerView = view.findViewById(R.id.recyclerViewMyPosts);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

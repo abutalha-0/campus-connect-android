@@ -2,6 +2,7 @@ package com.campusconnect.app.lostfound.model;
 
 import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
+import java.util.List;
 
 public class LostFoundItem implements Serializable {
 
@@ -36,11 +37,8 @@ public class LostFoundItem implements Serializable {
     @SerializedName("contact_info")
     private String contactInfo;
 
-    @SerializedName("date_seen")
-    private String dateSeen;
-
-    @SerializedName("found_at")
-    private String foundAt;
+    @SerializedName("event_date")
+    private String eventDate;
 
     @SerializedName("status")
     private String status;
@@ -54,12 +52,21 @@ public class LostFoundItem implements Serializable {
     @SerializedName("updated_at")
     private String updatedAt;
 
+    @SerializedName("resolved_at")
+    private String resolvedAt;
+
+    @SerializedName("claim_questions")
+    private List<ClaimQuestion> claimQuestions;
+
+    @SerializedName("claim_attempts")
+    private List<ClaimAttempt> claimAttempts;
+
     public LostFoundItem() {
     }
 
     public LostFoundItem(int id, String title, String description, String itemType,
                           String category, String location, String imageUrl,
-                          String contactInfo, String dateSeen, String status,
+                          String contactInfo, String eventDate, String status,
                           String reportedBy, String createdAt) {
         this.id = id;
         this.title = title;
@@ -69,7 +76,7 @@ public class LostFoundItem implements Serializable {
         this.location = location;
         this.imageUrl = imageUrl;
         this.contactInfo = contactInfo;
-        this.dateSeen = dateSeen;
+        this.eventDate = eventDate;
         this.status = status;
         this.reportedBy = reportedBy;
         this.createdAt = createdAt;
@@ -139,20 +146,21 @@ public class LostFoundItem implements Serializable {
         this.contactInfo = contactInfo;
     }
 
+    public String getEventDate() {
+        return eventDate;
+    }
+
+    public void setEventDate(String eventDate) {
+        this.eventDate = eventDate;
+    }
+
+    // Alias getter for backward compatibility
     public String getDateSeen() {
-        return dateSeen;
+        return eventDate;
     }
 
     public void setDateSeen(String dateSeen) {
-        this.dateSeen = dateSeen;
-    }
-
-    public String getFoundAt() {
-        return foundAt;
-    }
-
-    public void setFoundAt(String foundAt) {
-        this.foundAt = foundAt;
+        this.eventDate = dateSeen;
     }
 
     public String getStatus() {
@@ -187,6 +195,30 @@ public class LostFoundItem implements Serializable {
         this.updatedAt = updatedAt;
     }
 
+    public String getResolvedAt() {
+        return resolvedAt;
+    }
+
+    public void setResolvedAt(String resolvedAt) {
+        this.resolvedAt = resolvedAt;
+    }
+
+    public List<ClaimQuestion> getClaimQuestions() {
+        return claimQuestions;
+    }
+
+    public void setClaimQuestions(List<ClaimQuestion> claimQuestions) {
+        this.claimQuestions = claimQuestions;
+    }
+
+    public List<ClaimAttempt> getClaimAttempts() {
+        return claimAttempts;
+    }
+
+    public void setClaimAttempts(List<ClaimAttempt> claimAttempts) {
+        this.claimAttempts = claimAttempts;
+    }
+
     public boolean isLost() {
         return TYPE_LOST.equalsIgnoreCase(itemType);
     }
@@ -195,3 +227,4 @@ public class LostFoundItem implements Serializable {
         return STATUS_CLOSED.equalsIgnoreCase(status);
     }
 }
+

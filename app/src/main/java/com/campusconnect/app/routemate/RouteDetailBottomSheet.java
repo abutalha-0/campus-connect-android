@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.campusconnect.app.R;
 import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.utils.Constants;
+import com.campusconnect.app.core.utils.ProfileNavigator;
 import com.campusconnect.app.core.utils.TokenManager;
 import com.campusconnect.app.routemate.adapter.RouteJoinRequestAdapter;
 import com.campusconnect.app.routemate.api.RouteMateApiService;
@@ -108,6 +109,15 @@ public class RouteDetailBottomSheet extends BottomSheetDialogFragment {
             tvOwnerName.setText(fullName != null ? fullName : "Route Owner");
             tvOwnerInitials.setText(getInitials(fullName));
             tvOwnerUsername.setText(route.getOwnerUsername() != null ? "@" + route.getOwnerUsername() : "");
+
+            View.OnClickListener onOwnerClick = v -> {
+                if (route.getOwner() > 0) {
+                    ProfileNavigator.open(requireContext(), route.getOwner(), "STUDENT");
+                }
+            };
+            tvOwnerName.setOnClickListener(onOwnerClick);
+            tvOwnerInitials.setOnClickListener(onOwnerClick);
+            tvOwnerUsername.setOnClickListener(onOwnerClick);
 
             tvTransport.setText("Transport Mode: " + (route.getTransportMode() != null ? route.getTransportMode() : "Any"));
             tvDays.setText("Days Active: " + (route.getDaysActive() != null ? route.getDaysActive() : "Flexible"));

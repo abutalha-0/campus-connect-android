@@ -17,11 +17,27 @@ public class HomeActivity extends NavShellActivity {
     // Found), not as its own Activity — so a notification pointing at a
     // route has to come through here rather than being launched directly.
     private static final String EXTRA_OPEN_ROUTE_MATE = "open_route_mate";
+    private static final String EXTRA_OPEN_LOST_FOUND_ITEM_ID = "open_lost_found_item_id";
+    private static final String EXTRA_OPEN_LOST_FOUND_LIST = "open_lost_found_list";
 
     public static Intent createRouteMateIntent(Context ctx) {
         Intent i = new Intent(ctx, HomeActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         i.putExtra(EXTRA_OPEN_ROUTE_MATE, true);
+        return i;
+    }
+
+    public static Intent createLostFoundDetailIntent(Context ctx, int itemId) {
+        Intent i = new Intent(ctx, HomeActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        i.putExtra(EXTRA_OPEN_LOST_FOUND_ITEM_ID, itemId);
+        return i;
+    }
+
+    public static Intent createLostFoundListIntent(Context ctx) {
+        Intent i = new Intent(ctx, HomeActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        i.putExtra(EXTRA_OPEN_LOST_FOUND_LIST, true);
         return i;
     }
 
@@ -83,8 +99,7 @@ public class HomeActivity extends NavShellActivity {
     }
 
     /**
-     * Handles both the Route Mate deep link and the tab request that other
-     * screens attach when their bottom nav sends the user back here.
+     * Handles deep links and the tab request that other screens attach when their bottom nav sends the user back here.
      */
     private void applyIntentExtras(Intent intent) {
         if (intent == null) return;
@@ -92,6 +107,21 @@ public class HomeActivity extends NavShellActivity {
         if (intent.getBooleanExtra(EXTRA_OPEN_ROUTE_MATE, false)) {
             intent.removeExtra(EXTRA_OPEN_ROUTE_MATE);
             loadFragment(new com.campusconnect.app.routemate.RouteMateListFragment());
+            return;
+        }
+
+        if (intent.hasExtra(EXTRA_OPEN_LOST_FOUND_ITEM_ID)) {
+            int itemId = intent.getIntExtra(EXTRA_OPEN_LOST_FOUND_ITEM_ID, -1);
+            intent.removeExtra(EXTRA_OPEN_LOST_FOUND_ITEM_ID);
+            if (itemId != -1) {
+                loadFragment(com.campusconnect.app.lostfound.ItemDetailFragment.newInstance(itemId));
+            }
+            return;
+        }
+
+        if (intent.getBooleanExtra(EXTRA_OPEN_LOST_FOUND_LIST, false)) {
+            intent.removeExtra(EXTRA_OPEN_LOST_FOUND_LIST);
+            loadFragment(new com.campusconnect.app.lostfound.LostFoundListFragment());
             return;
         }
 

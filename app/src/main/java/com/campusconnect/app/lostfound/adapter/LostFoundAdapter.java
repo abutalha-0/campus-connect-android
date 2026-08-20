@@ -87,15 +87,32 @@ public class LostFoundAdapter extends RecyclerView.Adapter<LostFoundAdapter.View
                   OnActionClickListener actionListener, boolean showActions) {
             tvTitle.setText(item.getTitle());
             String relativeTime = TimeUtils.getRelativeTime(item.getCreatedAt());
-            tvMeta.setText(String.format("%s · %s", item.getLocation(), relativeTime));
+            String loc = item.getLocation();
+            if (loc != null && !loc.trim().isEmpty()) {
+                tvMeta.setText(String.format("%s · %s", loc, relativeTime));
+            } else if (item.getCategory() != null && !item.getCategory().trim().isEmpty()) {
+                tvMeta.setText(String.format("%s · %s", item.getCategory(), relativeTime));
+            } else {
+                tvMeta.setText(relativeTime);
+            }
 
             boolean isLost = LostFoundItem.TYPE_LOST.equalsIgnoreCase(item.getItemType());
             int accentColor = ContextCompat.getColor(itemView.getContext(), isLost ? R.color.amber : R.color.amber_gold);
             int dimColor = ContextCompat.getColor(itemView.getContext(), isLost ? R.color.amber_dim : R.color.amber_gold_dim);
 
-            tvStatusBadge.setText(item.getItemType());
-            tvStatusBadge.setTextColor(accentColor);
-            tvStatusBadge.setBackgroundTintList(ColorStateList.valueOf(dimColor));
+            if (LostFoundItem.STATUS_CLAIMED.equalsIgnoreCase(item.getStatus())) {
+                tvStatusBadge.setText("CLAIMED");
+                tvStatusBadge.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.amber_gold));
+                tvStatusBadge.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(itemView.getContext(), R.color.amber_gold_dim)));
+            } else if (LostFoundItem.STATUS_CLOSED.equalsIgnoreCase(item.getStatus())) {
+                tvStatusBadge.setText("CLOSED");
+                tvStatusBadge.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.text_faint));
+                tvStatusBadge.setBackgroundTintList(ColorStateList.valueOf(android.graphics.Color.parseColor("#1A2436")));
+            } else {
+                tvStatusBadge.setText(item.getItemType());
+                tvStatusBadge.setTextColor(accentColor);
+                tvStatusBadge.setBackgroundTintList(ColorStateList.valueOf(dimColor));
+            }
 
             if (item.getImageUrl() != null && !item.getImageUrl().isEmpty()) {
                 Glide.with(itemView.getContext())
