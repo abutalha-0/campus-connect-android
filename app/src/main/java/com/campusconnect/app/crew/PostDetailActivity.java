@@ -17,6 +17,7 @@ import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.base.NavShellActivity;
 import com.campusconnect.app.core.utils.ApiError;
 import com.campusconnect.app.core.utils.Constants;
+import com.campusconnect.app.core.utils.ProfileNavigator;
 import com.campusconnect.app.crew.model.JoinRequestModel;
 import com.campusconnect.app.crew.model.JoinRequestRequest;
 import com.campusconnect.app.crew.model.Post;
@@ -165,6 +166,9 @@ public class PostDetailActivity extends NavShellActivity {
         tvStatusBadge.setText(post.getStatus());
         tvTitle.setText(post.getTitle());
         tvAuthor.setText(post.getAuthor() != null ? getString(R.string.crew_posted_by, post.getAuthor().getFullName()) : "");
+        if (post.getAuthor() != null && post.getAuthor().getId() > 0) {
+            tvAuthor.setOnClickListener(v -> ProfileNavigator.open(this, post.getAuthor().getId(), post.getAuthor().getRole()));
+        }
         tvDescription.setText(post.getDescription());
         tvLocation.setText(post.getLocation() == null || post.getLocation().isEmpty() ? "" : getString(R.string.crew_location_prefix, post.getLocation()));
         tvContact.setText(post.getContactInfo() == null || post.getContactInfo().isEmpty() ? "" : getString(R.string.crew_contact_prefix, post.getContactInfo()));
@@ -367,7 +371,12 @@ public class PostDetailActivity extends NavShellActivity {
 
     private void addJoinRequestRow(JoinRequestModel jr) {
         View row = LayoutInflater.from(this).inflate(R.layout.item_join_request, joinRequestsContainer, false);
-        ((TextView) row.findViewById(R.id.tvRequesterName)).setText(jr.getRequester() != null ? jr.getRequester().getFullName() : "");
+        TextView tvName = row.findViewById(R.id.tvRequesterName);
+        tvName.setText(jr.getRequester() != null ? jr.getRequester().getFullName() : "");
+        if (jr.getRequester() != null && jr.getRequester().getId() > 0) {
+            tvName.setOnClickListener(v -> ProfileNavigator.open(this, jr.getRequester().getId(), jr.getRequester().getRole()));
+        }
+
         TextView tvMessage = row.findViewById(R.id.tvRequestMessage);
         if (jr.getMessage() == null || jr.getMessage().isEmpty()) {
             tvMessage.setVisibility(View.GONE);
@@ -423,6 +432,9 @@ public class PostDetailActivity extends NavShellActivity {
                             row.setTextSize(13f);
                             row.setPadding(0, 6, 0, 6);
                             row.setText("\u2022 " + (member.getUser() != null ? member.getUser().getFullName() : ""));
+                            if (member.getUser() != null && member.getUser().getId() > 0) {
+                                row.setOnClickListener(v -> ProfileNavigator.open(PostDetailActivity.this, member.getUser().getId(), member.getUser().getRole()));
+                            }
                             membersContainer.addView(row);
                         }
                     }

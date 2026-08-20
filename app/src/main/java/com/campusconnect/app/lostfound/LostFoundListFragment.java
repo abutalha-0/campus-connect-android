@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.campusconnect.app.R;
 import com.campusconnect.app.core.api.RetrofitClient;
 import com.campusconnect.app.core.utils.Constants;
+import com.campusconnect.app.core.utils.NotificationBellBinder;
 import com.campusconnect.app.core.utils.TokenManager;
 import com.campusconnect.app.home.HomeActivity;
 import com.campusconnect.app.lostfound.adapter.LostFoundAdapter;
@@ -56,6 +57,8 @@ public class LostFoundListFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         tokenManager = new TokenManager(requireContext());
+        NotificationBellBinder.bindClick(view, requireContext());
+        NotificationBellBinder.refreshUnreadDot(view, tokenManager, () -> isAdded());
         recyclerView = view.findViewById(R.id.recyclerView);
         filterBadge = view.findViewById(R.id.filterBadge);
         

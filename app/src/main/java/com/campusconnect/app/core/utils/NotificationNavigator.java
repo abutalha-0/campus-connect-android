@@ -38,6 +38,10 @@ public final class NotificationNavigator {
                 case "classroom":
                     openClassroom(context, parts);
                     break;
+                case "lostfound":
+                case "lost_found":
+                    openLostFound(context, parts);
+                    break;
                 default:
                     break;
             }
@@ -75,6 +79,16 @@ public final class NotificationNavigator {
         if (parts.length >= 3 && "feed".equals(parts[1])) {
             int postId = Integer.parseInt(parts[2]);
             FeedPostDetailActivity.start(context, postId);
+        }
+    }
+
+    private static void openLostFound(Context context, String[] parts) {
+        // lostfound/items/{itemId}
+        if (parts.length >= 3 && "items".equals(parts[1])) {
+            int itemId = Integer.parseInt(parts[2]);
+            context.startActivity(HomeActivity.createLostFoundDetailIntent(context, itemId));
+        } else {
+            context.startActivity(HomeActivity.createLostFoundListIntent(context));
         }
     }
 }

@@ -1,7 +1,10 @@
 package com.campusconnect.app.lostfound.api;
 
+import com.campusconnect.app.lostfound.model.ClaimAttempt;
+import com.campusconnect.app.lostfound.model.ClaimQuestion;
 import com.campusconnect.app.lostfound.model.LostFoundItem;
 import java.util.List;
+import java.util.Map;
 
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
@@ -45,7 +48,7 @@ public interface LostFoundApiService {
             @Part("item_type") RequestBody itemType,
             @Part("category") RequestBody category,
             @Part("location") RequestBody location,
-            @Part("date_seen") RequestBody dateSeen,
+            @Part("event_date") RequestBody eventDate,
             @Part("contact_info") RequestBody contactInfo,
             @Part MultipartBody.Part image
     );
@@ -73,7 +76,7 @@ public interface LostFoundApiService {
             @Part("item_type") RequestBody itemType,
             @Part("category") RequestBody category,
             @Part("location") RequestBody location,
-            @Part("date_seen") RequestBody dateSeen,
+            @Part("event_date") RequestBody eventDate,
             @Part("contact_info") RequestBody contactInfo,
             @Part("status") RequestBody status,
             @Part MultipartBody.Part image
@@ -89,4 +92,32 @@ public interface LostFoundApiService {
     Call<List<LostFoundItem>> getMyPosts(
             @Header("Authorization") String token
     );
+
+    @POST("api/lost-found/{id}/claim-questions/")
+    Call<List<ClaimQuestion>> createClaimQuestions(
+            @Header("Authorization") String token,
+            @Path("id") int id,
+            @Body List<ClaimQuestion> questions
+    );
+
+    @POST("api/lost-found/{id}/claims/")
+    Call<ClaimAttempt> submitClaimAttempt(
+            @Header("Authorization") String token,
+            @Path("id") int id,
+            @Body Map<String, Object> body
+    );
+
+    @GET("api/lost-found/{id}/claims/")
+    Call<List<ClaimAttempt>> getClaimAttempts(
+            @Header("Authorization") String token,
+            @Path("id") int id
+    );
+
+    @PATCH("api/lost-found/claims/{id}/")
+    Call<ClaimAttempt> reviewClaimAttempt(
+            @Header("Authorization") String token,
+            @Path("id") int id,
+            @Body Map<String, String> body
+    );
 }
+
