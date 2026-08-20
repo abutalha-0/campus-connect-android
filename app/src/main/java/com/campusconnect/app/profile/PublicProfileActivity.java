@@ -2,7 +2,7 @@ package com.campusconnect.app.profile;
 
 import android.os.Bundle;
 import com.campusconnect.app.R;
-import com.campusconnect.app.core.base.BaseActivity;
+import com.campusconnect.app.core.base.NavShellActivity;
 import com.campusconnect.app.home.ProfileFragment;
 
 /**
@@ -10,7 +10,7 @@ import com.campusconnect.app.home.ProfileFragment;
  * ProfileFragment.newInstance(userId). Keeping the actual profile UI in one
  * place means this screen always matches the own-profile screen's design.
  */
-public class PublicProfileActivity extends BaseActivity {
+public class PublicProfileActivity extends NavShellActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

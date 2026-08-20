@@ -9,7 +9,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.campusconnect.app.R;
 import com.campusconnect.app.core.api.RetrofitClient;
-import com.campusconnect.app.core.base.BaseActivity;
+import com.campusconnect.app.core.base.NavShellActivity;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.profile.ProfileApiService;
 import com.campusconnect.app.profile.models.Profile;
@@ -24,7 +24,7 @@ import retrofit2.Response;
  * EXTRA_MODE hides the other section's fields — but both modes still fetch
  * and resubmit all three values together so the hidden ones aren't wiped out.
  */
-public class EditBasicInfoActivity extends BaseActivity {
+public class EditBasicInfoActivity extends NavShellActivity {
 
     public enum Mode { HERO, ABOUT }
 

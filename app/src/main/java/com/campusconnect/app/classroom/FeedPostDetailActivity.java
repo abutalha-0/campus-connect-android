@@ -19,7 +19,7 @@ import com.campusconnect.app.classroom.model.FeedPost;
 import com.campusconnect.app.classroom.model.FeedVoteRequest;
 import com.campusconnect.app.classroom.util.RelativeTime;
 import com.campusconnect.app.core.api.RetrofitClient;
-import com.campusconnect.app.core.base.BaseActivity;
+import com.campusconnect.app.core.base.NavShellActivity;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.core.utils.ProfileNavigator;
 
@@ -30,7 +30,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /** Full post view: body, voting, and comments. */
-public class FeedPostDetailActivity extends BaseActivity {
+public class FeedPostDetailActivity extends NavShellActivity {
 
     private static final String EXTRA_POST_ID = "post_id";
 

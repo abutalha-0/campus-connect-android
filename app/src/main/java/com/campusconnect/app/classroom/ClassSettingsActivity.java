@@ -22,7 +22,7 @@ import com.campusconnect.app.classroom.model.Classroom;
 import com.campusconnect.app.classroom.model.DeleteClassRequest;
 import com.campusconnect.app.classroom.model.Subject;
 import com.campusconnect.app.core.api.RetrofitClient;
-import com.campusconnect.app.core.base.BaseActivity;
+import com.campusconnect.app.core.base.NavShellActivity;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.core.utils.ProfileNavigator;
 
@@ -33,7 +33,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /** Class settings: creator + class code (all); course management/delete (creator); leave (member). */
-public class ClassSettingsActivity extends BaseActivity {
+public class ClassSettingsActivity extends NavShellActivity {
 
     private static final int[] PALETTE = {
             0xFF22D3EE, 0xFFA855F7, 0xFFF59E0B, 0xFFF87171, 0xFF4ADE80

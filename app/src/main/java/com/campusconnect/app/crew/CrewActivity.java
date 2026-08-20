@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.campusconnect.app.R;
 import com.campusconnect.app.core.api.PageResponse;
 import com.campusconnect.app.core.api.RetrofitClient;
-import com.campusconnect.app.core.base.BaseActivity;
+import com.campusconnect.app.core.base.NavShellActivity;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.core.utils.NotificationBellBinder;
 import com.campusconnect.app.crew.model.Category;
@@ -36,7 +36,7 @@ import retrofit2.Response;
  * "Crew" tile (see HomeFragment.java) — structured like ClassroomActivity
  * (back-button header, drill-in screen), not a bottom-nav fragment.
  */
-public class CrewActivity extends BaseActivity {
+public class CrewActivity extends NavShellActivity {
 
     public static Intent createIntent(Context ctx) {
         return new Intent(ctx, CrewActivity.class);

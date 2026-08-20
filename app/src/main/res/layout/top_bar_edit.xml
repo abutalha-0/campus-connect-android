@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Shared top bar for full-page edit/add screens: back + title + Save action. -->
+<!--
+    Shared top bar for full-page edit/add screens:
+    drawer + back + title + Save action. NavShellActivity wires @id/btnMenu
+    itself, so hosting screens only handle back/save.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="56dp"
@@ -7,6 +11,17 @@
     android:gravity="center_vertical"
     android:paddingStart="4dp"
     android:paddingEnd="16dp">
+
+    <ImageButton
+        android:id="@+id/btnMenu"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_menu_hamburger"
+        android:padding="9dp"
+        android:tint="@color/color_muted"
+        android:visibility="gone"
+        android:contentDescription="@string/label_open_menu"/>
 
     <ImageButton
         android:id="@+id/btnBack"

@@ -16,7 +16,7 @@ import android.widget.Toast;
 import com.campusconnect.app.R;
 import com.campusconnect.app.core.api.PageResponse;
 import com.campusconnect.app.core.api.RetrofitClient;
-import com.campusconnect.app.core.base.BaseActivity;
+import com.campusconnect.app.core.base.NavShellActivity;
 import com.campusconnect.app.core.utils.ApiError;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.crew.model.Category;
@@ -39,7 +39,7 @@ import retrofit2.Response;
  * A spinner selection shows/hides one of three pre-built field groups
  * (study/contest/travel), which get packed into Post.details (JSON on the backend).
  */
-public class AddPostActivity extends BaseActivity {
+public class AddPostActivity extends NavShellActivity {
 
     public static Intent createIntent(Context ctx) {
         return new Intent(ctx, AddPostActivity.class);

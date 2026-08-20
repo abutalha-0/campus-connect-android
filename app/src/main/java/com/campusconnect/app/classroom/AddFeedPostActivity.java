@@ -15,7 +15,7 @@ import com.campusconnect.app.R;
 import com.campusconnect.app.classroom.model.FeedPost;
 import com.campusconnect.app.classroom.model.FeedPostRequest;
 import com.campusconnect.app.core.api.RetrofitClient;
-import com.campusconnect.app.core.base.BaseActivity;
+import com.campusconnect.app.core.base.NavShellActivity;
 import com.campusconnect.app.core.utils.Constants;
 
 import java.util.ArrayList;
@@ -26,7 +26,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /** Create or edit a feed post. The tag list is drawn live from the student's own class. */
-public class AddFeedPostActivity extends BaseActivity {
+public class AddFeedPostActivity extends NavShellActivity {
 
     private static final String EXTRA_POST_ID = "post_id";
     private static final String EXTRA_TITLE = "title";

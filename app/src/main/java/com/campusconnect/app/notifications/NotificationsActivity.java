@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.campusconnect.app.R;
 import com.campusconnect.app.core.api.PageResponse;
 import com.campusconnect.app.core.api.RetrofitClient;
-import com.campusconnect.app.core.base.BaseActivity;
+import com.campusconnect.app.core.base.NavShellActivity;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.core.utils.NotificationNavigator;
 import com.campusconnect.app.notifications.model.Notification;
@@ -29,7 +29,7 @@ import retrofit2.Response;
  * notification marks it read (if it wasn't already) and navigates to
  * whatever it's about, via NotificationNavigator + action_url.
  */
-public class NotificationsActivity extends BaseActivity {
+public class NotificationsActivity extends NavShellActivity {
 
     public static Intent createIntent(Context ctx) {
         return new Intent(ctx, NotificationsActivity.class);

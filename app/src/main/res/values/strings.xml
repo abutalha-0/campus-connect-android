@@ -34,6 +34,7 @@
     <string name="label_settings">Settings</string>
     <string name="label_recent_activity">RECENT ACTIVITY</string>
     <string name="drawer_menu_label">MENU</string>
+    <string name="label_open_menu">Open menu</string>
 
     <string name="greeting_morning">Good morning</string>
     <string name="greeting_afternoon">Good afternoon</string>

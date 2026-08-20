@@ -8,7 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.campusconnect.app.R;
 import com.campusconnect.app.core.api.RetrofitClient;
-import com.campusconnect.app.core.base.BaseActivity;
+import com.campusconnect.app.core.base.NavShellActivity;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.profile.ProfileApiService;
 import com.campusconnect.app.profile.models.Link;
@@ -28,7 +28,7 @@ import retrofit2.Response;
  * Full-page "Manage Connect & Network": current links as removable chips,
  * plus a platform picker + URL field to add a new one.
  */
-public class AddLinkActivity extends BaseActivity {
+public class AddLinkActivity extends NavShellActivity {
 
     public static void start(Context context) {
         context.startActivity(new Intent(context, AddLinkActivity.class));

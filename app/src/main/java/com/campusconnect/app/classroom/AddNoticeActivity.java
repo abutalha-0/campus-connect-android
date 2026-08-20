@@ -21,7 +21,7 @@ import com.campusconnect.app.R;
 import com.campusconnect.app.classroom.model.Notice;
 import com.campusconnect.app.classroom.util.NoticeDates;
 import com.campusconnect.app.core.api.RetrofitClient;
-import com.campusconnect.app.core.base.BaseActivity;
+import com.campusconnect.app.core.base.NavShellActivity;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.core.utils.FileUtils;
 import com.google.android.material.switchmaterial.SwitchMaterial;
@@ -48,7 +48,7 @@ import retrofit2.Response;
  * highlighted callout on the notice card. A live preview shows exactly what
  * that callout will look like as the faculty/CR builds it.
  */
-public class AddNoticeActivity extends BaseActivity {
+public class AddNoticeActivity extends NavShellActivity {
 
     private static final String EXTRA_SUBJECT_ID = "subject_id";
     private static final String EXTRA_NOTICE_ID = "notice_id";

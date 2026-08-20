@@ -12,7 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.campusconnect.app.R;
 import com.campusconnect.app.core.api.RetrofitClient;
-import com.campusconnect.app.core.base.BaseActivity;
+import com.campusconnect.app.core.base.NavShellActivity;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.profile.ProfileApiService;
 import com.campusconnect.app.profile.models.Profile;
@@ -33,7 +33,7 @@ import retrofit2.Response;
  * as skill_id) or creating a brand-new one by typing a name that isn't in
  * the catalog (submitted as skill_name — server auto-creates it).
  */
-public class AddSkillActivity extends BaseActivity {
+public class AddSkillActivity extends NavShellActivity {
 
     public static void start(Context context) {
         context.startActivity(new Intent(context, AddSkillActivity.class));

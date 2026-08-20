@@ -28,6 +28,19 @@
             android:paddingBottom="14dp">
 
             <ImageView
+                android:id="@+id/btnMenu"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:layout_marginEnd="12dp"
+                android:src="@drawable/ic_menu_hamburger"
+                android:tint="@color/color_muted"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:clickable="true"
+                android:focusable="true"
+                android:visibility="gone"
+                android:contentDescription="@string/label_open_menu" />
+
+            <ImageView
                 android:id="@+id/btnBack"
                 android:layout_width="26dp"
                 android:layout_height="26dp"

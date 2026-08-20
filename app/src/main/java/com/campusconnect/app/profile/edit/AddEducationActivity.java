@@ -8,7 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.campusconnect.app.R;
 import com.campusconnect.app.core.api.RetrofitClient;
-import com.campusconnect.app.core.base.BaseActivity;
+import com.campusconnect.app.core.base.NavShellActivity;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.profile.ProfileApiService;
 import com.campusconnect.app.profile.models.Education;
@@ -23,7 +23,7 @@ import retrofit2.Response;
  * switch to update mode. The endpoint is multipart/form-data (not JSON), so
  * every field gets wrapped as a text part.
  */
-public class AddEducationActivity extends BaseActivity {
+public class AddEducationActivity extends NavShellActivity {
 
     private static final String EXTRA_ID = "id";
     private static final String EXTRA_INSTITUTION = "institution";

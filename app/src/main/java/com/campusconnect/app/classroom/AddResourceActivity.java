@@ -23,7 +23,7 @@ import com.campusconnect.app.classroom.model.Resource;
 import com.campusconnect.app.classroom.model.ResourceRequest;
 import com.campusconnect.app.classroom.util.ResourceTypes;
 import com.campusconnect.app.core.api.RetrofitClient;
-import com.campusconnect.app.core.base.BaseActivity;
+import com.campusconnect.app.core.base.NavShellActivity;
 import com.campusconnect.app.core.utils.Constants;
 
 import java.io.File;
@@ -41,7 +41,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /** Add or edit a resource within a subject. */
-public class AddResourceActivity extends BaseActivity {
+public class AddResourceActivity extends NavShellActivity {
 
     private static final String EXTRA_SUBJECT_ID = "subject_id";
     private static final String EXTRA_RESOURCE_ID = "resource_id";

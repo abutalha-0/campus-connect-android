@@ -14,7 +14,7 @@ import android.widget.Toast;
 import com.campusconnect.app.R;
 import com.campusconnect.app.core.api.PageResponse;
 import com.campusconnect.app.core.api.RetrofitClient;
-import com.campusconnect.app.core.base.BaseActivity;
+import com.campusconnect.app.core.base.NavShellActivity;
 import com.campusconnect.app.core.utils.ApiError;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.crew.model.JoinRequestModel;
@@ -36,7 +36,7 @@ import retrofit2.Response;
  * the logged-in user's own profile (existing endpoint) and comparing its id
  * against post.author.id, since crew.Post doesn't compute that server-side.
  */
-public class PostDetailActivity extends BaseActivity {
+public class PostDetailActivity extends NavShellActivity {
 
     private static final String EXTRA_SLUG = "post_slug";
 

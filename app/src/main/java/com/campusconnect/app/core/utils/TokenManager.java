@@ -67,6 +67,31 @@ public class TokenManager {
         return prefs.getString(Constants.KEY_ROLE, null);
     }
 
+    /** Caches just enough of the profile to render the drawer header offline. */
+    public void saveProfileSummary(String fullName, String username, String photoUrl) {
+        if (prefs == null) return;
+        prefs.edit()
+                .putString(Constants.KEY_PROFILE_NAME, fullName)
+                .putString(Constants.KEY_PROFILE_USERNAME, username)
+                .putString(Constants.KEY_PROFILE_PHOTO, photoUrl)
+                .apply();
+    }
+
+    public String getProfileName() {
+        if (prefs == null) return null;
+        return prefs.getString(Constants.KEY_PROFILE_NAME, null);
+    }
+
+    public String getProfileUsername() {
+        if (prefs == null) return null;
+        return prefs.getString(Constants.KEY_PROFILE_USERNAME, null);
+    }
+
+    public String getProfilePhoto() {
+        if (prefs == null) return null;
+        return prefs.getString(Constants.KEY_PROFILE_PHOTO, null);
+    }
+
     public boolean isFaculty() {
         return Constants.ROLE_FACULTY.equals(getRole());
     }

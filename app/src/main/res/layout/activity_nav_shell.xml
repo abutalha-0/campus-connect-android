@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Shared navigation chrome (side drawer + Home/Discover/Profile bottom nav)
+    that NavShellActivity wraps around every screen's own layout. A screen's
+    setContentView() layout is inflated into @id/navShellContent, so individual
+    activities keep their own XML untouched.
+-->
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawerLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="@color/color_background">
+
+        <!-- The hosted screen's own layout goes here -->
+        <FrameLayout
+            android:id="@+id/navShellContent"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"/>
+
+        <View
+            android:id="@+id/navShellDivider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/color_border"/>
+
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNav"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/color_card"
+            app:itemIconTint="@color/bottom_nav_color"
+            app:itemTextColor="@color/bottom_nav_color"
+            app:menu="@menu/bottom_nav_menu"
+            app:labelVisibilityMode="labeled"/>
+
+    </LinearLayout>
+
+    <include
+        android:id="@+id/drawerPanel"
+        layout="@layout/drawer_home"/>
+
+</androidx.drawerlayout.widget.DrawerLayout>

@@ -24,7 +24,7 @@ import com.campusconnect.app.classroom.util.NoticeDates;
 import com.campusconnect.app.classroom.util.RelativeTime;
 import com.campusconnect.app.classroom.util.Weeks;
 import com.campusconnect.app.core.api.RetrofitClient;
-import com.campusconnect.app.core.base.BaseActivity;
+import com.campusconnect.app.core.base.NavShellActivity;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.core.utils.ProfileNavigator;
 import com.campusconnect.app.core.utils.SkeletonAnimator;
@@ -47,7 +47,7 @@ import retrofit2.Response;
  * otherwise a real in-place tab layout — Subjects / Schedule / Feed — all
  * swapped within this one screen rather than navigating to separate Activities.
  */
-public class ClassroomActivity extends BaseActivity {
+public class ClassroomActivity extends NavShellActivity {
 
     private static final int[] PALETTE = {
             0xFF22D3EE, 0xFFA855F7, 0xFFF59E0B, 0xFFF87171, 0xFF4ADE80

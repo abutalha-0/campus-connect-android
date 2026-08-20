@@ -14,7 +14,7 @@ import com.campusconnect.app.R;
 import com.campusconnect.app.classroom.model.Subject;
 import com.campusconnect.app.classroom.model.SubjectRequest;
 import com.campusconnect.app.core.api.RetrofitClient;
-import com.campusconnect.app.core.base.BaseActivity;
+import com.campusconnect.app.core.base.NavShellActivity;
 import com.campusconnect.app.core.utils.Constants;
 
 import retrofit2.Call;
@@ -22,7 +22,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /** Add a subject; on success shows the generated share code with a copy action. */
-public class AddSubjectActivity extends BaseActivity {
+public class AddSubjectActivity extends NavShellActivity {
 
     private EditText etName, etIntake, etSection, etRoom;
     private TextView btnAddSubject, codeCardCode;

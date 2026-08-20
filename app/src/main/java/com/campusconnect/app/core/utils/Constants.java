@@ -6,6 +6,11 @@ public class Constants {
     public static final String KEY_ACCESS = "access_token";
     public static final String KEY_REFRESH = "refresh_token";
     public static final String KEY_ROLE = "user_role";
+    // Cached profile summary, so the side drawer header can render on every
+    // screen without each one re-fetching /profile just to fill it in.
+    public static final String KEY_PROFILE_NAME = "profile_name";
+    public static final String KEY_PROFILE_USERNAME = "profile_username";
+    public static final String KEY_PROFILE_PHOTO = "profile_photo";
     public static final String ROLE_FACULTY = "FACULTY";
     public static final String ROLE_STUDENT = "STUDENT";
 }

@@ -14,7 +14,7 @@ import com.campusconnect.app.classroom.model.Classroom;
 import com.campusconnect.app.classroom.model.CreateClassRequest;
 import com.campusconnect.app.classroom.model.Subject;
 import com.campusconnect.app.core.api.RetrofitClient;
-import com.campusconnect.app.core.base.BaseActivity;
+import com.campusconnect.app.core.base.NavShellActivity;
 import com.campusconnect.app.core.utils.Constants;
 
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /** "Create Class" — draft courses by secret code, then create the class. */
-public class CreateClassActivity extends BaseActivity {
+public class CreateClassActivity extends NavShellActivity {
 
     private static final int[] PALETTE = {
             0xFF22D3EE, 0xFFA855F7, 0xFFF59E0B, 0xFFF87171, 0xFF4ADE80

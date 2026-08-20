@@ -16,7 +16,7 @@ import com.campusconnect.app.R;
 import com.campusconnect.app.classroom.model.Subject;
 import com.campusconnect.app.classroom.model.SubjectRequest;
 import com.campusconnect.app.core.api.RetrofitClient;
-import com.campusconnect.app.core.base.BaseActivity;
+import com.campusconnect.app.core.base.NavShellActivity;
 import com.campusconnect.app.core.utils.Constants;
 
 import retrofit2.Call;
@@ -24,7 +24,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /** View the subject share code and update or delete the subject. */
-public class SubjectSettingsActivity extends BaseActivity {
+public class SubjectSettingsActivity extends NavShellActivity {
 
     private static final String EXTRA_SUBJECT_ID = "subject_id";
 

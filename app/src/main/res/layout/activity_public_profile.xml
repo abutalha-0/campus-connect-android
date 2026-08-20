@@ -20,6 +20,17 @@
         android:paddingEnd="16dp">
 
         <ImageButton
+            android:id="@+id/btnMenu"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_menu_hamburger"
+            android:padding="9dp"
+            android:tint="@color/color_muted"
+            android:visibility="gone"
+            android:contentDescription="@string/label_open_menu"/>
+
+        <ImageButton
             android:id="@+id/btnBack"
             android:layout_width="44dp"
             android:layout_height="44dp"

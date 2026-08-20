@@ -8,7 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.campusconnect.app.R;
 import com.campusconnect.app.core.api.RetrofitClient;
-import com.campusconnect.app.core.base.BaseActivity;
+import com.campusconnect.app.core.base.NavShellActivity;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.profile.ProfileApiService;
 import com.campusconnect.app.profile.models.Project;
@@ -18,7 +18,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /** Full-page Add/Edit Project — pass an editing id via startEdit() to switch to update mode. */
-public class AddProjectActivity extends BaseActivity {
+public class AddProjectActivity extends NavShellActivity {
 
     private static final String EXTRA_ID = "id";
     private static final String EXTRA_NAME = "name";

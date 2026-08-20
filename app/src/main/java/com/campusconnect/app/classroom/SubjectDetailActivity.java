@@ -23,7 +23,7 @@ import com.campusconnect.app.classroom.util.NoticeDates;
 import com.campusconnect.app.classroom.util.ResourceTypes;
 import com.campusconnect.app.classroom.util.Weeks;
 import com.campusconnect.app.core.api.RetrofitClient;
-import com.campusconnect.app.core.base.BaseActivity;
+import com.campusconnect.app.core.base.NavShellActivity;
 import com.campusconnect.app.core.utils.Constants;
 import com.campusconnect.app.core.utils.ProfileNavigator;
 
@@ -39,7 +39,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 /** Subject detail: header + Resources / Notice / Work tabs. Resources are live. */
-public class SubjectDetailActivity extends BaseActivity {
+public class SubjectDetailActivity extends NavShellActivity {
 
     public static final String EXTRA_SUBJECT_ID = "subject_id";
     public static final String EXTRA_SUBJECT_NAME = "subject_name";
